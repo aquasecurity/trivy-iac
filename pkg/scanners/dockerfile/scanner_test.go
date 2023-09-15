@@ -531,27 +531,25 @@ END REGO RESULTSET
 
 `,
 		},
-		// TODO
-		/*
-					{
-						name: "new schema selector but invalid",
-						inputRegoPolicy: `# METADATA
-			# title: "COPY '--from' referring to the current image"
-			# description: "COPY '--from' should not mention the current FROM alias, since it is impossible to copy from itself."
-			# scope: package
-			# schemas:
-			# - input: schema["spooky-schema"]
-			# custom:
-			#   input:
-			#     selector:
-			#     - type: dockerfile
-			package builtin.dockerfile.DS006
-			deny[res]{
-				res := true
-			}`,
-						expectedError: `1 error occurred: rules/rule.rego:12: rego_type_error: undefined schema: schema["spooky-schema"]`,
-					},
-		*/
+		// TODO fix this test
+		{
+			name: "new schema selector but invalid",
+			inputRegoPolicy: `# METADATA
+# title: "COPY '--from' referring to the current image"
+# description: "COPY '--from' should not mention the current FROM alias, since it is impossible to copy from itself."
+# scope: package
+# schemas:
+# - input: schema["spooky-schema"]
+# custom:
+#   input:
+#     selector:
+#     - type: dockerfile
+package builtin.dockerfile.DS006
+deny[res]{
+res := true
+}`,
+			expectedError: `1 error occurred: rules/rule.rego:12: rego_type_error: undefined schema: schema["spooky-schema"]`,
+		},
 	}
 
 	for _, tc := range testCases {
