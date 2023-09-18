@@ -14,12 +14,12 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/state"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/azure"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/azure/arm/parser"
-	"github.com/simar7/trivy-misconf-rules/pkg/rego"
-	"github.com/simar7/trivy-misconf-rules/pkg/rules"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure/arm/parser"
+	"github.com/aquasecurity/trivy-policies/pkg/rego"
+	"github.com/aquasecurity/trivy-policies/pkg/rules"
 )
 
 var _ scanners.FSScanner = (*Scanner)(nil)

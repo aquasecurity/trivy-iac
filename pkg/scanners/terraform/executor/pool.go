@@ -12,7 +12,7 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/state"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/simar7/trivy-misconf-rules/pkg/rego"
+	"github.com/aquasecurity/trivy-policies/pkg/rego"
 )
 
 type RegisteredRule interface {

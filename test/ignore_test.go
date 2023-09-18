@@ -8,7 +8,7 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/simar7/trivy-misconf-rules/pkg/rules"
+	"github.com/aquasecurity/trivy-policies/pkg/rules"
 	"github.com/stretchr/testify/assert"
 )
 

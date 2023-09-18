@@ -6,7 +6,7 @@ import (
 
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
 
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/cftypes"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/cftypes"
 )
 
 func (p *Property) IsNil() bool {

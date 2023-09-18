@@ -1,6 +1,6 @@
 package parser
 
-import "github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/cftypes"
+import "github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/cftypes"
 
 func ResolveAnd(property *Property) (resolved *Property, success bool) {
 	if !property.isFunction() {

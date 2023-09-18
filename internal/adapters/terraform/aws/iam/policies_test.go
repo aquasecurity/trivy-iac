@@ -8,8 +8,8 @@ import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/iam"
 	"github.com/liamg/iamgo"
 
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/tftestutil"
-	"github.com/nikpivkin/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/tftestutil"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
 )
 
 func Test_adaptPolicies(t *testing.T) {

@@ -7,9 +7,9 @@ import (
 	"github.com/aquasecurity/defsec/pkg/providers/nifcloud/sslcertificate"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
 
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/tftestutil"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/tftestutil"
 
-	"github.com/nikpivkin/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
 )
 
 const certificate = `

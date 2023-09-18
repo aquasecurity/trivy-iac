@@ -3,7 +3,7 @@ package terraformplan
 import (
 	"testing"
 
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/terraformplan/parser"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraformplan/parser"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

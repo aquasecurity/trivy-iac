@@ -6,10 +6,10 @@ import (
 	"io/fs"
 	"testing"
 
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/terraform/executor"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/terraform/parser"
-	"github.com/nikpivkin/trivy-iac/test/testutil"
-	"github.com/simar7/trivy-misconf-rules/pkg/rules"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/executor"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-policies/pkg/rules"
 )
 
 func BenchmarkCalculate(b *testing.B) {

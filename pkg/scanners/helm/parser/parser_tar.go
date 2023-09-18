@@ -11,8 +11,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/aquasecurity/trivy-iac/pkg/detection"
 	"github.com/liamg/memoryfs"
-	"github.com/nikpivkin/trivy-iac/pkg/detection"
 )
 
 func (p *Parser) addTarToFS(path string) (fs.FS, error) {

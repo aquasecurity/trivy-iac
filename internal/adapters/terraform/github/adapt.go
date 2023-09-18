@@ -3,9 +3,9 @@ package github
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/github"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/github/branch_protections"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/github/repositories"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/github/secrets"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/github/branch_protections"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/github/repositories"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/github/secrets"
 )
 
 func Adapt(modules terraform.Modules) github.GitHub {

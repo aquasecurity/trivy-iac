@@ -7,7 +7,7 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/providers/aws/ec2"
 
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getNetworkACLs(ctx parser.FileContext) (acls []ec2.NetworkACL) {

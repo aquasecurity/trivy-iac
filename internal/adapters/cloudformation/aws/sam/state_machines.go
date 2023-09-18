@@ -4,8 +4,8 @@ import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/iam"
 	"github.com/aquasecurity/defsec/pkg/providers/aws/sam"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 	"github.com/liamg/iamgo"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getStateMachines(cfFile parser.FileContext) (stateMachines []sam.StateMachine) {

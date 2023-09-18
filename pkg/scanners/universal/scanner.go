@@ -6,16 +6,16 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/azure/arm"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/dockerfile"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/helm"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/json"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/kubernetes"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/terraform"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/toml"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/yaml"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure/arm"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/dockerfile"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/helm"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/json"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/kubernetes"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/toml"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/yaml"
 )
 
 type nestableFSScanners interface {

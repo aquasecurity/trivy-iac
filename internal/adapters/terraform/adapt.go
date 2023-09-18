@@ -3,16 +3,16 @@ package terraform
 import (
 	"github.com/aquasecurity/defsec/pkg/state"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/aws"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/azure"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/cloudstack"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/digitalocean"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/github"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/google"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/kubernetes"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/nifcloud"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/openstack"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/oracle"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/aws"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/azure"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/cloudstack"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/digitalocean"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/github"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/google"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/kubernetes"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/nifcloud"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/openstack"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/oracle"
 )
 
 func Adapt(modules terraform.Modules) *state.State {

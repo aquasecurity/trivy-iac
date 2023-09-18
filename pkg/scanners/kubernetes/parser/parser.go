@@ -15,7 +15,7 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/debug"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/nikpivkin/trivy-iac/pkg/detection"
+	"github.com/aquasecurity/trivy-iac/pkg/detection"
 )
 
 var _ options.ConfigurableParser = (*Parser)(nil)

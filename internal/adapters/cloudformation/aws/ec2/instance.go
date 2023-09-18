@@ -3,7 +3,7 @@ package ec2
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/ec2"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getInstances(ctx parser.FileContext) (instances []ec2.Instance) {

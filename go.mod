@@ -1,4 +1,4 @@
-module github.com/nikpivkin/trivy-iac
+module github.com/aquasecurity/trivy-iac
 
 go 1.19
 
@@ -7,7 +7,8 @@ require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/alecthomas/chroma v0.10.0 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aquasecurity/defsec v0.92.0
+	github.com/aquasecurity/defsec v0.92.1-0.20230918174123-78adefe70b50
+	github.com/aquasecurity/trivy-policies v0.0.6-0.20230918204638-b8dab51e5a8e
 	github.com/aws/aws-sdk-go v1.44.245 // indirect
 	github.com/aws/smithy-go v1.13.5
 	github.com/bmatcuk/doublestar/v4 v4.6.0
@@ -21,9 +22,8 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/moby/buildkit v0.11.6
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/open-policy-agent/opa v0.56.0
+	github.com/open-policy-agent/opa v0.56.0 // indirect
 	github.com/owenrumney/squealer v1.2.1 // indirect
-	github.com/simar7/trivy-misconf-rules v0.0.4
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/cobra v1.7.0 // indirect
 	github.com/stretchr/testify v1.8.4
@@ -66,7 +66,7 @@ require (
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/containerd/containerd v1.7.4 // indirect
 	github.com/containerd/typeurl v1.0.2 // indirect
-	github.com/cyphar/filepath-securejoin v0.2.3 // indirect
+	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
 	github.com/docker/cli v24.0.5+incompatible // indirect
@@ -219,7 +219,3 @@ require (
 replace github.com/elgohr/go-localstack => github.com/aquasecurity/go-localstack v0.0.0-20220706080605-1ec0e9b8753c
 
 replace oras.land/oras-go => oras.land/oras-go v1.2.4-0.20230801060855-932dd06d38af
-
-replace github.com/simar7/trivy-misconf-rules => github.com/nikpivkin/trivy-misconf-rules v0.0.0-20230907122513-803f46cef021
-
-replace github.com/aquasecurity/defsec => github.com/aquasecurity/defsec v0.92.1-0.20230905012348-ae6078ba0df9

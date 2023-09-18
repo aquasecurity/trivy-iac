@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nikpivkin/trivy-iac/pkg/detection"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/helm/parser"
+	"github.com/aquasecurity/trivy-iac/pkg/detection"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/helm/parser"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
