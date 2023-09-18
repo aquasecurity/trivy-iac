@@ -44,11 +44,11 @@ module "something" {
 `
 
 	for _, rule := range rules.GetRegistered() {
-		if rule.Rule().Terraform == nil {
+		if rule.GetRule().Terraform == nil {
 			continue
 		}
-		for i, bad := range rule.Rule().Terraform.BadExamples {
-			filename := fmt.Sprintf("/modules/problem/%s-%d.tf", rule.Rule().LongID(), i)
+		for i, bad := range rule.GetRule().Terraform.BadExamples {
+			filename := fmt.Sprintf("/modules/problem/%s-%d.tf", rule.GetRule().LongID(), i)
 			files[filename] = bad
 		}
 	}

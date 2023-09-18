@@ -187,12 +187,12 @@ func (s *Scanner) scanFileContext(ctx context.Context, regoScanner *rego.Scanner
 				return nil, ctx.Err()
 			default:
 			}
-			if rule.Rule().RegoPackage != "" {
+			if rule.GetRule().RegoPackage != "" {
 				continue
 			}
 			evalResult := rule.Evaluate(state)
 			if len(evalResult) > 0 {
-				s.debug.Log("Found %d results for %s", len(evalResult), rule.Rule().AVDID)
+				s.debug.Log("Found %d results for %s", len(evalResult), rule.GetRule().AVDID)
 				for _, scanResult := range evalResult {
 
 					ref := scanResult.Metadata().Reference()

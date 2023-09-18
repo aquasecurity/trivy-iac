@@ -12,6 +12,7 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/dockerfile"
+	"github.com/aquasecurity/trivy-policies/pkg/rego"
 	"github.com/liamg/memoryfs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -30,7 +31,7 @@ func addFilesToMemFS(memfs *memoryfs.FS, typePolicy bool, folderName string) err
 			if info.IsDir() {
 				return nil
 			}
-			if typePolicy && !isRegoFile(info.Name()) {
+			if typePolicy && !rego.IsRegoFile(info.Name()) {
 				return nil
 			}
 			data, err := os.ReadFile(fpath)

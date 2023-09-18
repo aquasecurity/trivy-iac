@@ -14,6 +14,7 @@ import (
 	adapter "github.com/aquasecurity/trivy-iac/internal/adapters/terraform"
 	"github.com/aquasecurity/trivy-policies/pkg/rego"
 	"github.com/aquasecurity/trivy-policies/pkg/rules"
+	"github.com/aquasecurity/trivy-policies/pkg/types"
 )
 
 // Executor scans HCL blocks by running all registered rules against them
@@ -104,11 +105,11 @@ func (e *Executor) Execute(modules terraform.Modules) (scan.Results, Metrics, er
 	}
 
 	checksTime := time.Now()
-	var registeredRules []RegisteredRule
+	var registeredRules []types.RegisteredRule
 	a := rules.GetRegistered(e.frameworks...)
 	for _, r := range a {
 		rule := r
-		registeredRules = append(registeredRules, &rule)
+		registeredRules = append(registeredRules, rule)
 	}
 	e.debug.Log("Initialised %d rule(s).", len(registeredRules))
 

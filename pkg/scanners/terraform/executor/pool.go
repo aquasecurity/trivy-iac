@@ -13,10 +13,11 @@ import (
 	"github.com/aquasecurity/defsec/pkg/state"
 	"github.com/aquasecurity/defsec/pkg/terraform"
 	"github.com/aquasecurity/trivy-policies/pkg/rego"
+	"github.com/aquasecurity/trivy-policies/pkg/types"
 )
 
 type RegisteredRule interface {
-	Rule() scan.Rule
+	GetRule() scan.Rule
 	Evaluate(s *state.State) scan.Results
 }
 
@@ -24,13 +25,13 @@ type Pool struct {
 	size         int
 	modules      terraform.Modules
 	state        *state.State
-	rules        []RegisteredRule
+	rules        []types.RegisteredRule
 	ignoreErrors bool
 	rs           *rego.Scanner
 	regoOnly     bool
 }
 
-func NewPool(size int, rules []RegisteredRule, modules terraform.Modules, state *state.State, ignoreErrors bool, regoScanner *rego.Scanner, regoOnly bool) *Pool {
+func NewPool(size int, rules []types.RegisteredRule, modules terraform.Modules, state *state.State, ignoreErrors bool, regoScanner *rego.Scanner, regoOnly bool) *Pool {
 	return &Pool{
 		size:         size,
 		rules:        rules,
@@ -68,13 +69,13 @@ func (p *Pool) Run() (scan.Results, error) {
 
 	if !p.regoOnly {
 		for _, r := range p.rules {
-			if r.Rule().CustomChecks.Terraform != nil && r.Rule().CustomChecks.Terraform.Check != nil {
+			if r.GetRule().CustomChecks.Terraform != nil && r.GetRule().CustomChecks.Terraform.Check != nil {
 				// run local hcl rule
 				for _, module := range p.modules {
 					mod := *module
 					outgoing <- &hclModuleRuleJob{
 						module:       &mod,
-						rule:         r,
+						rule:         &r,
 						ignoreErrors: p.ignoreErrors,
 					}
 				}
@@ -82,7 +83,7 @@ func (p *Pool) Run() (scan.Results, error) {
 				// run defsec rule
 				outgoing <- &infraRuleJob{
 					state:        p.state,
-					rule:         r,
+					rule:         &r,
 					ignoreErrors: p.ignoreErrors,
 				}
 			}
@@ -144,14 +145,14 @@ func (h *hclModuleRuleJob) Run() (results scan.Results, err error) {
 			}
 		}()
 	}
-	customCheck := h.rule.Rule().CustomChecks.Terraform
+	customCheck := h.rule.GetRule().CustomChecks.Terraform
 	for _, block := range h.module.GetBlocks() {
 		if !isCustomCheckRequiredForBlock(customCheck, block) {
 			continue
 		}
 		results = append(results, customCheck.Check(block, h.module)...)
 	}
-	results.SetRule(h.rule.Rule())
+	results.SetRule(h.rule.GetRule())
 	return
 }
 

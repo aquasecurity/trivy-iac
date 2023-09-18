@@ -158,11 +158,11 @@ func (s *Scanner) scanDeployment(ctx context.Context, deployment azure.Deploymen
 				return nil, ctx.Err()
 			default:
 			}
-			if rule.Rule().RegoPackage != "" {
+			if rule.GetRule().RegoPackage != "" {
 				continue
 			}
 			ruleResults := rule.Evaluate(deploymentState)
-			s.debug.Log("Found %d results for %s", len(ruleResults), rule.Rule().AVDID)
+			s.debug.Log("Found %d results for %s", len(ruleResults), rule.GetRule().AVDID)
 			if len(ruleResults) > 0 {
 				results = append(results, ruleResults...)
 			}
