@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//func addFilesToMemFS(memfs *memoryfs.FS, typePolicy bool, folderName string) error {
+// func addFilesToMemFS(memfs *memoryfs.FS, typePolicy bool, folderName string) error {
 //	base := filepath.Base(folderName)
 //	if err := memfs.MkdirAll(base, 0o700); err != nil {
 //		return err
@@ -47,7 +47,7 @@ import (
 //}
 
 // TODO: Evaluate usefulness of this test
-//func Test_Docker_RegoPoliciesFromDisk(t *testing.T) {
+// func Test_Docker_RegoPoliciesFromDisk(t *testing.T) {
 //	t.Parallel()
 //
 //	entries, err := os.ReadDir("./testdata/dockerfile")
