@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/cftypes"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/cftypes"
 )
 
 func ResolveReference(property *Property) (resolved *Property, success bool) {

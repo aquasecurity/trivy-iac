@@ -3,7 +3,7 @@ package storage
 import (
 	"testing"
 
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/azure"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
 
 	"github.com/stretchr/testify/assert"
 

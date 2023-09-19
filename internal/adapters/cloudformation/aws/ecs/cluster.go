@@ -3,7 +3,7 @@ package ecs
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/ecs"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getClusters(ctx parser.FileContext) (clusters []ecs.Cluster) {

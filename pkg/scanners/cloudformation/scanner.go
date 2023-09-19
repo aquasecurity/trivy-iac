@@ -13,11 +13,11 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/types"
-	adapter "github.com/nikpivkin/trivy-iac/internal/adapters/cloudformation"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/parser"
-	"github.com/simar7/trivy-misconf-rules/pkg/rego"
-	"github.com/simar7/trivy-misconf-rules/pkg/rules"
+	adapter "github.com/aquasecurity/trivy-iac/internal/adapters/cloudformation"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/aquasecurity/trivy-policies/pkg/rego"
+	"github.com/aquasecurity/trivy-policies/pkg/rules"
 )
 
 var _ scanners.FSScanner = (*Scanner)(nil)
@@ -187,12 +187,12 @@ func (s *Scanner) scanFileContext(ctx context.Context, regoScanner *rego.Scanner
 				return nil, ctx.Err()
 			default:
 			}
-			if rule.Rule().RegoPackage != "" {
+			if rule.GetRule().RegoPackage != "" {
 				continue
 			}
 			evalResult := rule.Evaluate(state)
 			if len(evalResult) > 0 {
-				s.debug.Log("Found %d results for %s", len(evalResult), rule.Rule().AVDID)
+				s.debug.Log("Found %d results for %s", len(evalResult), rule.GetRule().AVDID)
 				for _, scanResult := range evalResult {
 
 					ref := scanResult.Metadata().Reference()

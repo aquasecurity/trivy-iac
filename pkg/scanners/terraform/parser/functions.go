@@ -3,8 +3,8 @@ package parser
 import (
 	"io/fs"
 
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser/funcs"
 	"github.com/hashicorp/hcl/v2/ext/tryfunc"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/terraform/parser/funcs"
 	ctyyaml "github.com/zclconf/go-cty-yaml"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/function"

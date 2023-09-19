@@ -7,8 +7,8 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/providers/google/compute"
 
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/tftestutil"
-	"github.com/nikpivkin/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/tftestutil"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
 )
 
 func Test_adaptProjectMetadata(t *testing.T) {

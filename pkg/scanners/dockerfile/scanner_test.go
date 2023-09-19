@@ -8,10 +8,10 @@ import (
 	"github.com/aquasecurity/defsec/pkg/framework"
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/nikpivkin/trivy-iac/test/testutil"
-	"github.com/simar7/trivy-misconf-rules/pkg/rego"
-	"github.com/simar7/trivy-misconf-rules/pkg/rego/schemas"
-	"github.com/simar7/trivy-misconf-rules/rules"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-policies/pkg/rego"
+	"github.com/aquasecurity/trivy-policies/pkg/rego/schemas"
+	"github.com/aquasecurity/trivy-policies/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -531,27 +531,24 @@ END REGO RESULTSET
 
 `,
 		},
-		// TODO
-		/*
-					{
-						name: "new schema selector but invalid",
-						inputRegoPolicy: `# METADATA
-			# title: "COPY '--from' referring to the current image"
-			# description: "COPY '--from' should not mention the current FROM alias, since it is impossible to copy from itself."
-			# scope: package
-			# schemas:
-			# - input: schema["spooky-schema"]
-			# custom:
-			#   input:
-			#     selector:
-			#     - type: dockerfile
-			package builtin.dockerfile.DS006
-			deny[res]{
-				res := true
-			}`,
-						expectedError: `1 error occurred: rules/rule.rego:12: rego_type_error: undefined schema: schema["spooky-schema"]`,
-					},
-		*/
+		{
+			name: "new schema selector but invalid",
+			inputRegoPolicy: `# METADATA
+# title: "COPY '--from' referring to the current image"
+# description: "COPY '--from' should not mention the current FROM alias, since it is impossible to copy from itself."
+# scope: package
+# schemas:
+# - input: schema["spooky-schema"]
+# custom:
+#   input:
+#     selector:
+#     - type: dockerfile
+package builtin.dockerfile.DS006
+deny[res]{
+res := true
+}`,
+			expectedError: `1 error occurred: rules/rule.rego:12: rego_type_error: undefined schema: schema["spooky-schema"]`,
+		},
 	}
 
 	for _, tc := range testCases {

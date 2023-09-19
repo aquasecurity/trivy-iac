@@ -8,14 +8,46 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/dockerfile"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/dockerfile"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-// TODO
+// func addFilesToMemFS(memfs *memoryfs.FS, typePolicy bool, folderName string) error {
+//	base := filepath.Base(folderName)
+//	if err := memfs.MkdirAll(base, 0o700); err != nil {
+//		return err
+//	}
+//	err := filepath.Walk(filepath.FromSlash(folderName),
+//		func(fpath string, info os.FileInfo, err error) error {
+//			if err != nil {
+//				return err
+//			}
+//			if info.IsDir() {
+//				return nil
+//			}
+//			if typePolicy && !rego.IsRegoFile(info.Name()) {
+//				return nil
+//			}
+//			data, err := os.ReadFile(fpath)
+//			if err != nil {
+//				return err
+//			}
+//			fileName := getFileName(fpath, info, typePolicy)
+//			if err := memfs.WriteFile(path.Join(base, fileName), data, 0o644); err != nil {
+//				return err
+//			}
+//			return nil
+//		})
 //
-//func Test_Docker_RegoPoliciesFromDisk(t *testing.T) {
+//	if err != nil {
+//		return err
+//	}
+//	return nil
+//}
+
+// TODO: Evaluate usefulness of this test
+// func Test_Docker_RegoPoliciesFromDisk(t *testing.T) {
 //	t.Parallel()
 //
 //	entries, err := os.ReadDir("./testdata/dockerfile")

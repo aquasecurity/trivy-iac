@@ -5,7 +5,7 @@ import (
 
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
 
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 
 	"github.com/aquasecurity/defsec/pkg/providers/aws/ecr"
 	"github.com/aquasecurity/defsec/pkg/providers/aws/iam"

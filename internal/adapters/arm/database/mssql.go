@@ -3,7 +3,7 @@ package database
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/azure/database"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/azure"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
 )
 
 func adaptMSSQLServers(deployment azure.Deployment) (msSQlServers []database.MSSQLServer) {

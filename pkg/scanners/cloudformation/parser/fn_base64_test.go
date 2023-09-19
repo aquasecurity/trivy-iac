@@ -2,7 +2,7 @@ package parser
 
 import (
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/cftypes"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/cftypes"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 

@@ -12,11 +12,11 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/terraform/executor"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/terraform/parser"
-	"github.com/nikpivkin/trivy-iac/test/testutil"
-	"github.com/simar7/trivy-misconf-rules/pkg/rules"
-	"github.com/simar7/trivy-misconf-rules/rules/cloud/policies/aws/iam"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/executor"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-policies/pkg/rules"
+	"github.com/aquasecurity/trivy-policies/rules/cloud/policies/aws/iam"
 	"github.com/stretchr/testify/require"
 )
 
@@ -626,6 +626,6 @@ data "aws_iam_policy_document" "policy" {
 	modules, _, err := p.EvaluateAll(context.TODO())
 	require.NoError(t, err)
 	results, _, _ := executor.New().Execute(modules)
-	testutil.AssertRuleNotFound(t, iam.CheckEnforceGroupMFA.Rule().LongID(), results, "")
+	testutil.AssertRuleNotFound(t, iam.CheckEnforceGroupMFA.GetRule().LongID(), results, "")
 
 }

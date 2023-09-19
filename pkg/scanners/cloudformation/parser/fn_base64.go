@@ -3,7 +3,7 @@ package parser
 import (
 	"encoding/base64"
 
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/cftypes"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/cftypes"
 )
 
 func ResolveBase64(property *Property) (*Property, bool) {

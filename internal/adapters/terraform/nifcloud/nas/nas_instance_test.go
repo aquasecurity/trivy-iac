@@ -7,9 +7,9 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/providers/nifcloud/nas"
 
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/tftestutil"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/tftestutil"
 
-	"github.com/nikpivkin/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
 )
 
 func Test_adaptNASInstances(t *testing.T) {

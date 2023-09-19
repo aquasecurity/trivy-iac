@@ -2,8 +2,8 @@ package parser
 
 import (
 	"github.com/aquasecurity/defsec/pkg/types"
-	types2 "github.com/nikpivkin/trivy-iac/pkg/scanners/azure"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/azure/arm/parser/armjson"
+	types2 "github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure/arm/parser/armjson"
 )
 
 type Template struct {

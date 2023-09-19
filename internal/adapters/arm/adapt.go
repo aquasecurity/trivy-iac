@@ -3,23 +3,23 @@ package arm
 import (
 	"context"
 
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/appservice"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/authorization"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/compute"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/container"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/database"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/datafactory"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/datalake"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/keyvault"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/monitor"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/network"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/securitycenter"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/storage"
-	"github.com/nikpivkin/trivy-iac/internal/adapters/arm/synapse"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/appservice"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/authorization"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/compute"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/container"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/database"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/datafactory"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/datalake"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/keyvault"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/monitor"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/network"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/securitycenter"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/storage"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/arm/synapse"
 
 	"github.com/aquasecurity/defsec/pkg/providers/azure"
 	"github.com/aquasecurity/defsec/pkg/state"
-	scanner "github.com/nikpivkin/trivy-iac/pkg/scanners/azure"
+	scanner "github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
 )
 
 // Adapt ...

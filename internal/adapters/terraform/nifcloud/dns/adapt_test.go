@@ -3,7 +3,7 @@ package dns
 import (
 	"testing"
 
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/tftestutil"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/tftestutil"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

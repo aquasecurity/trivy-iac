@@ -2,7 +2,7 @@ package authorization
 
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/azure/authorization"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/azure"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
 )
 
 func Adapt(deployment azure.Deployment) authorization.Authorization {

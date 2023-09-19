@@ -8,9 +8,9 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/types"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure/resolver"
 	"github.com/liamg/memoryfs"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/azure"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/azure/resolver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

@@ -13,10 +13,10 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/types"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/kubernetes/parser"
+	"github.com/aquasecurity/trivy-policies/pkg/rego"
 	"github.com/liamg/memoryfs"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/kubernetes/parser"
-	"github.com/simar7/trivy-misconf-rules/pkg/rego"
 )
 
 var _ scanners.FSScanner = (*Scanner)(nil)

@@ -7,9 +7,9 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/providers/azure/monitor"
 
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/tftestutil"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/tftestutil"
 
-	"github.com/nikpivkin/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

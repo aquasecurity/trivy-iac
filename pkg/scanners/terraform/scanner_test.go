@@ -13,8 +13,8 @@ import (
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/state"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/nikpivkin/trivy-iac/test/testutil"
-	"github.com/simar7/trivy-misconf-rules/pkg/rules"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-policies/pkg/rules"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

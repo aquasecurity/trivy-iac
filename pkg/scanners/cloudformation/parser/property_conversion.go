@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/cftypes"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/cftypes"
 )
 
 func (p *Property) IsConvertableTo(conversionType cftypes.CfType) bool {

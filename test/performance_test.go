@@ -6,10 +6,10 @@ import (
 	"io/fs"
 	"testing"
 
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/terraform/executor"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/terraform/parser"
-	"github.com/nikpivkin/trivy-iac/test/testutil"
-	"github.com/simar7/trivy-misconf-rules/pkg/rules"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/executor"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-policies/pkg/rules"
 )
 
 func BenchmarkCalculate(b *testing.B) {
@@ -44,11 +44,11 @@ module "something" {
 `
 
 	for _, rule := range rules.GetRegistered() {
-		if rule.Rule().Terraform == nil {
+		if rule.GetRule().Terraform == nil {
 			continue
 		}
-		for i, bad := range rule.Rule().Terraform.BadExamples {
-			filename := fmt.Sprintf("/modules/problem/%s-%d.tf", rule.Rule().LongID(), i)
+		for i, bad := range rule.GetRule().Terraform.BadExamples {
+			filename := fmt.Sprintf("/modules/problem/%s-%d.tf", rule.GetRule().LongID(), i)
 			files[filename] = bad
 		}
 	}

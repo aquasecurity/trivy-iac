@@ -3,7 +3,7 @@ package rds
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/rds"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/nikpivkin/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getParameterGroups(ctx parser.FileContext) (parametergroups []rds.ParameterGroups) {

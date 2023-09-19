@@ -8,10 +8,10 @@ import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/iam"
 	"github.com/aquasecurity/defsec/pkg/providers/aws/sqs"
 
-	"github.com/nikpivkin/trivy-iac/internal/adapters/terraform/tftestutil"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/tftestutil"
 
+	"github.com/aquasecurity/trivy-iac/test/testutil"
 	"github.com/liamg/iamgo"
-	"github.com/nikpivkin/trivy-iac/test/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

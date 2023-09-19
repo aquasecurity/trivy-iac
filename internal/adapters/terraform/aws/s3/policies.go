@@ -3,7 +3,7 @@ package s3
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/iam"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-	iamAdapter "github.com/nikpivkin/trivy-iac/internal/adapters/terraform/aws/iam"
+	iamAdapter "github.com/aquasecurity/trivy-iac/internal/adapters/terraform/aws/iam"
 )
 
 func (a *adapter) adaptBucketPolicies() {

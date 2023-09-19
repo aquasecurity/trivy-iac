@@ -7,8 +7,8 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/nikpivkin/trivy-iac/test/testutil"
-	"github.com/simar7/trivy-misconf-rules/pkg/rules"
+	"github.com/aquasecurity/trivy-iac/test/testutil"
+	"github.com/aquasecurity/trivy-policies/pkg/rules"
 )
 
 func Test_WildcardMatchingOnRequiredLabels(t *testing.T) {
