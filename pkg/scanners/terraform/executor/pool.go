@@ -16,11 +16,6 @@ import (
 	"github.com/aquasecurity/trivy-policies/pkg/types"
 )
 
-type RegisteredRule interface {
-	GetRule() scan.Rule
-	Evaluate(s *state.State) scan.Results
-}
-
 type Pool struct {
 	size         int
 	modules      terraform.Modules
@@ -75,7 +70,7 @@ func (p *Pool) Run() (scan.Results, error) {
 					mod := *module
 					outgoing <- &hclModuleRuleJob{
 						module:       &mod,
-						rule:         &r,
+						rule:         r,
 						ignoreErrors: p.ignoreErrors,
 					}
 				}
@@ -83,7 +78,7 @@ func (p *Pool) Run() (scan.Results, error) {
 				// run defsec rule
 				outgoing <- &infraRuleJob{
 					state:        p.state,
-					rule:         &r,
+					rule:         r,
 					ignoreErrors: p.ignoreErrors,
 				}
 			}
@@ -109,14 +104,14 @@ type Job interface {
 
 type infraRuleJob struct {
 	state *state.State
-	rule  RegisteredRule
+	rule  types.RegisteredRule
 
 	ignoreErrors bool
 }
 
 type hclModuleRuleJob struct {
 	module       *terraform.Module
-	rule         RegisteredRule
+	rule         types.RegisteredRule
 	ignoreErrors bool
 }
 

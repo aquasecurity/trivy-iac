@@ -531,7 +531,6 @@ END REGO RESULTSET
 
 `,
 		},
-		// TODO fix this test
 		{
 			name: "new schema selector but invalid",
 			inputRegoPolicy: `# METADATA
