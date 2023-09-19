@@ -1,4 +1,4 @@
-module github.com/nikpivkin/trivy-iac
+module github.com/aquasecurity/trivy-iac
 
 go 1.19
 
