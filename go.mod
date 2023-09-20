@@ -30,7 +30,7 @@ require (
 	github.com/zclconf/go-cty v1.13.0
 	github.com/zclconf/go-cty-yaml v1.0.3
 	golang.org/x/crypto v0.12.0
-	golang.org/x/text v0.12.0
+	golang.org/x/text v0.13.0
 	golang.org/x/tools v0.8.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 	helm.sh/helm/v3 v3.12.3
