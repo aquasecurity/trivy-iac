@@ -214,9 +214,4 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-// See https://github.com/moby/moby/issues/42939#issuecomment-1114255529
-//replace github.com/docker/docker => github.com/docker/docker v20.10.24+incompatible
-
-replace github.com/elgohr/go-localstack => github.com/aquasecurity/go-localstack v0.0.0-20220706080605-1ec0e9b8753c
-
 replace oras.land/oras-go => oras.land/oras-go v1.2.4-0.20230801060855-932dd06d38af
