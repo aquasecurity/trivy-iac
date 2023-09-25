@@ -18,7 +18,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.18.0
 	github.com/liamg/iamgo v0.0.9
 	github.com/liamg/jfather v0.0.7
-	github.com/liamg/memoryfs v1.4.3
+	github.com/liamg/memoryfs v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/moby/buildkit v0.11.6
 	github.com/olekukonko/tablewriter v0.0.5
