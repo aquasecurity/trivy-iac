@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/aquasecurity/defsec/pkg/debug"
-	tfcontext "github.com/aquasecurity/defsec/pkg/scanners/terraform/context"
 	"github.com/aquasecurity/defsec/pkg/terraform"
+	tfcontext "github.com/aquasecurity/defsec/pkg/terraform/context"
 	"github.com/aquasecurity/defsec/pkg/types"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"

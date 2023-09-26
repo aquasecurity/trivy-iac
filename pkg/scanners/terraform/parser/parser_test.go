@@ -7,10 +7,14 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/aquasecurity/trivy-iac/test/testutil"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+
+	"github.com/aquasecurity/defsec/test/testutil"
+
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/stretchr/testify/require"
 )
 
 func Test_BasicParsing(t *testing.T) {
@@ -720,7 +724,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this2" {
 	assert.Len(t, blocks, 2)
 
 	for _, block := range blocks {
-		attr := block.GetNestedAttribute("rule.apply_server_side_encryption_by_default.kms_master_key_id")
+		attr, parent := block.GetNestedAttribute("rule.apply_server_side_encryption_by_default.kms_master_key_id")
+		assert.Equal(t, "apply_server_side_encryption_by_default", parent.Type())
 		assert.NotNil(t, attr)
 		assert.NotEmpty(t, attr.Value().AsString())
 	}

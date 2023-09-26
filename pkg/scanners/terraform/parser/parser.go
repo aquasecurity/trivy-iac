@@ -12,8 +12,8 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/debug"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	tfcontext "github.com/aquasecurity/defsec/pkg/scanners/terraform/context"
 	"github.com/aquasecurity/defsec/pkg/terraform"
+	tfcontext "github.com/aquasecurity/defsec/pkg/terraform/context"
 	"github.com/aquasecurity/trivy-iac/pkg/extrafs"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclparse"
