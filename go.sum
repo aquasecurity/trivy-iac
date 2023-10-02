@@ -240,8 +240,8 @@ github.com/apparentlymart/go-cidr v1.1.0 h1:2mAhrMoF+nhXqxTzSZMUzDHkLjmIHC+Zzn4t
 github.com/apparentlymart/go-cidr v1.1.0/go.mod h1:EBcsNrHc3zQeuaeCeCtQruQm+n9/YjEn/vI25Lg7Gwc=
 github.com/apparentlymart/go-textseg/v13 v13.0.0 h1:Y+KvPE1NYz0xl601PVImeQfFyEy6iT90AvPUL1NNfNw=
 github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkEghdlcqw7yxLeM89kiTRPUo=
-github.com/aquasecurity/defsec v0.92.1-0.20230925225724-4b598f8ffb36 h1:YxFj0hVolk1vrwnwaZbfw/vlpIJZCejcMvd5uXmYXTA=
-github.com/aquasecurity/defsec v0.92.1-0.20230925225724-4b598f8ffb36/go.mod h1:hSw5Nz91TC34eUmgXrpZSzI6zd7hErpk1QyE+uqtBjc=
+github.com/aquasecurity/defsec v0.93.0 h1:7I3A6xOa32ugsOcTDvc0FymAEbwR0HO1Jt5wYc8NmFc=
+github.com/aquasecurity/defsec v0.93.0/go.mod h1:BiRuveI3ATEzIwyg6SUeU7MHuPFczAmYmFmdYQLdSSU=
 github.com/aquasecurity/trivy-policies v0.0.6-0.20230918204638-b8dab51e5a8e h1:MnNIVcsNdLsF0gD+Rng04a/G5CbJ8pWsMMDyyBBSz4s=
 github.com/aquasecurity/trivy-policies v0.0.6-0.20230918204638-b8dab51e5a8e/go.mod h1:rnMbnfUDCaT+pU1sgin/mVi8m+FO+kktmgD34sGMKR0=
 github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0 h1:jfIu9sQUG6Ig+0+Ap1h4unLjW6YQJpKZVmUzxsD4E/Q=
@@ -349,7 +349,7 @@ github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4
 github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/docker/libtrust v0.0.0-20150114040149-fa567046d9b1 h1:ZClxb8laGDf5arXfYcAtECDFgAgHklGI8CxgjHnXKJ4=
 github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815/go.mod h1:WwZ+bS3ebgob9U8Nd0kOddGdZWjyMGR8Wziv+TBNwSE=
-github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
+github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/elazarl/goproxy v0.0.0-20221015165544-a0805db90819 h1:RIB4cRk+lBqKK3Oy0r2gRX4ui7tuhiZq2SuTtTCi0/0=
 github.com/emicklei/go-restful/v3 v3.10.1 h1:rc42Y5YTp7Am7CS630D7JmhRjq4UlEUuEKfrDac4bSQ=
 github.com/emicklei/go-restful/v3 v3.10.1/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
