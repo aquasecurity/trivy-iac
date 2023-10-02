@@ -15,7 +15,7 @@ require (
 	github.com/google/uuid v1.3.1
 	github.com/hashicorp/go-getter v1.7.2
 	github.com/hashicorp/go-uuid v1.0.3
-	github.com/hashicorp/hcl/v2 v2.17.1
+	github.com/hashicorp/hcl/v2 v2.18.0
 	github.com/liamg/iamgo v0.0.9
 	github.com/liamg/jfather v0.0.7
 	github.com/liamg/memoryfs v1.4.3
@@ -58,6 +58,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
+	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
