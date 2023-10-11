@@ -7,14 +7,10 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-
 	"github.com/aquasecurity/defsec/test/testutil"
-
-	"github.com/zclconf/go-cty/cty"
-
 	"github.com/stretchr/testify/assert"
-
 	"github.com/stretchr/testify/require"
+	"github.com/zclconf/go-cty/cty"
 )
 
 func Test_BasicParsing(t *testing.T) {
@@ -729,4 +725,37 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this2" {
 		assert.NotNil(t, attr)
 		assert.NotEmpty(t, attr.Value().AsString())
 	}
+}
+
+func Test_IfConfigFsIsNotSet_ThenUseModuleFsForVars(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"main.tf": `
+variable "bucket_name" {
+	type = string
+}
+resource "aws_s3_bucket" "main" {
+	bucket = var.bucket_name
+}
+`,
+		"main.tfvars": `bucket_name = "test_bucket"`,
+	})
+	parser := New(fs, "",
+		OptionStopOnHCLError(true),
+		OptionWithTFVarsPaths("main.tfvars"),
+	)
+
+	if err := parser.ParseFS(context.TODO(), "."); err != nil {
+		t.Fatal(err)
+	}
+	modules, _, err := parser.EvaluateAll(context.TODO())
+	assert.NoError(t, err)
+	assert.Len(t, modules, 1)
+
+	rootModule := modules[0]
+	blocks := rootModule.GetResourcesByType("aws_s3_bucket")
+	require.Len(t, blocks, 1)
+
+	block := blocks[0]
+
+	assert.Equal(t, "test_bucket", block.GetAttribute("bucket").AsStringValueOrDefault("", block).Value())
 }
