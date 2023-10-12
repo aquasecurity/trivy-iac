@@ -8,17 +8,17 @@ require (
 	github.com/alecthomas/chroma v0.10.0 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0
 	github.com/aquasecurity/defsec v0.92.1-0.20230925225724-4b598f8ffb36
-	github.com/aquasecurity/trivy-policies v0.0.6-0.20230918204638-b8dab51e5a8e
+	github.com/aquasecurity/trivy-policies v0.1.0
 	github.com/aws/aws-sdk-go v1.44.245 // indirect
 	github.com/aws/smithy-go v1.14.2
 	github.com/bmatcuk/doublestar/v4 v4.6.0
 	github.com/google/uuid v1.3.1
 	github.com/hashicorp/go-getter v1.7.2
 	github.com/hashicorp/go-uuid v1.0.3
-	github.com/hashicorp/hcl/v2 v2.17.1
+	github.com/hashicorp/hcl/v2 v2.18.0
 	github.com/liamg/iamgo v0.0.9
 	github.com/liamg/jfather v0.0.7
-	github.com/liamg/memoryfs v1.4.3
+	github.com/liamg/memoryfs v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/moby/buildkit v0.11.6
 	github.com/olekukonko/tablewriter v0.0.5
@@ -59,6 +59,7 @@ require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
+	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
