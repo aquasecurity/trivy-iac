@@ -7,7 +7,7 @@ require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/alecthomas/chroma v0.10.0 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aquasecurity/defsec v0.92.1-0.20230925225724-4b598f8ffb36
+	github.com/aquasecurity/defsec v0.93.1
 	github.com/aquasecurity/trivy-policies v0.1.0
 	github.com/aws/aws-sdk-go v1.44.245 // indirect
 	github.com/aws/smithy-go v1.14.2
