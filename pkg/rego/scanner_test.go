@@ -3,7 +3,6 @@ package rego
 import (
 	"bytes"
 	"context"
-	"github.com/liamg/memoryfs"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -13,6 +12,7 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/types"
+	"github.com/liamg/memoryfs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
