@@ -11,3 +11,8 @@ quality:
 update-aws-deps:
 	@grep aws-sdk-go-v2 go.mod | grep -v '// indirect' | sed 's/^[\t\s]*//g' | sed 's/\s.*//g' | xargs go get
 	@go mod tidy
+
+.PHONY: schema
+schema:
+	go run ./cmd/schema generate
+
