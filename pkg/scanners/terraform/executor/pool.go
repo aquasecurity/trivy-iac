@@ -12,7 +12,7 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/state"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/aquasecurity/trivy-policies/pkg/rego"
+	"github.com/aquasecurity/trivy-iac/pkg/rego"
 	"github.com/aquasecurity/trivy-policies/pkg/types"
 )
 
