@@ -37,6 +37,8 @@ require (
 	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2
 )
 
+require github.com/tomwright/dasel v1.27.3
+
 require (
 	cloud.google.com/go v0.110.0 // indirect
 	cloud.google.com/go/compute v1.19.1 // indirect
@@ -167,7 +169,6 @@ require (
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tchap/go-patricia/v2 v2.3.1 // indirect
-	github.com/tomwright/dasel v1.27.3 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect

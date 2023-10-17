@@ -11,7 +11,7 @@ import (
 	"github.com/aquasecurity/defsec/pkg/debug"
 	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure"
 
-	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/options"
+	"github.com/aquasecurity/defsec/pkg/scanners/options"
 
 	"github.com/aquasecurity/defsec/pkg/types"
 
