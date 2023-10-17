@@ -7,7 +7,7 @@ require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/alecthomas/chroma v0.10.0 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aquasecurity/defsec v0.92.1-0.20230925225724-4b598f8ffb36
+	github.com/aquasecurity/defsec v0.93.1
 	github.com/aquasecurity/trivy-policies v0.1.0
 	github.com/aws/aws-sdk-go v1.44.245 // indirect
 	github.com/aws/smithy-go v1.14.2
@@ -219,4 +219,6 @@ require (
 
 replace oras.land/oras-go => oras.land/oras-go v1.2.4-0.20230801060855-932dd06d38af
 
-replace github.com/aquasecurity/trivy-policies => github.com/nikpivkin/trivy-policies v0.0.0-20231013150755-e38d71eadc9f
+replace github.com/aquasecurity/trivy-policies => github.com/aquasecurity/trivy-policies v0.2.1-0.20231017063459-bd8eb4f035d0
+
+replace github.com/aquasecurity/defsec => github.com/aquasecurity/defsec v0.93.2-0.20231010220704-82e20e4c9d72
