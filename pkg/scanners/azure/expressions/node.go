@@ -6,6 +6,7 @@ import (
 
 type Node interface {
 	Evaluate(deploymentProvider functions.DeploymentData) interface{}
+	Evaluate1(generalFuncs map[string]func(...interface{}) interface{}) interface{}
 }
 
 type expressionValue struct {
@@ -15,6 +16,13 @@ type expressionValue struct {
 func (e expressionValue) Evaluate(deploymentProvider functions.DeploymentData) interface{} {
 	if f, ok := e.val.(Expression); ok {
 		return f.Evaluate(deploymentProvider)
+	}
+	return e.val
+}
+
+func (e expressionValue) Evaluate1(generalFuncs map[string]func(...interface{}) interface{}) interface{} {
+	if f, ok := e.val.(Expression); ok {
+		return f.Evaluate1(generalFuncs)
 	}
 	return e.val
 }
@@ -31,6 +39,15 @@ func (f Expression) Evaluate(deploymentProvider functions.DeploymentData) interf
 	}
 
 	return functions.Evaluate(deploymentProvider, f.Name, args...)
+}
+
+func (f Expression) Evaluate1(generalFuncs map[string]func(...interface{}) interface{}) interface{} {
+	args := make([]interface{}, len(f.Args))
+	for i, arg := range f.Args {
+		args[i] = arg.Evaluate1(generalFuncs)
+	}
+
+	return functions.Evaluate1(generalFuncs, f.Name, args...)
 }
 
 func NewExpressionTree(code string) (Node, error) {

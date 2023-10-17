@@ -97,3 +97,12 @@ func Evaluate(deploymentProvider DeploymentData, name string, args ...interface{
 
 	return nil
 }
+
+func Evaluate1(generalFuncs map[string]func(...interface{}) interface{}, name string, args ...interface{}) interface{} {
+
+	if f, ok := generalFuncs[name]; ok {
+		return f(args...)
+	}
+
+	return nil
+}
