@@ -93,7 +93,7 @@ func newFunctionNode(tw *tokenWalker) Node {
 				//  this is a function, unwind 1
 				tw.unPop()
 				funcNode.args = append(funcNode.args, newFunctionNode(tw))
-			} else if funcNode.name == "parameters" {
+			} else {
 				funcNode.args = append(funcNode.args, expressionValue{token.Data})
 			}
 		case TokenLiteralString, TokenLiteralInteger, TokenLiteralFloat:
