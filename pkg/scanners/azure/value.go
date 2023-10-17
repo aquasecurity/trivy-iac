@@ -212,6 +212,15 @@ func (v Value) AsString() string {
 	return v.rLit.(string)
 }
 
+func (v Value) AsExpressionString() string {
+
+	if v.Kind != KindExpression {
+		return ""
+	}
+
+	return v.rLit.(string)
+}
+
 func (v Value) AsBool() bool {
 	v.Resolve()
 	if v.Kind != KindBoolean {
@@ -304,11 +313,17 @@ func (v Value) AsList() []Value {
 func (v Value) Raw() interface{} {
 	switch v.Kind {
 	case KindArray:
-		// TODO: recursively build raw array
-		return nil
+		result := []interface{}{}
+		for _, val := range v.rArr {
+			result = append(result, val.Raw())
+		}
+		return result
 	case KindObject:
-		// TODO: recursively build raw object
-		return nil
+		result := make(map[string]interface{})
+		for key, val := range v.rMap {
+			result[key] = val.Raw()
+		}
+		return result
 	default:
 		return v.rLit
 	}

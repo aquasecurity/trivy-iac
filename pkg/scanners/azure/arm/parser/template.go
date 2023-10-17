@@ -15,6 +15,7 @@ type Template struct {
 	Variables      map[string]types2.Value `json:"variables"`
 	Functions      []Function              `json:"functions"`
 	Resources      []Resource              `json:"resources"`
+	Copy           *Copy                   `json:"copy"`
 	Outputs        map[string]types2.Value `json:"outputs"`
 }
 
@@ -46,15 +47,40 @@ func (p *Parameter) SetMetadata(m *types.Metadata) {
 }
 
 type innerResource struct {
-	APIVersion types2.Value `json:"apiVersion"`
-	Type       types2.Value `json:"type"`
-	Kind       types2.Value `json:"kind"`
-	Name       types2.Value `json:"name"`
-	Location   types2.Value `json:"location"`
-	Tags       types2.Value `json:"tags"`
-	Sku        types2.Value `json:"sku"`
-	Properties types2.Value `json:"properties"`
-	Resources  []Resource   `json:"resources"`
+	APIVersion         types2.Value       `json:"apiVersion"`
+	Type               types2.Value       `json:"type"`
+	Kind               types2.Value       `json:"kind"`
+	Copy               *Copy              `json:"copy"`
+	Name               types2.Value       `json:"name"`
+	Location           types2.Value       `json:"location"`
+	Condition          types2.Value       `json:"condition"`
+	Tags               types2.Value       `json:"tags"`
+	Sku                types2.Value       `json:"sku"`
+	Properties         types2.Value       `json:"properties"`
+	TemplateProperties TemplateProperties `json:"properties"`
+	Resources          []Resource         `json:"resources"`
+}
+
+type Copy struct {
+	Name      types2.Value `json:"name"`
+	Mode      types2.Value `json:"mode"`
+	BatchSize types2.Value `json:"batchSize"`
+	Count     types2.Value `json:"count"`
+}
+
+type TemplateProperties struct {
+	Mode                        types2.Value                 `json:"mode"`
+	ExpressionEvaluationOptions *ExpressionEvaluationOptions `json:"expressionEvaluationOptions"`
+	ParameterValues             map[string]ParameterValue    `json:"parameters"`
+	Template                    *Template                    `json:"template"`
+}
+
+type ExpressionEvaluationOptions struct {
+	Scope types2.Value `json:"scope"`
+}
+
+type ParameterValue struct {
+	Value types2.Value `json:"value"`
 }
 
 func (v *Resource) UnmarshalJSONWithMetadata(node armjson.Node) error {

@@ -20,7 +20,7 @@ func (t *tokenWalker) peek() Token {
 }
 
 func (t *tokenWalker) hasNext() bool {
-	return t.currentPosition+1 < len(t.tokens)
+	return t.currentPosition < len(t.tokens)
 }
 
 func (t *tokenWalker) unPop() {

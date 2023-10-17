@@ -13,6 +13,8 @@ const (
 	TokenName TokenType = iota
 	TokenOpenParen
 	TokenCloseParen
+	TokenOpenBracket
+	TokenCloseBracket
 	TokenComma
 	TokenDot
 	TokenLiteralString
@@ -64,10 +66,14 @@ func (l *lexer) Lex() ([]Token, error) {
 			tokens = append(tokens, Token{Type: TokenOpenParen})
 		case ')':
 			tokens = append(tokens, Token{Type: TokenCloseParen})
+		case '[':
+			tokens = append(tokens, Token{Data: "[", Type: TokenOpenBracket})
+		case ']':
+			tokens = append(tokens, Token{Data: "]", Type: TokenCloseBracket})
 		case ',':
 			tokens = append(tokens, Token{Type: TokenComma})
 		case '.':
-			tokens = append(tokens, Token{Type: TokenDot})
+			tokens = append(tokens, Token{Data: ".", Type: TokenDot})
 		case '"', '\'':
 			token, err := l.lexString(r)
 			if err != nil {

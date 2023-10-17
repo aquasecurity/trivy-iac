@@ -9,11 +9,13 @@ import (
 	"strings"
 
 	"github.com/aquasecurity/defsec/pkg/debug"
-	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/aquasecurity/defsec/pkg/types"
 	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure"
+
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/options"
+
+	"github.com/aquasecurity/defsec/pkg/types"
+
 	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure/arm/parser/armjson"
-	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure/resolver"
 )
 
 type Parser struct {
@@ -77,6 +79,43 @@ func (p *Parser) ParseFS(ctx context.Context, dir string) ([]azure.Deployment, e
 	return deployments, nil
 }
 
+func (p *Parser) ParseFS2(ctx context.Context, dir string) (map[string]azure.Deployment, error) {
+
+	var deployments = map[string]azure.Deployment{}
+
+	if err := fs.WalkDir(p.targetFS, dir, func(path string, entry fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+		if entry.IsDir() {
+			return nil
+		}
+		if !p.Required(path) {
+			return nil
+		}
+		f, err := p.targetFS.Open(path)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		deployment, err := p.parseFile(f, path)
+		if err != nil {
+			return err
+		}
+		deployments[path] = *deployment
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return deployments, nil
+}
+
 func (p *Parser) Required(path string) bool {
 	if p.skipRequired {
 		return true
@@ -114,7 +153,7 @@ func (p *Parser) parseFile(r io.Reader, filename string) (*azure.Deployment, err
 	root := types.NewMetadata(
 		types.NewRange(filename, 0, 0, "", p.targetFS),
 		"",
-	).WithInternal(resolver.NewResolver())
+	).WithInternal(azure.NewResolver())
 
 	if err := armjson.Unmarshal(data, &template, &root); err != nil {
 		return nil, fmt.Errorf("failed to parse template: %w", err)
@@ -133,7 +172,7 @@ func (p *Parser) convertTemplate(template Template) *azure.Deployment {
 		Outputs:     nil,
 	}
 
-	if r, ok := template.Metadata.Internal().(resolver.Resolver); ok {
+	if r, ok := template.Metadata.Internal().(azure.Resolver); ok {
 		r.SetDeployment(&deployment)
 	}
 
@@ -163,6 +202,14 @@ func (p *Parser) convertTemplate(template Template) *azure.Deployment {
 		})
 	}
 
+	if template.Copy != nil {
+		deployment.Copy = &azure.Copy{
+			Name:      template.Copy.Name,
+			Mode:      template.Copy.Mode,
+			BatchSize: template.Copy.BatchSize,
+			Count:     template.Copy.Count,
+		}
+	}
 	for _, resource := range template.Resources {
 		deployment.Resources = append(deployment.Resources, p.convertResource(resource))
 	}
@@ -179,14 +226,43 @@ func (p *Parser) convertResource(input Resource) azure.Resource {
 	}
 
 	resource := azure.Resource{
-		Metadata:   input.Metadata,
-		APIVersion: input.APIVersion,
-		Type:       input.Type,
-		Kind:       input.Kind,
-		Name:       input.Name,
-		Location:   input.Location,
-		Properties: input.Properties,
-		Resources:  children,
+		Metadata:             input.Metadata,
+		Condition:            input.Condition,
+		APIVersion:           input.APIVersion,
+		Type:                 input.Type,
+		Kind:                 input.Kind,
+		Name:                 input.Name,
+		Location:             input.Location,
+		Properties:           input.Properties,
+		DeploymentProperties: azure.DeploymentProperties{},
+		Resources:            children,
+	}
+
+	if input.Copy != nil {
+		resource.Copy = &azure.Copy{
+			Name:      input.Copy.Name,
+			Mode:      input.Copy.Mode,
+			BatchSize: input.Copy.BatchSize,
+			Count:     input.Copy.Count,
+		}
+	}
+
+	if input.TemplateProperties.Template != nil {
+		resource.DeploymentProperties = azure.DeploymentProperties{
+			Mode:            input.TemplateProperties.Mode,
+			ParameterValues: map[string]azure.Value{},
+			Deployment:      p.convertTemplate(*input.TemplateProperties.Template),
+		}
+
+		if input.TemplateProperties.ExpressionEvaluationOptions != nil {
+			resource.DeploymentProperties.ExpressionEvaluationOptions = &azure.ExpressionEvaluationOptions{
+				Scope: input.TemplateProperties.ExpressionEvaluationOptions.Scope,
+			}
+		}
+		for name, param := range input.TemplateProperties.ParameterValues {
+			resource.DeploymentProperties.ParameterValues[name] = param.Value
+		}
+
 	}
 
 	return resource

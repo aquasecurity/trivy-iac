@@ -20,6 +20,7 @@ func CopyIndex(args ...interface{}) interface{} {
 		loopCounter[loopName] = 0
 	}
 
+	result := loopCounter[loopName]
 	loopCounter[loopName] += offset
-	return loopCounter[loopName]
+	return result
 }

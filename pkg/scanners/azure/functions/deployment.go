@@ -1,5 +1,10 @@
 package functions
 
+import (
+	"fmt"
+	"strings"
+)
+
 type DeploymentData interface {
 	GetParameter(name string) interface{}
 	GetVariable(variableName string) interface{}
@@ -65,10 +70,13 @@ func Parameters(paramProvider DeploymentData, args ...interface{}) interface{} {
 		return nil
 	}
 
-	paramName, ok := args[0].(string)
-	if !ok {
-		return nil
+	props := []string{}
+
+	for _, arg := range args {
+		props = append(props, fmt.Sprintf("%v", arg))
 	}
+
+	paramName := strings.Join(props, "")
 
 	return paramProvider.GetParameter(paramName)
 

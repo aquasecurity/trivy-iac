@@ -6,10 +6,13 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	types2 "github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure"
+
 	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure/arm/parser/armjson"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/stretchr/testify/require"
 )
 
 func Test_JSONUnmarshal(t *testing.T) {
