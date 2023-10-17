@@ -2,7 +2,7 @@ package container
 
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/azure/container"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure"
 )
 
 func Adapt(deployment azure.Deployment) container.Container {

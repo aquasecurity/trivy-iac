@@ -1,4 +1,4 @@
-module github.com/aquasecurity/trivy-iac
+module github.com/wuwwlwwl/trivy-iac
 
 go 1.20
 

@@ -15,12 +15,12 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/extrafs"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/executor"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser/resolvers"
 	"github.com/aquasecurity/trivy-policies/pkg/rego"
+	"github.com/wuwwlwwl/trivy-iac/pkg/extrafs"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraform/executor"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraform/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraform/parser/resolvers"
 )
 
 var _ scanners.FSScanner = (*Scanner)(nil)

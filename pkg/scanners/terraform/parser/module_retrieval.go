@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/fs"
 
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser/resolvers"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraform/parser/resolvers"
 )
 
 type ModuleResolver interface {

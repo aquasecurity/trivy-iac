@@ -3,8 +3,8 @@ package iam
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/iam"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 	"github.com/liamg/iamgo"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getPolicies(ctx parser.FileContext) (policies []iam.Policy) {

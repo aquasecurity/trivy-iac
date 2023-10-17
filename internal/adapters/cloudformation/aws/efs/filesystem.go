@@ -2,7 +2,7 @@ package efs
 
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/efs"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getFileSystems(ctx parser.FileContext) (filesystems []efs.FileSystem) {

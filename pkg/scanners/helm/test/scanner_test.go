@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/helm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/helm"
 )
 
 func Test_helm_scanner_with_archive(t *testing.T) {

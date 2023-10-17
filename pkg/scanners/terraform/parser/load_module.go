@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser/resolvers"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraform/parser/resolvers"
 
 	"github.com/zclconf/go-cty/cty"
 )

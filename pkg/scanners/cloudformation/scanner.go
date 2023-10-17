@@ -13,11 +13,11 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/types"
-	adapter "github.com/aquasecurity/trivy-iac/internal/adapters/cloudformation"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 	"github.com/aquasecurity/trivy-policies/pkg/rego"
 	"github.com/aquasecurity/trivy-policies/pkg/rules"
+	adapter "github.com/wuwwlwwl/trivy-iac/internal/adapters/cloudformation"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 var _ scanners.FSScanner = (*Scanner)(nil)

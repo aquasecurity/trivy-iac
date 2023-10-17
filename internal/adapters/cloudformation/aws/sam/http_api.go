@@ -3,7 +3,7 @@ package sam
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/sam"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getHttpApis(cfFile parser.FileContext) (apis []sam.HttpAPI) {

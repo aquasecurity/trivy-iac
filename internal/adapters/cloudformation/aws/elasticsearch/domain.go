@@ -3,7 +3,7 @@ package elasticsearch
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/elasticsearch"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getDomains(ctx parser.FileContext) (domains []elasticsearch.Domain) {

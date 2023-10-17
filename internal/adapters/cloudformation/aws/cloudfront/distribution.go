@@ -3,7 +3,7 @@ package cloudfront
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/cloudfront"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getDistributions(ctx parser.FileContext) (distributions []cloudfront.Distribution) {

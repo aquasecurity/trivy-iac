@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure"
 
 	"github.com/stretchr/testify/assert"
 

@@ -2,7 +2,7 @@ package elasticache
 
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/elasticache"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getClusterGroups(ctx parser.FileContext) (clusters []elasticache.Cluster) {

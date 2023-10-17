@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/executor"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
-	"github.com/aquasecurity/trivy-iac/test/testutil"
 	"github.com/aquasecurity/trivy-policies/pkg/rules"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraform/executor"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraform/parser"
+	"github.com/wuwwlwwl/trivy-iac/test/testutil"
 )
 
 func Test_DeterministicResults(t *testing.T) {

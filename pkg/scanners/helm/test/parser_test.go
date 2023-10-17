@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aquasecurity/trivy-iac/pkg/detection"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/helm/parser"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/pkg/detection"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/helm/parser"
 )
 
 func Test_helm_parser(t *testing.T) {

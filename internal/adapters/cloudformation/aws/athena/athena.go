@@ -2,7 +2,7 @@ package athena
 
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/athena"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 // Adapt ...

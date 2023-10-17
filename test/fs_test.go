@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraform"
 )
 
 func Test_OS_FS(t *testing.T) {

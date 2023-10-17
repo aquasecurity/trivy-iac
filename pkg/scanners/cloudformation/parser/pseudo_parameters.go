@@ -1,6 +1,6 @@
 package parser
 
-import "github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/cftypes"
+import "github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/cftypes"
 
 type pseudoParameter struct {
 	t   cftypes.CfType

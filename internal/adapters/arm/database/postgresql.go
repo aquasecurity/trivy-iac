@@ -6,7 +6,7 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/providers/azure/database"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure"
 )
 
 func adaptPostgreSQLServers(deployment azure.Deployment) (databases []database.PostgreSQLServer) {

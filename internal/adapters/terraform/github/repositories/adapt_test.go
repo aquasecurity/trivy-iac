@@ -3,7 +3,7 @@ package repositories
 import (
 	"testing"
 
-	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/tftestutil"
+	"github.com/wuwwlwwl/trivy-iac/internal/adapters/terraform/tftestutil"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

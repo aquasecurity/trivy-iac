@@ -3,9 +3,9 @@ package terraformplan
 import (
 	"testing"
 
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraformplan/parser"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraformplan/parser"
 )
 
 func Test_Parse_Plan_File(t *testing.T) {

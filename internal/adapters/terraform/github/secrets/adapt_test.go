@@ -7,9 +7,9 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/providers/github"
 
-	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/tftestutil"
+	"github.com/wuwwlwwl/trivy-iac/internal/adapters/terraform/tftestutil"
 
-	"github.com/aquasecurity/trivy-iac/test/testutil"
+	"github.com/wuwwlwwl/trivy-iac/test/testutil"
 )
 
 func Test_Adapt(t *testing.T) {

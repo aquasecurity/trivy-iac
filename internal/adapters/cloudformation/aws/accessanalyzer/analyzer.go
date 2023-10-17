@@ -3,7 +3,7 @@ package accessanalyzer
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/accessanalyzer"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getAccessAnalyzer(ctx parser.FileContext) (analyzers []accessanalyzer.Analyzer) {

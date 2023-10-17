@@ -5,8 +5,8 @@ import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/sqs"
 	"github.com/aquasecurity/defsec/pkg/terraform"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/aws/iam"
 	"github.com/liamg/iamgo"
+	"github.com/wuwwlwwl/trivy-iac/internal/adapters/terraform/aws/iam"
 
 	"github.com/google/uuid"
 )

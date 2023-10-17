@@ -8,11 +8,11 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure/resolver"
 	"github.com/liamg/memoryfs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure/resolver"
 )
 
 func createMetadata(targetFS fs.FS, filename string, start, end int, ref string, parent *types.Metadata) types.Metadata {

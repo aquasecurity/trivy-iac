@@ -7,11 +7,11 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/providers/azure/container"
 
-	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/tftestutil"
+	"github.com/wuwwlwwl/trivy-iac/internal/adapters/terraform/tftestutil"
 
-	"github.com/aquasecurity/trivy-iac/test/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/test/testutil"
 )
 
 func Test_adaptCluster(t *testing.T) {

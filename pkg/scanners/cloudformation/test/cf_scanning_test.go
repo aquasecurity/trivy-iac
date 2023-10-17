@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation"
 )
 
 func Test_basic_cloudformation_scanning(t *testing.T) {

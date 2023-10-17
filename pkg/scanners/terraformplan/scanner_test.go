@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/aquasecurity/trivy-iac/test/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/test/testutil"
 )
 
 func Test_OptionWithPolicyDirs_OldRegoMetadata(t *testing.T) {

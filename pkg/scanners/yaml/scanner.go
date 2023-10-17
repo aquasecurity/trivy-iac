@@ -11,8 +11,8 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/yaml/parser"
 	"github.com/aquasecurity/trivy-policies/pkg/rego"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/yaml/parser"
 )
 
 var _ options.ConfigurableScanner = (*Scanner)(nil)

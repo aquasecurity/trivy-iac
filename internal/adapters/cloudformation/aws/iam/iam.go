@@ -3,7 +3,7 @@ package iam
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/iam"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 // Adapt ...

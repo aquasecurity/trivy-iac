@@ -11,10 +11,10 @@ import (
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/state"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	adapter "github.com/aquasecurity/trivy-iac/internal/adapters/terraform"
 	"github.com/aquasecurity/trivy-policies/pkg/rego"
 	"github.com/aquasecurity/trivy-policies/pkg/rules"
 	"github.com/aquasecurity/trivy-policies/pkg/types"
+	adapter "github.com/wuwwlwwl/trivy-iac/internal/adapters/terraform"
 )
 
 // Executor scans HCL blocks by running all registered rules against them

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/azure"
 )
 
 func Test_resolveFunc(t *testing.T) {

@@ -3,7 +3,7 @@ package ec2
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/ec2"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getLaunchConfigurations(file parser.FileContext) (launchConfigurations []ec2.LaunchConfiguration) {

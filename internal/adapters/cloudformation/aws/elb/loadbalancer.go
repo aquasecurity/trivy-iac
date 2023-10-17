@@ -3,7 +3,7 @@ package elb
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/elb"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
 func getLoadBalancers(ctx parser.FileContext) (loadbalancers []elb.LoadBalancer) {

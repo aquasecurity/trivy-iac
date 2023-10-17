@@ -12,12 +12,12 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/executor"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
-	"github.com/aquasecurity/trivy-iac/test/testutil"
 	"github.com/aquasecurity/trivy-policies/pkg/rules"
 	"github.com/aquasecurity/trivy-policies/rules/cloud/policies/aws/iam"
 	"github.com/stretchr/testify/require"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraform/executor"
+	"github.com/wuwwlwwl/trivy-iac/pkg/scanners/terraform/parser"
+	"github.com/wuwwlwwl/trivy-iac/test/testutil"
 )
 
 var badRule = scan.Rule{
