@@ -14,40 +14,40 @@ type expressionValue struct {
 }
 
 func (e expressionValue) Evaluate(deploymentProvider functions.DeploymentData) interface{} {
-	if f, ok := e.val.(Expression); ok {
+	if f, ok := e.val.(expression); ok {
 		return f.Evaluate(deploymentProvider)
 	}
 	return e.val
 }
 
 func (e expressionValue) Evaluate1(generalFuncs map[string]func(...interface{}) interface{}) interface{} {
-	if f, ok := e.val.(Expression); ok {
+	if f, ok := e.val.(expression); ok {
 		return f.Evaluate1(generalFuncs)
 	}
 	return e.val
 }
 
-type Expression struct {
-	Name string
-	Args []Node
+type expression struct {
+	name string
+	args []Node
 }
 
-func (f Expression) Evaluate(deploymentProvider functions.DeploymentData) interface{} {
-	args := make([]interface{}, len(f.Args))
-	for i, arg := range f.Args {
+func (f expression) Evaluate(deploymentProvider functions.DeploymentData) interface{} {
+	args := make([]interface{}, len(f.args))
+	for i, arg := range f.args {
 		args[i] = arg.Evaluate(deploymentProvider)
 	}
 
-	return functions.Evaluate(deploymentProvider, f.Name, args...)
+	return functions.Evaluate(deploymentProvider, f.name, args...)
 }
 
-func (f Expression) Evaluate1(generalFuncs map[string]func(...interface{}) interface{}) interface{} {
-	args := make([]interface{}, len(f.Args))
-	for i, arg := range f.Args {
+func (f expression) Evaluate1(generalFuncs map[string]func(...interface{}) interface{}) interface{} {
+	args := make([]interface{}, len(f.args))
+	for i, arg := range f.args {
 		args[i] = arg.Evaluate1(generalFuncs)
 	}
 
-	return functions.Evaluate1(generalFuncs, f.Name, args...)
+	return functions.Evaluate1(generalFuncs, f.name, args...)
 }
 
 func NewExpressionTree(code string) (Node, error) {
@@ -64,8 +64,8 @@ func NewExpressionTree(code string) (Node, error) {
 }
 
 func newFunctionNode(tw *tokenWalker) Node {
-	funcNode := &Expression{
-		Name: tw.pop().Data.(string),
+	funcNode := &expression{
+		name: tw.pop().Data.(string),
 	}
 	tokenCloseParenCount := 0
 
@@ -77,7 +77,7 @@ func newFunctionNode(tw *tokenWalker) Node {
 
 		switch token.Type {
 		case TokenCloseParen:
-			if funcNode.Name != "parameters" {
+			if funcNode.name != "parameters" {
 				return funcNode
 			} else if tokenCloseParenCount == 1 {
 				tw.unPop()
@@ -85,22 +85,22 @@ func newFunctionNode(tw *tokenWalker) Node {
 			}
 			tokenCloseParenCount++
 		case TokenComma:
-			if funcNode.Name == "parameters" {
+			if funcNode.name == "parameters" {
 				return funcNode
 			}
 		case TokenName:
 			if tw.peek().Type == TokenOpenParen {
 				//  this is a function, unwind 1
 				tw.unPop()
-				funcNode.Args = append(funcNode.Args, newFunctionNode(tw))
-			} else if funcNode.Name == "parameters" {
-				funcNode.Args = append(funcNode.Args, expressionValue{token.Data})
+				funcNode.args = append(funcNode.args, newFunctionNode(tw))
+			} else if funcNode.name == "parameters" {
+				funcNode.args = append(funcNode.args, expressionValue{token.Data})
 			}
 		case TokenLiteralString, TokenLiteralInteger, TokenLiteralFloat:
-			funcNode.Args = append(funcNode.Args, expressionValue{token.Data})
+			funcNode.args = append(funcNode.args, expressionValue{token.Data})
 		case TokenDot, TokenOpenBracket, TokenCloseBracket:
-			if funcNode.Name == "parameters" {
-				funcNode.Args = append(funcNode.Args, expressionValue{token.Data})
+			if funcNode.name == "parameters" {
+				funcNode.args = append(funcNode.args, expressionValue{token.Data})
 			}
 		}
 
