@@ -25,7 +25,7 @@ require (
 	github.com/open-policy-agent/opa v0.57.0
 	github.com/owenrumney/squealer v1.2.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/spf13/cobra v1.7.0 // indirect
+	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
 	github.com/zclconf/go-cty v1.13.0
 	github.com/zclconf/go-cty-yaml v1.0.3
@@ -37,7 +37,7 @@ require (
 	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2
 )
 
-require github.com/mitchellh/mapstructure v1.5.0 // indirect
+require github.com/mitchellh/mapstructure v1.5.0
 
 require (
 	cloud.google.com/go v0.110.4 // indirect
