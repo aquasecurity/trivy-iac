@@ -58,11 +58,7 @@ func Variables(varProvider DeploymentData, args ...interface{}) interface{} {
 		return nil
 	}
 
-	varName, ok := args[0].(string)
-	if !ok {
-		return nil
-	}
-	return varProvider.GetVariable(varName)
+	return varProvider.GetVariable(getName(args...))
 }
 
 func Parameters(paramProvider DeploymentData, args ...interface{}) interface{} {
@@ -70,14 +66,16 @@ func Parameters(paramProvider DeploymentData, args ...interface{}) interface{} {
 		return nil
 	}
 
+	return paramProvider.GetParameter(getName(args...))
+}
+
+func getName(args ...interface{}) string {
 	props := []string{}
 
 	for _, arg := range args {
 		props = append(props, fmt.Sprintf("%v", arg))
 	}
 
-	paramName := strings.Join(props, "")
-
-	return paramProvider.GetParameter(paramName)
+	return strings.Join(props, "")
 
 }

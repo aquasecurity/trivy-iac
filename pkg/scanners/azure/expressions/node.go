@@ -77,7 +77,7 @@ func newFunctionNode(tw *tokenWalker) Node {
 
 		switch token.Type {
 		case TokenCloseParen:
-			if funcNode.name != "parameters" {
+			if funcNode.name != "parameters" && funcNode.name != "variables" {
 				return funcNode
 			} else if tokenCloseParenCount == 1 {
 				tw.unPop()
@@ -85,7 +85,7 @@ func newFunctionNode(tw *tokenWalker) Node {
 			}
 			tokenCloseParenCount++
 		case TokenComma:
-			if funcNode.name == "parameters" {
+			if funcNode.name == "parameters" || funcNode.name == "variables" {
 				return funcNode
 			}
 		case TokenName:
@@ -99,7 +99,7 @@ func newFunctionNode(tw *tokenWalker) Node {
 		case TokenLiteralString, TokenLiteralInteger, TokenLiteralFloat:
 			funcNode.args = append(funcNode.args, expressionValue{token.Data})
 		case TokenDot, TokenOpenBracket, TokenCloseBracket:
-			if funcNode.name == "parameters" {
+			if funcNode.name == "parameters" || funcNode.name == "variables" {
 				funcNode.args = append(funcNode.args, expressionValue{token.Data})
 			}
 		}

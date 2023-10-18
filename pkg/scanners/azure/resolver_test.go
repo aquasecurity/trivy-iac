@@ -148,6 +148,19 @@ func Test_resolveParameter(t *testing.T) {
 			expr:     "parameters('test')[0].count",
 			expected: "2",
 		},
+		{
+			name: "format call with variables1",
+			deployment: &Deployment{
+				Variables: []Variable{
+					{
+						Name:  "test",
+						Value: NewValue([]interface{}{"test1", "test2"}, types.NewTestMetadata()),
+					},
+				},
+			},
+			expr:     "uniqueString(variables('test')[0]))",
+			expected: "7465737431e3b",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

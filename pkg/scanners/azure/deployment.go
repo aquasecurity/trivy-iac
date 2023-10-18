@@ -119,59 +119,35 @@ func (d *Deployment) SetParameter(name string, value interface{}) error {
 
 func (d *Deployment) GetParameter(name string) interface{} {
 
-	parameterName := name
-	propertyName := ""
-	indexDot := strings.Index(name, ".")
-	indexBracket := strings.Index(name, "[")
-	index := indexDot
-	if indexBracket < indexDot && indexBracket >= 0 {
-		index = indexBracket
-	}
-	if index >= 0 {
-		parameterName = name[:index]
-		propertyName = name[index:]
-		propertyName = strings.ReplaceAll(propertyName, "[", ".[")
-	}
+	parameterName, propertyName := d.getPropertyName(name)
 
 	for _, parameter := range d.Parameters {
 		if parameter.Name == parameterName {
-			value := parameter.Value.Raw()
-			if propertyName == "" {
-				return value
-			}
-			paramNode := dasel.New(value)
-			result, err := paramNode.Query(propertyName)
+			result, err := d.getPropertyValue(parameter.Value, propertyName)
 			if err != nil {
 				fmt.Printf("parse parameter %s failed, %v", name, err)
-				return nil
 			}
-			return result.InterfaceValue()
+			return result
 		}
 	}
-
 	return nil
 }
 
-func (d *Deployment) GetVariable(variableName string) interface{} {
+func (d *Deployment) GetVariable(name string) interface{} {
 
-	resolver := resolver{
-		deployment: d,
-	}
+	varName, propertyName := d.getPropertyName(name)
 
 	for _, variable := range d.Variables {
-		if variable.Name == variableName {
-			if variable.Value.Kind == KindExpression {
-				value, err := resolver.resolveExpressionString(variable.Value.AsExpressionString(), types.NewTestMetadata())
-				if err != nil {
-					fmt.Printf("resolve expression %s failed, %v", variable.Value.AsExpressionString(), err)
-					return nil
-				}
-				return value.Raw()
+		if variable.Name == varName {
+			result, err := d.getPropertyValue(variable.Value, propertyName)
+			if err != nil {
+				fmt.Printf("parse parameter %s failed, %v", name, err)
 			}
-			return variable.Value.Raw()
+			return result
 		}
 	}
 	return nil
+
 }
 
 func (d *Deployment) GetEnvVariable(envVariableName string) interface{} {
@@ -253,4 +229,51 @@ func (d *Deployment) GetDeployment() interface{} {
 	}
 
 	return deploymentShell
+}
+
+func (d *Deployment) getPropertyName(name string) (string, string) {
+	parameterName := name
+	propertyName := ""
+	indexDot := strings.Index(name, ".")
+	indexBracket := strings.Index(name, "[")
+	index := indexDot
+	if (indexBracket < indexDot || index < 0) && indexBracket >= 0 {
+		index = indexBracket
+	}
+	if index >= 0 {
+		parameterName = name[:index]
+		propertyName = name[index:]
+		propertyName = strings.ReplaceAll(propertyName, "[", ".[")
+	}
+	return parameterName, propertyName
+}
+
+func (d *Deployment) getPropertyValue(v Value, property string) (interface{}, error) {
+	resolver := resolver{
+		deployment: d,
+	}
+
+	rawValue := v.Raw()
+
+	value := v
+	var err error
+	for value.Kind == KindExpression {
+		value, err = resolver.resolveExpressionString(v.AsExpressionString(), types.NewTestMetadata())
+		if err != nil {
+			return nil, fmt.Errorf("resolve expression %s failed, %v", v.AsExpressionString(), err)
+		}
+		rawValue = value.Raw()
+	}
+
+	if property == "" {
+		return rawValue, nil
+	}
+	paramNode := dasel.New(rawValue)
+	result, err := paramNode.Query(property)
+	if err == nil {
+		return result.InterfaceValue(), nil
+	} else {
+		return nil, err
+	}
+
 }
