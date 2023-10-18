@@ -8,7 +8,7 @@ import (
 	"github.com/aquasecurity/defsec/pkg/framework"
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/aquasecurity/trivy-iac/pkg/rego/embed"
+	"github.com/aquasecurity/trivy-iac/pkg/rego"
 	"github.com/aquasecurity/trivy-iac/pkg/rego/schemas"
 	"github.com/aquasecurity/trivy-iac/test/testutil"
 	"github.com/stretchr/testify/assert"
@@ -553,7 +553,7 @@ res := true
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			regoMap := make(map[string]string)
-			libs, err := embed.LoadEmbeddedLibraries()
+			libs, err := rego.LoadEmbeddedLibraries()
 			require.NoError(t, err)
 			for name, library := range libs {
 				regoMap["/rules/"+name] = library.String()
