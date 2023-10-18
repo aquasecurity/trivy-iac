@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/aquasecurity/defsec/pkg/rego/convert"
 	"github.com/aquasecurity/defsec/pkg/state"
-	"github.com/aquasecurity/trivy-policies/pkg/rego/convert"
 )
 
 type RawSchema struct {

@@ -158,10 +158,6 @@ func (s *Scanner) SetParentDebugLogger(l debug.Logger) {
 	s.debug = l.Extend("rego")
 }
 
-func getModuleNamespace(module *ast.Module) string {
-	return strings.TrimPrefix(module.Package.Path.String(), "data.")
-}
-
 func (s *Scanner) runQuery(ctx context.Context, query string, input interface{}, disableTracing bool) (rego.ResultSet, []string, error) {
 
 	trace := (s.traceWriter != nil || s.tracePerResult) && !disableTracing
