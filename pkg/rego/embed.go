@@ -1,4 +1,4 @@
-package embed
+package rego
 
 import (
 	"context"
@@ -6,12 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/open-policy-agent/opa/ast"
-	"github.com/open-policy-agent/opa/bundle"
-
-	"github.com/aquasecurity/trivy-iac/pkg/rego"
 	"github.com/aquasecurity/trivy-iac/pkg/rules"
 	rules2 "github.com/aquasecurity/trivy-policies/rules"
+	"github.com/open-policy-agent/opa/ast"
 )
 
 func init() {
@@ -35,7 +32,7 @@ func init() {
 func RegisterRegoRules(modules map[string]*ast.Module) {
 	ctx := context.TODO()
 
-	schemaSet, _, _ := rego.BuildSchemaSetFromPolicies(modules, nil, nil)
+	schemaSet, _, _ := BuildSchemaSetFromPolicies(modules, nil, nil)
 
 	compiler := ast.NewCompiler().
 		WithSchemas(schemaSet).
@@ -48,7 +45,7 @@ func RegisterRegoRules(modules map[string]*ast.Module) {
 		panic(compiler.Errors)
 	}
 
-	retriever := rego.NewMetadataRetriever(compiler)
+	retriever := NewMetadataRetriever(compiler)
 	for _, module := range modules {
 		metadata, err := retriever.RetrieveMetadata(ctx, module)
 		if err != nil {
@@ -70,20 +67,6 @@ func LoadEmbeddedPolicies() (map[string]*ast.Module, error) {
 
 func LoadEmbeddedLibraries() (map[string]*ast.Module, error) {
 	return LoadPoliciesFromDirs(rules2.EmbeddedLibraryFileSystem, ".")
-}
-
-func IsRegoFile(name string) bool {
-	return strings.HasSuffix(name, bundle.RegoExt) && !strings.HasSuffix(name, "_test"+bundle.RegoExt)
-}
-
-func IsDotFile(name string) bool {
-	return strings.HasPrefix(name, ".")
-}
-
-func sanitisePath(path string) string {
-	vol := filepath.VolumeName(path)
-	path = strings.TrimPrefix(path, vol)
-	return strings.TrimPrefix(strings.TrimPrefix(filepath.ToSlash(path), "./"), "/")
 }
 
 func LoadPoliciesFromDirs(target fs.FS, paths ...string) (map[string]*ast.Module, error) {
