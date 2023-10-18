@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/types"
-	policyEmbed "github.com/aquasecurity/trivy-policies/pkg/rego/embed"
+	policyEmbed "github.com/aquasecurity/trivy-iac/pkg/rego/embed"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

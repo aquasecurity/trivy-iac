@@ -13,7 +13,7 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-policies/pkg/rules"
+	"github.com/aquasecurity/trivy-iac/pkg/rules"
 
 	adapter "github.com/aquasecurity/trivy-iac/internal/adapters/cloudformation"
 	"github.com/aquasecurity/trivy-iac/pkg/rego"
