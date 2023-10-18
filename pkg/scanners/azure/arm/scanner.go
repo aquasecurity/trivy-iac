@@ -14,7 +14,7 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/state"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-policies/pkg/rules"
+	"github.com/aquasecurity/trivy-iac/pkg/rules"
 
 	"github.com/aquasecurity/trivy-iac/internal/adapters/arm"
 	"github.com/aquasecurity/trivy-iac/pkg/rego"

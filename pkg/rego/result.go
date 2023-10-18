@@ -7,7 +7,6 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/scan"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-	trivyRego "github.com/aquasecurity/trivy-policies/pkg/rego"
 	"github.com/open-policy-agent/opa/rego"
 )
 
@@ -161,7 +160,7 @@ func (s *Scanner) convertResults(set rego.ResultSet, input Input, namespace stri
 	return results
 }
 
-func (s *Scanner) embellishResultsWithRuleMetadata(results scan.Results, metadata trivyRego.StaticMetadata) scan.Results {
+func (s *Scanner) embellishResultsWithRuleMetadata(results scan.Results, metadata StaticMetadata) scan.Results {
 	results.SetRule(metadata.ToRule())
 	return results
 }

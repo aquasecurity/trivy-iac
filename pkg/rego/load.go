@@ -7,8 +7,7 @@ import (
 	"io/fs"
 	"strings"
 
-	"github.com/aquasecurity/trivy-policies/pkg/rego"
-	"github.com/aquasecurity/trivy-policies/pkg/rego/embed"
+	"github.com/aquasecurity/trivy-iac/pkg/rego/embed"
 	"github.com/open-policy-agent/opa/ast"
 	"github.com/open-policy-agent/opa/bundle"
 )
@@ -144,7 +143,7 @@ func (s *Scanner) prunePoliciesWithError(compiler *ast.Compiler) error {
 
 func (s *Scanner) compilePolicies(srcFS fs.FS, paths []string) error {
 
-	schemaSet, custom, err := rego.BuildSchemaSetFromPolicies(s.policies, paths, srcFS)
+	schemaSet, custom, err := BuildSchemaSetFromPolicies(s.policies, paths, srcFS)
 	if err != nil {
 		return err
 	}
@@ -164,7 +163,7 @@ func (s *Scanner) compilePolicies(srcFS fs.FS, paths []string) error {
 		}
 		return s.compilePolicies(srcFS, paths)
 	}
-	retriever := rego.NewMetadataRetriever(compiler)
+	retriever := NewMetadataRetriever(compiler)
 
 	if err := s.filterModules(retriever); err != nil {
 		return err
@@ -186,7 +185,7 @@ func (s *Scanner) compilePolicies(srcFS fs.FS, paths []string) error {
 	return nil
 }
 
-func (s *Scanner) filterModules(retriever *rego.MetadataRetriever) error {
+func (s *Scanner) filterModules(retriever *MetadataRetriever) error {
 
 	filtered := make(map[string]*ast.Module)
 	for name, module := range s.policies {
