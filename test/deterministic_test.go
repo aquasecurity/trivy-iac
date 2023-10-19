@@ -13,7 +13,7 @@ import (
 
 func Test_DeterministicResults(t *testing.T) {
 
-	reg := rules.Register(badRule, nil)
+	reg := rules.Register(badRule)
 	defer rules.Deregister(reg)
 
 	fs := testutil.CreateFS(t, map[string]string{

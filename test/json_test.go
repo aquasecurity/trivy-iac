@@ -82,7 +82,7 @@ func TestScanningJSON(t *testing.T) {
 					},
 				},
 			}
-			reg := rules.Register(r1, nil)
+			reg := rules.Register(r1)
 			defer rules.Deregister(reg)
 
 			results := scanJSON(t, test.source)

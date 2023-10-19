@@ -1,6 +1,7 @@
 package rules
 
 import (
+	trules "github.com/aquasecurity/trivy-policies/pkg/rules"
 	_ "github.com/aquasecurity/trivy-policies/rules/cloud/policies/aws/accessanalyzer"
 	_ "github.com/aquasecurity/trivy-policies/rules/cloud/policies/aws/apigateway"
 	_ "github.com/aquasecurity/trivy-policies/rules/cloud/policies/aws/athena"
@@ -73,3 +74,9 @@ import (
 	_ "github.com/aquasecurity/trivy-policies/rules/cloud/policies/oracle/compute"
 	_ "github.com/aquasecurity/trivy-policies/rules/kubernetes/network"
 )
+
+func init() {
+	for _, r := range trules.GetRules() {
+		Register(r)
+	}
+}

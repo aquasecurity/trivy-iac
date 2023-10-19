@@ -7,10 +7,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/aquasecurity/trivy-iac/pkg/scanners/helm/parser"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/aquasecurity/defsec/pkg/scanners/options"
+	"github.com/aquasecurity/trivy-iac/pkg/scanners/helm/parser"
 )
 
 func Test_helm_parser_with_options_with_values_file(t *testing.T) {

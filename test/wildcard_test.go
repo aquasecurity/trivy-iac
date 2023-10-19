@@ -68,7 +68,7 @@ func Test_WildcardMatchingOnRequiredLabels(t *testing.T) {
 					},
 				},
 			}
-			reg := rules.Register(rule, nil)
+			reg := rules.Register(rule)
 			defer rules.Deregister(reg)
 
 			results := scanHCL(t, test.input)

@@ -49,7 +49,7 @@ func scanWithOptions(t *testing.T, code string, opt ...options.ScannerOption) sc
 }
 
 func Test_OptionWithAlternativeIDProvider(t *testing.T) {
-	reg := rules.Register(alwaysFailRule, nil)
+	reg := rules.Register(alwaysFailRule)
 	defer rules.Deregister(reg)
 
 	options := []options.ScannerOption{
@@ -67,7 +67,7 @@ resource "something" "else" {}
 }
 
 func Test_TrivyOptionWithAlternativeIDProvider(t *testing.T) {
-	reg := rules.Register(alwaysFailRule, nil)
+	reg := rules.Register(alwaysFailRule)
 	defer rules.Deregister(reg)
 
 	options := []options.ScannerOption{
@@ -85,7 +85,7 @@ resource "something" "else" {}
 }
 
 func Test_OptionWithSeverityOverrides(t *testing.T) {
-	reg := rules.Register(alwaysFailRule, nil)
+	reg := rules.Register(alwaysFailRule)
 	defer rules.Deregister(reg)
 
 	options := []options.ScannerOption{
@@ -99,7 +99,7 @@ resource "something" "else" {}
 }
 
 func Test_OptionWithDebugWriter(t *testing.T) {
-	reg := rules.Register(alwaysFailRule, nil)
+	reg := rules.Register(alwaysFailRule)
 	defer rules.Deregister(reg)
 
 	buffer := bytes.NewBuffer([]byte{})
@@ -114,7 +114,7 @@ resource "something" "else" {}
 }
 
 func Test_OptionNoIgnores(t *testing.T) {
-	reg := rules.Register(alwaysFailRule, nil)
+	reg := rules.Register(alwaysFailRule)
 	defer rules.Deregister(reg)
 
 	scannerOpts := []options.ScannerOption{
@@ -130,7 +130,7 @@ resource "something" "else" {}
 }
 
 func Test_OptionExcludeRules(t *testing.T) {
-	reg := rules.Register(alwaysFailRule, nil)
+	reg := rules.Register(alwaysFailRule)
 	defer rules.Deregister(reg)
 
 	options := []options.ScannerOption{
@@ -145,7 +145,7 @@ resource "something" "else" {}
 }
 
 func Test_OptionIncludeRules(t *testing.T) {
-	reg := rules.Register(alwaysFailRule, nil)
+	reg := rules.Register(alwaysFailRule)
 	defer rules.Deregister(reg)
 
 	scannerOpts := []options.ScannerOption{
@@ -160,7 +160,7 @@ resource "something" "else" {}
 }
 
 func Test_OptionWithMinimumSeverity(t *testing.T) {
-	reg := rules.Register(alwaysFailRule, nil)
+	reg := rules.Register(alwaysFailRule)
 	defer rules.Deregister(reg)
 
 	scannerOpts := []options.ScannerOption{

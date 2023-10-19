@@ -171,7 +171,7 @@ variable "things" {
 					},
 				},
 			}
-			reg := rules.Register(r1, nil)
+			reg := rules.Register(r1)
 			defer rules.Deregister(reg)
 			results := scanHCL(t, test.source)
 			var include string

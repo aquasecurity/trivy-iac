@@ -238,10 +238,6 @@ github.com/apparentlymart/go-textseg/v13 v13.0.0 h1:Y+KvPE1NYz0xl601PVImeQfFyEy6
 github.com/apparentlymart/go-textseg/v13 v13.0.0/go.mod h1:ZK2fH7c4NqDTLtiYLvIkEghdlcqw7yxLeM89kiTRPUo=
 github.com/apparentlymart/go-textseg/v15 v15.0.0 h1:uYvfpb3DyLSCGWnctWKGj857c6ew1u1fNQOlOtuGxQY=
 github.com/apparentlymart/go-textseg/v15 v15.0.0/go.mod h1:K8XmNZdhEBkdlyDdvbmmsvpAG721bKi0joRfFdHIWJ4=
-github.com/aquasecurity/defsec v0.93.2-0.20231010220704-82e20e4c9d72 h1:myA/gpe55MGv88FHxN3YCchrrUM5ze4d+MQ42FeunVw=
-github.com/aquasecurity/defsec v0.93.2-0.20231010220704-82e20e4c9d72/go.mod h1:hSw5Nz91TC34eUmgXrpZSzI6zd7hErpk1QyE+uqtBjc=
-github.com/aquasecurity/trivy-policies v0.2.1-0.20231017063459-bd8eb4f035d0 h1:DaUmplSzs3o61bPVw+TyEF4mXyx7fmLfFORhep/QIBE=
-github.com/aquasecurity/trivy-policies v0.2.1-0.20231017063459-bd8eb4f035d0/go.mod h1:95+qxzR/aSisozbOeSHtltIstUhDHzOCeaqYOFQhC80=
 github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0 h1:jfIu9sQUG6Ig+0+Ap1h4unLjW6YQJpKZVmUzxsD4E/Q=
 github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0/go.mod h1:t2tdKJDJF9BV14lnkjHmOQgcvEKgtqs5a1N3LNdJhGE=
 github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
@@ -669,6 +665,10 @@ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
+github.com/nikpivkin/defsec v0.0.0-20231019085750-03d4b56ab64f h1:Q9SYIfqHxVrRSLmR/J09G+BQ0a17sZTEwg3FIOcOvac=
+github.com/nikpivkin/defsec v0.0.0-20231019085750-03d4b56ab64f/go.mod h1:J30VViSgmoW2Ic/6aqVJO2qvuADsmZ3MYuNxPcU6Vt0=
+github.com/nikpivkin/trivy-policies v0.0.0-20231019090550-7c8998fcab3a h1:kfVgH4Zo7xRf37PM8O7LlvvWLxGwIhpb3rnDFBbSeLI=
+github.com/nikpivkin/trivy-policies v0.0.0-20231019090550-7c8998fcab3a/go.mod h1:/+AdBaKS0Ioggk2o0Ln2zEZXRahW/Z2+BooSrs6weFk=
 github.com/olekukonko/tablewriter v0.0.5 h1:P2Ga83D34wi1o9J6Wh1mRuqd4mF/x/lgBS7N7AbDhec=
 github.com/olekukonko/tablewriter v0.0.5/go.mod h1:hPp6KlRPjbx+hW8ykQs1w3UBbZlj6HuIJcUGPhkA7kY=
 github.com/onsi/ginkgo/v2 v2.9.4 h1:xR7vG4IXt5RWx6FfIjyAtsoMAtnc3C/rFXBBd2AjZwE=

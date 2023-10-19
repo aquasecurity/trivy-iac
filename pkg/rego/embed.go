@@ -56,7 +56,6 @@ func RegisterRegoRules(modules map[string]*ast.Module) {
 		}
 		rules.Register(
 			metadata.ToRule(),
-			nil,
 		)
 	}
 }
