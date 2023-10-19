@@ -13,7 +13,9 @@ func (n *node) decodeString(v reflect.Value) error {
 	case reflect.Interface:
 		v.Set(reflect.ValueOf(n.raw))
 	default:
-		return fmt.Errorf("cannot decode string value to non-string target: %s", v.Kind())
+		if n.ref != "properties" {
+			return fmt.Errorf("cannot decode string value %v to non-string target: %s", v, v.Kind())
+		}
 	}
 	return nil
 }

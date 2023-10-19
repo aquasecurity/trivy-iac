@@ -68,6 +68,7 @@ func newFunctionNode(tw *tokenWalker) Node {
 		name: tw.pop().Data.(string),
 	}
 	tokenCloseParenCount := 0
+	tokenOpenBracketCount := 0
 
 	for tw.hasNext() {
 		token := tw.pop()
@@ -98,7 +99,20 @@ func newFunctionNode(tw *tokenWalker) Node {
 			}
 		case TokenLiteralString, TokenLiteralInteger, TokenLiteralFloat:
 			funcNode.args = append(funcNode.args, expressionValue{token.Data})
-		case TokenDot, TokenOpenBracket, TokenCloseBracket:
+		case TokenCloseBracket:
+			if funcNode.name == "parameters" || funcNode.name == "variables" {
+				if tokenOpenBracketCount == 0 {
+					tw.unPop()
+					return funcNode
+				}
+				funcNode.args = append(funcNode.args, expressionValue{token.Data})
+			}
+		case TokenOpenBracket:
+			if funcNode.name == "parameters" || funcNode.name == "variables" {
+				funcNode.args = append(funcNode.args, expressionValue{token.Data})
+				tokenOpenBracketCount++
+			}
+		case TokenDot:
 			if funcNode.name == "parameters" || funcNode.name == "variables" {
 				funcNode.args = append(funcNode.args, expressionValue{token.Data})
 			}
