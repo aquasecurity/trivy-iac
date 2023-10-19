@@ -53,6 +53,8 @@ type innerResource struct {
 	Copy               *Copy              `json:"copy"`
 	Name               types2.Value       `json:"name"`
 	Location           types2.Value       `json:"location"`
+	SubscriptionId     types2.Value       `json:"subscriptionId"`
+	ResourceGroup      types2.Value       `json:"resourceGroup"`
 	Condition          types2.Value       `json:"condition"`
 	Tags               types2.Value       `json:"tags"`
 	Sku                types2.Value       `json:"sku"`

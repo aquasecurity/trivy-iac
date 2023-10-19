@@ -40,6 +40,8 @@ type Resource struct {
 	Kind                 Value
 	Name                 Value
 	Location             Value
+	SubscriptionId       Value
+	ResourceGroup        Value
 	Tags                 Value
 	Sku                  Value
 	DeploymentProperties DeploymentProperties

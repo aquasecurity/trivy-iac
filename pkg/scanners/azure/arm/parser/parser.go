@@ -233,6 +233,8 @@ func (p *Parser) convertResource(input Resource) azure.Resource {
 		Kind:                 input.Kind,
 		Name:                 input.Name,
 		Location:             input.Location,
+		SubscriptionId:       input.SubscriptionId,
+		ResourceGroup:        input.ResourceGroup,
 		Properties:           input.Properties,
 		DeploymentProperties: azure.DeploymentProperties{},
 		Resources:            children,
