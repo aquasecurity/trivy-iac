@@ -14,10 +14,11 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/terraform"
 	tfcontext "github.com/aquasecurity/defsec/pkg/terraform/context"
-	"github.com/aquasecurity/trivy-iac/pkg/extrafs"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclparse"
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/aquasecurity/trivy-iac/pkg/extrafs"
 )
 
 type sourceFile struct {
@@ -60,6 +61,7 @@ type Parser struct {
 	allowDownloads bool
 	fsMap          map[string]fs.FS
 	skipRequired   bool
+	configsFS      fs.FS
 }
 
 func (p *Parser) SetDebugWriter(writer io.Writer) {
@@ -86,6 +88,10 @@ func (p *Parser) SetSkipRequiredCheck(b bool) {
 	p.skipRequired = b
 }
 
+func (p *Parser) SetConfigsFS(fsys fs.FS) {
+	p.configsFS = fsys
+}
+
 // New creates a new Parser
 func New(moduleFS fs.FS, moduleSource string, opts ...options.ParserOption) *Parser {
 	p := &Parser{
@@ -96,6 +102,7 @@ func New(moduleFS fs.FS, moduleSource string, opts ...options.ParserOption) *Par
 		allowDownloads: true,
 		moduleFS:       moduleFS,
 		moduleSource:   moduleSource,
+		configsFS:      moduleFS,
 	}
 
 	for _, option := range opts {
@@ -263,7 +270,7 @@ func (p *Parser) EvaluateAll(ctx context.Context) (terraform.Modules, cty.Value,
 		inputVars = p.moduleBlock.Values().AsValueMap()
 		p.debug.Log("Added %d input variables from module definition.", len(inputVars))
 	} else {
-		inputVars, err = loadTFVars(p.moduleFS, p.tfvarsPaths)
+		inputVars, err = loadTFVars(p.configsFS, p.tfvarsPaths)
 		if err != nil {
 			return nil, cty.NilVal, err
 		}

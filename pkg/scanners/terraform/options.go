@@ -1,12 +1,14 @@
 package terraform
 
 import (
+	"io/fs"
 	"strings"
 
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/state"
+
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/executor"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
 )
@@ -16,7 +18,6 @@ type ConfigurableTerraformScanner interface {
 	SetForceAllDirs(bool)
 	AddExecutorOptions(options ...executor.Option)
 	AddParserOptions(options ...options.ParserOption)
-	SetEmbeddedLibrariesEnabled(enabled bool)
 }
 
 func ScannerWithTFVarsPaths(paths ...string) options.ScannerOption {
@@ -193,10 +194,10 @@ func ScannerWithDownloadsAllowed(allowed bool) options.ScannerOption {
 	}
 }
 
-func ScannerWithEmbeddedLibraries(embedded bool) options.ScannerOption {
+func ScannerWithConfigsFileSystem(fsys fs.FS) options.ScannerOption {
 	return func(s options.ConfigurableScanner) {
 		if tf, ok := s.(ConfigurableTerraformScanner); ok {
-			tf.SetEmbeddedLibrariesEnabled(embedded)
+			tf.AddParserOptions(parser.OptionWithConfigsFS(fsys))
 		}
 	}
 }
