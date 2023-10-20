@@ -149,7 +149,7 @@ func (e *evaluator) EvaluateAll(ctx context.Context) (terraform.Modules, map[str
 	parseDuration += time.Since(start)
 
 	e.debug.Log("Starting submodule evaluation...")
-	var modules []*terraform.Module
+	var modules terraform.Modules
 	for _, definition := range e.loadModules(ctx) {
 		submodules, outputs, err := definition.Parser.EvaluateAll(ctx)
 		if err != nil {
@@ -185,7 +185,16 @@ func (e *evaluator) EvaluateAll(ctx context.Context) (terraform.Modules, map[str
 
 	e.debug.Log("Module evaluation complete.")
 	parseDuration += time.Since(start)
-	return append([]*terraform.Module{terraform.NewModule(e.projectRootPath, e.modulePath, e.blocks, e.ignores)}, modules...), fsMap, parseDuration
+	rootModule := terraform.NewModule(e.projectRootPath, e.modulePath, e.blocks, e.ignores, e.isModuleLocal())
+	for _, m := range modules {
+		m.SetParent(rootModule)
+	}
+	return append(terraform.Modules{rootModule}, modules...), fsMap, parseDuration
+}
+
+func (e *evaluator) isModuleLocal() bool {
+	// the module source is empty only for local modules
+	return e.parentParser.moduleSource == ""
 }
 
 func (e *evaluator) expandBlocks(blocks terraform.Blocks) terraform.Blocks {

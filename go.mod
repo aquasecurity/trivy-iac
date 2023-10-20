@@ -39,6 +39,8 @@ require (
 
 require github.com/mitchellh/mapstructure v1.5.0 // indirect
 
+require golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
+
 require (
 	cloud.google.com/go v0.110.4 // indirect
 	cloud.google.com/go/compute v1.21.0 // indirect
@@ -218,3 +220,5 @@ require (
 )
 
 replace oras.land/oras-go => oras.land/oras-go v1.2.4-0.20230801060855-932dd06d38af
+
+replace github.com/aquasecurity/defsec => github.com/nikpivkin/defsec v0.0.0-20231020161637-822f1a3cb14f
