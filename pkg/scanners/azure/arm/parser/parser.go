@@ -79,43 +79,6 @@ func (p *Parser) ParseFS(ctx context.Context, dir string) ([]azure.Deployment, e
 	return deployments, nil
 }
 
-func (p *Parser) ParseFS2(ctx context.Context, dir string) (map[string]azure.Deployment, error) {
-
-	var deployments = map[string]azure.Deployment{}
-
-	if err := fs.WalkDir(p.targetFS, dir, func(path string, entry fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		default:
-		}
-		if entry.IsDir() {
-			return nil
-		}
-		if !p.Required(path) {
-			return nil
-		}
-		f, err := p.targetFS.Open(path)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-		deployment, err := p.parseFile(f, path)
-		if err != nil {
-			return err
-		}
-		deployments[path] = *deployment
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	return deployments, nil
-}
-
 func (p *Parser) Required(path string) bool {
 	if p.skipRequired {
 		return true

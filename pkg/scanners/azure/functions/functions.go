@@ -1,5 +1,7 @@
 package functions
 
+import "strings"
+
 var deploymentFuncs = map[string]func(dp DeploymentData, args ...interface{}) interface{}{
 	"parameters":  Parameters,
 	"deployment":  Deployment,
@@ -92,6 +94,8 @@ func Evaluate(deploymentProvider DeploymentData, name string, args ...interface{
 	}
 
 	if f, ok := generalFuncs[name]; ok {
+		return f(args...)
+	} else if f, ok := generalFuncs[strings.ToLower(name)]; ok {
 		return f(args...)
 	}
 

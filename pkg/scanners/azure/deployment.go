@@ -143,7 +143,7 @@ func (d *Deployment) GetVariable(name string) interface{} {
 		if variable.Name == varName {
 			result, err := d.getPropertyValue(variable.Value, propertyName)
 			if err != nil {
-				fmt.Printf("parse parameter %s failed, %v", name, err)
+				fmt.Printf("parse variables %s failed, %v", name, err)
 			}
 			return result
 		}
@@ -272,10 +272,18 @@ func (d *Deployment) getPropertyValue(v Value, property string) (interface{}, er
 	}
 	paramNode := dasel.New(rawValue)
 	result, err := paramNode.Query(property)
-	if err == nil {
-		return result.InterfaceValue(), nil
-	} else {
+	if err != nil {
 		return nil, err
+
 	}
+	value = NewValue(result.InterfaceValue(), types.NewTestMetadata())
+	if value.Kind == KindExpression {
+		value, err = resolver.resolveExpressionString(value.AsExpressionString(), types.NewTestMetadata())
+		if err != nil {
+			return nil, fmt.Errorf("resolve expression %s failed, %v", value.AsExpressionString(), err)
+		}
+		return value.Raw(), nil
+	}
+	return result.InterfaceValue(), nil
 
 }

@@ -1,6 +1,7 @@
 package azure
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -74,8 +75,14 @@ func NewValue(value interface{}, metadata types.Metadata) Value {
 			v.rMap[key] = val
 		}
 	case string:
-		v.Kind = KindString
-		v.rLit = ty
+		if strings.HasPrefix(ty, "[") && strings.HasSuffix(ty, "]") {
+			v.Kind = KindExpression
+			v.rLit = ty[1 : len(ty)-1]
+		} else {
+			v.Kind = KindString
+			v.rLit = ty
+		}
+
 	case int, int64, int32, float32, float64, int8, int16, uint8, uint16, uint32, uint64:
 		v.Kind = KindNumber
 		v.rLit = ty
@@ -324,6 +331,8 @@ func (v Value) Raw() interface{} {
 			result[key] = val.Raw()
 		}
 		return result
+	case KindExpression:
+		return fmt.Sprintf("[%s]", v.rLit)
 	default:
 		return v.rLit
 	}
