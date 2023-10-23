@@ -97,7 +97,7 @@ func (p *Parameters) UnmarshalJSON(data []byte) error {
 				for _, param := range params {
 					parts := strings.Split(param, "=")
 					if len(parts) != 2 {
-						break
+						return fmt.Errorf("invalid key-value parameter: %q", param)
 					}
 					(*p)[parts[0]] = parts[1]
 				}
