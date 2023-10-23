@@ -21,7 +21,32 @@ import (
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
+func WithParameters(params map[string]any) options.ScannerOption {
+	return func(cs options.ConfigurableScanner) {
+		if s, ok := cs.(*Scanner); ok {
+			s.addParserOptions(parser.WithParameters(params))
+		}
+	}
+}
+
+func WithParameterFiles(files ...string) options.ScannerOption {
+	return func(cs options.ConfigurableScanner) {
+		if s, ok := cs.(*Scanner); ok {
+			s.addParserOptions(parser.WithParameterFiles(files...))
+		}
+	}
+}
+
+func WithConfigsFS(fsys fs.FS) options.ScannerOption {
+	return func(cs options.ConfigurableScanner) {
+		if s, ok := cs.(*Scanner); ok {
+			s.addParserOptions(parser.WithConfigsFS(fsys))
+		}
+	}
+}
+
 var _ scanners.FSScanner = (*Scanner)(nil)
+var _ options.ConfigurableScanner = (*Scanner)(nil)
 
 type Scanner struct {
 	debug                 debug.Logger
@@ -34,9 +59,14 @@ type Scanner struct {
 	loadEmbeddedPolicies  bool
 	loadEmbeddedLibraries bool
 	options               []options.ScannerOption
+	parserOptions         []options.ParserOption
 	frameworks            []framework.Framework
 	spec                  string
 	sync.Mutex
+}
+
+func (s *Scanner) addParserOptions(opt options.ParserOption) {
+	s.parserOptions = append(s.parserOptions, opt)
 }
 
 func (s *Scanner) SetFrameworks(frameworks []framework.Framework) {
@@ -101,7 +131,8 @@ func New(opts ...options.ScannerOption) *Scanner {
 	for _, opt := range opts {
 		opt(s)
 	}
-	s.parser = parser.New(options.ParserWithSkipRequiredCheck(s.skipRequired))
+	s.addParserOptions(options.ParserWithSkipRequiredCheck(s.skipRequired))
+	s.parser = parser.New(s.parserOptions...)
 	return s
 }
 
