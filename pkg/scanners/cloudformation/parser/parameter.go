@@ -76,9 +76,9 @@ func (p *Parameters) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	// CodePipeline like format
 	switch {
 	case data[0] == '{' && data[len(data)-1] == '}':
+		// CodePipeline like format
 		var params struct {
 			Params map[string]any `json:"Parameters"`
 		}
@@ -90,9 +90,9 @@ func (p *Parameters) UnmarshalJSON(data []byte) error {
 		(*p) = params.Params
 	case data[0] == '[' && data[len(data)-1] == ']':
 		{
+			// Original format
 			var params []string
 
-			// Original format
 			if err := json.Unmarshal(data, &params); err == nil {
 				for _, param := range params {
 					parts := strings.Split(param, "=")
