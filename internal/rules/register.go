@@ -8,9 +8,9 @@ import (
 	"github.com/aquasecurity/defsec/pkg/framework"
 	"github.com/aquasecurity/defsec/pkg/scan"
 	dftypes "github.com/aquasecurity/defsec/pkg/types"
-
-	"github.com/aquasecurity/trivy-policies/pkg/types"
 	"github.com/aquasecurity/trivy-policies/rules/specs"
+
+	"github.com/aquasecurity/trivy-iac/pkg/types"
 )
 
 type registry struct {
@@ -27,24 +27,23 @@ func Reset() {
 	coreRegistry.Reset()
 }
 
-func Register(rule scan.Rule, f scan.CheckFunc) types.RegisteredRule {
-	return coreRegistry.register(rule, f)
+func Register(rule scan.Rule) types.RegisteredRule {
+	return coreRegistry.register(rule)
 }
 
 func Deregister(rule types.RegisteredRule) {
 	coreRegistry.deregister(rule)
 }
 
-func (r *registry) register(rule scan.Rule, f scan.CheckFunc) types.RegisteredRule {
+func (r *registry) register(rule scan.Rule) types.RegisteredRule {
 	r.Lock()
 	defer r.Unlock()
 	if len(rule.Frameworks) == 0 {
 		rule.Frameworks = map[framework.Framework][]string{framework.Default: nil}
 	}
 	registeredRule := types.RegisteredRule{
-		Number:    r.index,
-		Rule:      rule,
-		CheckFunc: f,
+		Number: r.index,
+		Rule:   rule,
 	}
 	r.index++
 	for fw := range rule.Frameworks {

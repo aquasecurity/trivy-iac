@@ -3,12 +3,13 @@ package rules
 import (
 	"github.com/aquasecurity/defsec/pkg/framework"
 	"github.com/aquasecurity/defsec/pkg/scan"
+
 	"github.com/aquasecurity/trivy-iac/internal/rules"
-	"github.com/aquasecurity/trivy-policies/pkg/types"
+	"github.com/aquasecurity/trivy-iac/pkg/types"
 )
 
-func Register(rule scan.Rule, f scan.CheckFunc) types.RegisteredRule {
-	return rules.Register(rule, f)
+func Register(rule scan.Rule) types.RegisteredRule {
+	return rules.Register(rule)
 }
 
 func Deregister(rule types.RegisteredRule) {
