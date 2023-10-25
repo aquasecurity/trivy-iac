@@ -198,3 +198,34 @@ func Test_resolveParameter(t *testing.T) {
 	}
 
 }
+
+func Test_resolver(t *testing.T) {
+	tests := []struct {
+		name       string
+		deployment *Deployment
+		expr       string
+		expected   string
+	}{
+
+		{
+			name:       "substring call ",
+			deployment: &Deployment{},
+			expr:       "substring('2f73756273637',0, 3)",
+			expected:   "2f7",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resolver := resolver{
+				deployment: tt.deployment,
+			}
+
+			resolvedValue, err := resolver.resolveExpressionString(tt.expr, types.NewTestMetadata())
+			require.NoError(t, err)
+			require.Equal(t, KindString, resolvedValue.Kind)
+
+			require.Equal(t, tt.expected, resolvedValue.AsString())
+		})
+	}
+
+}

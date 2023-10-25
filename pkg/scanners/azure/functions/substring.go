@@ -1,5 +1,10 @@
 package functions
 
+import (
+	"fmt"
+	"strconv"
+)
+
 func SubString(args ...interface{}) interface{} {
 	if len(args) < 2 {
 		return ""
@@ -10,8 +15,8 @@ func SubString(args ...interface{}) interface{} {
 		return ""
 	}
 
-	start, ok := args[1].(int)
-	if !ok {
+	start, err := getIntValue(args[1])
+	if err != nil {
 		return ""
 	}
 
@@ -19,8 +24,8 @@ func SubString(args ...interface{}) interface{} {
 		args = append(args, len(input))
 	}
 
-	length, ok := args[2].(int)
-	if !ok {
+	length, err := getIntValue(args[2])
+	if err != nil {
 		return ""
 	}
 
@@ -33,4 +38,8 @@ func SubString(args ...interface{}) interface{} {
 	}
 
 	return input[start : start+length]
+}
+
+func getIntValue(value interface{}) (int, error) {
+	return strconv.Atoi(fmt.Sprintf("%v", value))
 }
