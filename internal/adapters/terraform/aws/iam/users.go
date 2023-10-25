@@ -23,9 +23,9 @@ func adaptUsers(modules terraform.Modules) []iam.User {
 		userMap[userBlockID].Policies = append(userMap[userBlockID].Policies, *policy)
 	}
 
-	if roleBlockID, accessKey, ok := applyForDependentResource(modules, userBlockIDs, "name", "aws_iam_access_key", "user", func(resource *terraform.Block) iam.AccessKey {
-		return adaptAccessKey(resource)
-	}); ok {
+	if roleBlockID, accessKey, ok := applyForDependentResource(
+		modules, userBlockIDs, "name", "aws_iam_access_key", "user", adaptAccessKey,
+	); ok {
 		userMap[roleBlockID].AccessKeys = append(userMap[roleBlockID].AccessKeys, accessKey)
 	}
 
