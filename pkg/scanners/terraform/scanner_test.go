@@ -1110,3 +1110,74 @@ bucket_name = "test"
 		fmt.Printf("Debug logs:\n%s\n", debugLog.String())
 	}
 }
+
+func Test_RoleRefToOutput(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"code/main.tf": `
+module "this" {
+  source = "./modules/iam"
+}
+
+resource "aws_iam_role_policy" "bad-policy" {
+  name     = "bad-policy"
+  role     = module.this.role_name
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "*"
+        Resource = "*"
+      },
+    ]
+  })
+}
+		`,
+		"code/modules/iam/main.tf": `
+resource "aws_iam_role" "example" {
+  name               = "example"
+  assume_role_policy = jsonencode({})
+}
+
+output "role_name" {
+  value = aws_iam_role.example.id
+}
+		`,
+		"rules/test.rego": `
+# METADATA
+# schemas:
+# - input: schema.input
+# custom:
+#   avd_id: AVD-AWS-0001
+#   input:
+#     selector:
+#     - type: cloud
+#       subtypes:
+#         - service: iam
+#           provider: aws
+package defsec.test.aws1
+deny[res] {
+  policy := input.aws.iam.roles[_].policies[_]
+  policy.name.value == "bad-policy"
+  res := result.new("Deny!", policy)
+}
+		`,
+	})
+
+	debugLog := bytes.NewBuffer([]byte{})
+	scanner := New(
+		options.ScannerWithDebug(debugLog),
+		options.ScannerWithPolicyDirs("rules"),
+		options.ScannerWithPolicyFilesystem(fs),
+		options.ScannerWithRegoOnly(true),
+		options.ScannerWithEmbeddedLibraries(false),
+		options.ScannerWithEmbeddedPolicies(false),
+		ScannerWithAllDirectories(true),
+	)
+
+	results, err := scanner.ScanFS(context.TODO(), fs, "code")
+	require.NoError(t, err)
+
+	assert.Len(t, results, 2)
+	assert.Len(t, results.GetFailed(), 1)
+}

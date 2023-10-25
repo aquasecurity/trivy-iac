@@ -12,6 +12,26 @@ import (
 	"github.com/aquasecurity/trivy-iac/test/testutil"
 )
 
+func defaultPolicyDocuemnt(offset bool) iam.Document {
+
+	builder := iamgo.NewPolicyBuilder()
+	builder.WithVersion("2012-10-17")
+
+	sb := iamgo.NewStatementBuilder()
+	sb.WithEffect(iamgo.EffectAllow)
+	sb.WithActions([]string{"ec2:Describe*"})
+	sb.WithResources([]string{"*"})
+
+	builder.WithStatement(sb.Build())
+
+	return iam.Document{
+		Parsed:   builder.Build(),
+		Metadata: defsecTypes.NewTestMetadata(),
+		IsOffset: offset,
+		HasRefs:  false,
+	}
+}
+
 func Test_adaptPolicies(t *testing.T) {
 	tests := []struct {
 		name      string
