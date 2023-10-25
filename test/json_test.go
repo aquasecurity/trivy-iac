@@ -7,8 +7,8 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/terraform"
+	"github.com/aquasecurity/trivy-iac/pkg/rules"
 	"github.com/aquasecurity/trivy-iac/test/testutil"
-	"github.com/aquasecurity/trivy-policies/pkg/rules"
 )
 
 func TestScanningJSON(t *testing.T) {
@@ -82,7 +82,7 @@ func TestScanningJSON(t *testing.T) {
 					},
 				},
 			}
-			reg := rules.Register(r1, nil)
+			reg := rules.Register(r1)
 			defer rules.Deregister(reg)
 
 			results := scanJSON(t, test.source)
