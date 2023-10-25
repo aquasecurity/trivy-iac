@@ -37,7 +37,10 @@ require (
 	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2
 )
 
-require github.com/tomwright/dasel v1.27.3
+require (
+	github.com/tomwright/dasel v1.27.3
+	github.com/wuwwlwwl/go-unique-string v0.0.0-20230828031914-78532c13780c
+)
 
 require (
 	cloud.google.com/go v0.110.0 // indirect

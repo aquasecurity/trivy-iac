@@ -1,21 +1,18 @@
 package functions
 
 import (
-	"crypto/sha256"
-	"fmt"
-	"strings"
+	uniquestring "github.com/wuwwlwwl/go-unique-string"
 )
 
 func UniqueString(args ...interface{}) interface{} {
-	if len(args) == 0 {
+	if len(args) != 1 {
 		return ""
 	}
 
-	hashParts := make([]string, len(args))
-	for i, str := range args {
-		hashParts[i] = str.(string)
+	str, ok := args[0].(string)
+	if !ok {
+		return ""
 	}
 
-	hash := sha256.New().Sum([]byte(strings.Join(hashParts, "")))
-	return fmt.Sprintf("%x", hash)[:13]
+	return uniquestring.GenerateUniqueString(str)
 }

@@ -17,15 +17,14 @@ func Test_UniqueString(t *testing.T) {
 			args: []interface{}{
 				"hello",
 			},
-			expected: "68656c6c6fe3b",
+			expected: "htpi75jfihg4e",
 		},
 		{
 			name: "unique string from a string",
 			args: []interface{}{
-				"hello",
 				"world",
 			},
-			expected: "68656c6c6f776",
+			expected: "iw4p5eg6q6hta",
 		},
 	}
 

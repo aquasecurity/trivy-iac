@@ -766,6 +766,8 @@ github.com/tomwright/dasel v1.27.3 h1:vnoaZsG8hbubcdh2IioRVjOt2DTg+txLtDGKQn1cdA
 github.com/tomwright/dasel v1.27.3/go.mod h1:/rESPoTvQxRkrtEH8lhSU8CB2UWPh/bM0kDrKVGf1kQ=
 github.com/ulikunitz/xz v0.5.10 h1:t92gobL9l3HE202wg3rlk19F6X+JOxl9BBrCCMYEYd8=
 github.com/ulikunitz/xz v0.5.10/go.mod h1:nbz6k7qbPmH4IRqmfOplQw/tblSgqTqBwxkY0oWt/14=
+github.com/wuwwlwwl/go-unique-string v0.0.0-20230828031914-78532c13780c h1:u6w3IIi93ExPb14nmRMbzILQ3ZBfQArB+xlYMdt0/+A=
+github.com/wuwwlwwl/go-unique-string v0.0.0-20230828031914-78532c13780c/go.mod h1:1pg4PfB5Yg6AE2ughgX+vLGeIyUDJfDi38FcKq0L/IU=
 github.com/xanzy/ssh-agent v0.3.3 h1:+/15pJfg/RsTxqYcX6fHqOXZwwMP+2VyYWJeWM2qQFM=
 github.com/xanzy/ssh-agent v0.3.3/go.mod h1:6dzNDKs0J9rVPHPhaGCukekBHKqfl+L3KghI1Bc68Uw=
 github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f/go.mod h1:N2zxlSyiKSe5eX1tZViRH5QA0qijqEDrYZiPEAiq3wU=
