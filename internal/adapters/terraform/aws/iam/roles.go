@@ -8,8 +8,7 @@ import (
 
 func adaptRoles(modules terraform.Modules) []iam.Role {
 
-	roleMap, _ := mapRoles(modules)
-
+	roleMap := mapRoles(modules)
 	roleBlockIDs := maps.Keys(roleMap)
 
 	if roleBlockID, policy, ok := applyForDependentResource(
@@ -31,8 +30,7 @@ func adaptRoles(modules terraform.Modules) []iam.Role {
 	return output
 }
 
-func mapRoles(modules terraform.Modules) (map[string]*iam.Role, map[string]struct{}) {
-	policyBlocks := make(map[string]struct{})
+func mapRoles(modules terraform.Modules) map[string]*iam.Role {
 	roleMap := make(map[string]*iam.Role)
 	for _, roleBlock := range modules.GetResourcesByType("aws_iam_role") {
 		role := &iam.Role{
@@ -50,5 +48,5 @@ func mapRoles(modules terraform.Modules) (map[string]*iam.Role, map[string]struc
 		roleMap[roleBlock.ID()] = role
 	}
 
-	return roleMap, policyBlocks
+	return roleMap
 }
