@@ -10,7 +10,7 @@ require (
 	github.com/aquasecurity/defsec v0.93.2-0.20231020041402-7ccc46780c09
 	github.com/aquasecurity/trivy-policies v0.3.1-0.20231021040354-0572a07131c2
 	github.com/aws/aws-sdk-go v1.44.245 // indirect
-	github.com/aws/smithy-go v1.14.2
+	github.com/aws/smithy-go v1.15.0
 	github.com/bmatcuk/doublestar/v4 v4.6.0
 	github.com/google/uuid v1.3.1
 	github.com/hashicorp/go-getter v1.7.2
