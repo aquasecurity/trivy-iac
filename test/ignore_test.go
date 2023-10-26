@@ -8,7 +8,7 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	"github.com/aquasecurity/trivy-policies/pkg/rules"
+	"github.com/aquasecurity/trivy-iac/pkg/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -381,7 +381,7 @@ resources = ["*"] # trivy:ignore:aws-iam-enforce-mfa
 }
 `, assertLength: 0}}
 
-	reg := rules.Register(exampleRule, nil)
+	reg := rules.Register(exampleRule)
 	defer rules.Deregister(reg)
 
 	for _, tc := range testCases {
@@ -393,7 +393,7 @@ resources = ["*"] # trivy:ignore:aws-iam-enforce-mfa
 }
 
 func Test_IgnoreIgnoreWithExpiryAndWorkspaceAndWorkspaceSupplied(t *testing.T) {
-	reg := rules.Register(exampleRule, nil)
+	reg := rules.Register(exampleRule)
 	defer rules.Deregister(reg)
 
 	results := scanHCLWithWorkspace(t, `
@@ -405,7 +405,7 @@ resource "bad" "my-rule" {
 }
 
 func Test_IgnoreInline(t *testing.T) {
-	reg := rules.Register(exampleRule, nil)
+	reg := rules.Register(exampleRule)
 	defer rules.Deregister(reg)
 
 	results := scanHCL(t, fmt.Sprintf(`
@@ -417,7 +417,7 @@ func Test_IgnoreInline(t *testing.T) {
 }
 
 func Test_IgnoreIgnoreWithExpiryAndWorkspaceButWrongWorkspaceSupplied(t *testing.T) {
-	reg := rules.Register(exampleRule, nil)
+	reg := rules.Register(exampleRule)
 	defer rules.Deregister(reg)
 
 	results := scanHCLWithWorkspace(t, `
@@ -430,7 +430,7 @@ resource "bad" "my-rule" {
 }
 
 func Test_IgnoreWithAliasCodeStillIgnored(t *testing.T) {
-	reg := rules.Register(exampleRule, nil)
+	reg := rules.Register(exampleRule)
 	defer rules.Deregister(reg)
 
 	results := scanHCLWithWorkspace(t, `
@@ -443,7 +443,7 @@ resource "bad" "my-rule" {
 }
 
 func Test_TrivyIgnoreIgnoreWithExpiryAndWorkspaceAndWorkspaceSupplied(t *testing.T) {
-	reg := rules.Register(exampleRule, nil)
+	reg := rules.Register(exampleRule)
 	defer rules.Deregister(reg)
 
 	results := scanHCLWithWorkspace(t, `
@@ -455,7 +455,7 @@ resource "bad" "my-rule" {
 }
 
 func Test_TrivyIgnoreIgnoreWithExpiryAndWorkspaceButWrongWorkspaceSupplied(t *testing.T) {
-	reg := rules.Register(exampleRule, nil)
+	reg := rules.Register(exampleRule)
 	defer rules.Deregister(reg)
 
 	results := scanHCLWithWorkspace(t, `
@@ -468,7 +468,7 @@ resource "bad" "my-rule" {
 }
 
 func Test_TrivyIgnoreWithAliasCodeStillIgnored(t *testing.T) {
-	reg := rules.Register(exampleRule, nil)
+	reg := rules.Register(exampleRule)
 	defer rules.Deregister(reg)
 
 	results := scanHCLWithWorkspace(t, `
@@ -481,7 +481,7 @@ resource "bad" "my-rule" {
 }
 
 func Test_TrivyIgnoreInline(t *testing.T) {
-	reg := rules.Register(exampleRule, nil)
+	reg := rules.Register(exampleRule)
 	defer rules.Deregister(reg)
 
 	results := scanHCL(t, fmt.Sprintf(`

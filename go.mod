@@ -6,8 +6,8 @@ require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/Masterminds/semver v1.5.0
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aquasecurity/defsec v0.93.2-0.20231010220704-82e20e4c9d72
-	github.com/aquasecurity/trivy-policies v0.2.1-0.20231017063459-bd8eb4f035d0
+	github.com/aquasecurity/defsec v0.93.2-0.20231020041402-7ccc46780c09
+	github.com/aquasecurity/trivy-policies v0.3.1-0.20231021040354-0572a07131c2
 	github.com/aws/smithy-go v1.14.2
 	github.com/bmatcuk/doublestar/v4 v4.6.0
 	github.com/google/uuid v1.3.1
@@ -18,9 +18,11 @@ require (
 	github.com/liamg/jfather v0.0.7
 	github.com/liamg/memoryfs v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/moby/buildkit v0.11.6
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/open-policy-agent/opa v0.57.0
+	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
 	github.com/zclconf/go-cty v1.13.0
 	github.com/zclconf/go-cty-yaml v1.0.3
@@ -132,7 +134,6 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
-	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/moby/locker v1.0.1 // indirect
 	github.com/moby/spdystream v0.2.0 // indirect
@@ -162,7 +163,6 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/skeema/knownhosts v1.2.0 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
-	github.com/spf13/cobra v1.7.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tchap/go-patricia/v2 v2.3.1 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect
