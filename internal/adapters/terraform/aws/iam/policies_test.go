@@ -62,27 +62,8 @@ func Test_adaptPolicies(t *testing.T) {
 				{
 					Metadata: defsecTypes.NewTestMetadata(),
 					Name:     defsecTypes.String("test", defsecTypes.NewTestMetadata()),
-					Document: func() iam.Document {
-
-						builder := iamgo.NewPolicyBuilder()
-						builder.WithVersion("2012-10-17")
-
-						sb := iamgo.NewStatementBuilder()
-
-						sb.WithEffect(iamgo.EffectAllow)
-						sb.WithActions([]string{"ec2:Describe*"})
-						sb.WithResources([]string{"*"})
-
-						builder.WithStatement(sb.Build())
-
-						return iam.Document{
-							Parsed:   builder.Build(),
-							Metadata: defsecTypes.NewTestMetadata(),
-							IsOffset: false,
-							HasRefs:  false,
-						}
-					}(),
-					Builtin: defsecTypes.Bool(false, defsecTypes.NewTestMetadata()),
+					Document: defaultPolicyDocuemnt(false),
+					Builtin:  defsecTypes.Bool(false, defsecTypes.NewTestMetadata()),
 				},
 			},
 		},
