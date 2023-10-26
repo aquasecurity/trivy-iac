@@ -3,6 +3,8 @@ package parser
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -10,18 +12,46 @@ import (
 	"strings"
 
 	"github.com/aquasecurity/defsec/pkg/debug"
+	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/liamg/jfather"
 	"gopkg.in/yaml.v3"
 
-	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/trivy-iac/pkg/detection"
 )
 
 var _ options.ConfigurableParser = (*Parser)(nil)
 
 type Parser struct {
-	debug        debug.Logger
-	skipRequired bool
+	debug               debug.Logger
+	skipRequired        bool
+	parameterFiles      []string
+	parameters          map[string]any
+	overridedParameters Parameters
+	configsFS           fs.FS
+}
+
+func WithParameters(params map[string]any) options.ParserOption {
+	return func(cp options.ConfigurableParser) {
+		if p, ok := cp.(*Parser); ok {
+			p.parameters = params
+		}
+	}
+}
+
+func WithParameterFiles(files ...string) options.ParserOption {
+	return func(cp options.ConfigurableParser) {
+		if p, ok := cp.(*Parser); ok {
+			p.parameterFiles = files
+		}
+	}
+}
+
+func WithConfigsFS(fsys fs.FS) options.ParserOption {
+	return func(cp options.ConfigurableParser) {
+		if p, ok := cp.(*Parser); ok {
+			p.configsFS = fsys
+		}
+	}
 }
 
 func (p *Parser) SetDebugWriter(writer io.Writer) {
@@ -40,9 +70,9 @@ func New(options ...options.ParserOption) *Parser {
 	return p
 }
 
-func (p *Parser) ParseFS(ctx context.Context, target fs.FS, dir string) (FileContexts, error) {
+func (p *Parser) ParseFS(ctx context.Context, fsys fs.FS, dir string) (FileContexts, error) {
 	var contexts FileContexts
-	if err := fs.WalkDir(target, filepath.ToSlash(dir), func(path string, entry fs.DirEntry, err error) error {
+	if err := fs.WalkDir(fsys, filepath.ToSlash(dir), func(path string, entry fs.DirEntry, err error) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
@@ -55,12 +85,12 @@ func (p *Parser) ParseFS(ctx context.Context, target fs.FS, dir string) (FileCon
 			return nil
 		}
 
-		if !p.Required(target, path) {
+		if !p.Required(fsys, path) {
 			p.debug.Log("not a CloudFormation file, skipping %s", path)
 			return nil
 		}
 
-		c, err := p.ParseFile(ctx, target, path)
+		c, err := p.ParseFile(ctx, fsys, path)
 		if err != nil {
 			p.debug.Log("Error parsing file '%s': %s", path, err)
 			return nil
@@ -90,8 +120,7 @@ func (p *Parser) Required(fs fs.FS, path string) bool {
 
 }
 
-func (p *Parser) ParseFile(ctx context.Context, fs fs.FS, path string) (context *FileContext, err error) {
-
+func (p *Parser) ParseFile(ctx context.Context, fsys fs.FS, path string) (context *FileContext, err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			err = fmt.Errorf("panic during parse: %s", e)
@@ -104,12 +133,20 @@ func (p *Parser) ParseFile(ctx context.Context, fs fs.FS, path string) (context 
 	default:
 	}
 
+	if p.configsFS == nil {
+		p.configsFS = fsys
+	}
+
+	if err := p.parseParams(); err != nil {
+		return nil, fmt.Errorf("failed to parse parameters file: %w", err)
+	}
+
 	sourceFmt := YamlSourceFormat
 	if strings.HasSuffix(strings.ToLower(path), ".json") {
 		sourceFmt = JsonSourceFormat
 	}
 
-	f, err := fs.Open(filepath.ToSlash(path))
+	f, err := fsys.Open(filepath.ToSlash(path))
 	if err != nil {
 		return nil, err
 	}
@@ -138,6 +175,8 @@ func (p *Parser) ParseFile(ctx context.Context, fs fs.FS, path string) (context 
 		}
 	}
 
+	context.OverrideParameters(p.overridedParameters)
+
 	context.lines = lines
 	context.SourceFormat = sourceFmt
 	context.filepath = path
@@ -150,8 +189,48 @@ func (p *Parser) ParseFile(ctx context.Context, fs fs.FS, path string) (context 
 	}
 
 	for name, r := range context.Resources {
-		r.ConfigureResource(name, fs, path, context)
+		r.ConfigureResource(name, fsys, path, context)
 	}
 
 	return context, nil
+}
+
+func (p *Parser) parseParams() error {
+	if p.overridedParameters != nil { // parameters have already been parsed
+		return nil
+	}
+
+	params := make(Parameters)
+
+	var errs []error
+
+	for _, path := range p.parameterFiles {
+		if parameters, err := p.parseParametersFile(path); err != nil {
+			errs = append(errs, err)
+		} else {
+			params.Merge(parameters)
+		}
+	}
+
+	if len(errs) != 0 {
+		return errors.Join(errs...)
+	}
+
+	params.Merge(p.parameters)
+
+	p.overridedParameters = params
+	return nil
+}
+
+func (p *Parser) parseParametersFile(path string) (Parameters, error) {
+	f, err := p.configsFS.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("parameters file %q open error: %w", path, err)
+	}
+
+	var parameters Parameters
+	if err := json.NewDecoder(f).Decode(&parameters); err != nil {
+		return nil, err
+	}
+	return parameters, nil
 }
