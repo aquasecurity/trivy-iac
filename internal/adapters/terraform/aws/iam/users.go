@@ -7,44 +7,36 @@ import (
 )
 
 func adaptUsers(modules terraform.Modules) []iam.User {
+	var users []iam.User
 
-	var output []iam.User
+	for _, userBlock := range modules.GetResourcesByType("aws_iam_user") {
+		user := iam.User{
+			Metadata:   userBlock.GetMetadata(),
+			Name:       userBlock.GetAttribute("name").AsStringValueOrDefault("", userBlock),
+			LastAccess: defsecTypes.TimeUnresolvable(userBlock.GetMetadata()),
+		}
 
-	for userBlockID, user := range mapUsers(modules) {
 		if policy, ok := applyForDependentResource(
-			modules, userBlockID, "name", "aws_iam_user_policy", "user", findPolicy(modules),
+			modules, userBlock.ID(), "name", "aws_iam_user_policy", "user", findPolicy(modules),
 		); ok && policy != nil {
 			user.Policies = append(user.Policies, *policy)
 		}
 
 		if policy, ok := applyForDependentResource(
-			modules, userBlockID, "name", "aws_iam_user_policy_attachment", "user", findAttachmentPolicy(modules),
+			modules, userBlock.ID(), "name", "aws_iam_user_policy_attachment", "user", findAttachmentPolicy(modules),
 		); ok && policy != nil {
 			user.Policies = append(user.Policies, *policy)
 		}
 
 		if accessKey, ok := applyForDependentResource(
-			modules, userBlockID, "name", "aws_iam_access_key", "user", adaptAccessKey,
+			modules, userBlock.ID(), "name", "aws_iam_access_key", "user", adaptAccessKey,
 		); ok {
 			user.AccessKeys = append(user.AccessKeys, accessKey)
 		}
 
-		output = append(output, user)
+		users = append(users, user)
 	}
-
-	return output
-}
-
-func mapUsers(modules terraform.Modules) map[string]iam.User {
-	userMap := make(map[string]iam.User)
-	for _, userBlock := range modules.GetResourcesByType("aws_iam_user") {
-		userMap[userBlock.ID()] = iam.User{
-			Metadata:   userBlock.GetMetadata(),
-			Name:       userBlock.GetAttribute("name").AsStringValueOrDefault("", userBlock),
-			LastAccess: defsecTypes.TimeUnresolvable(userBlock.GetMetadata()),
-		}
-	}
-	return userMap
+	return users
 
 }
 
