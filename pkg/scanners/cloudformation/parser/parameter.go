@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -77,7 +78,7 @@ func (p *Parameters) UnmarshalJSON(data []byte) error {
 	}
 
 	switch {
-	case data[0] == '{' && data[len(data)-1] == '}':
+	case data[0] == '{' && data[len(data)-1] == '}': // object
 		// CodePipeline like format
 		var params struct {
 			Params map[string]any `json:"Parameters"`
@@ -88,7 +89,7 @@ func (p *Parameters) UnmarshalJSON(data []byte) error {
 		}
 
 		(*p) = params.Params
-	case data[0] == '[' && data[len(data)-1] == ']':
+	case data[0] == '[' && data[len(data)-1] == ']': // array
 		{
 			// Original format
 			var params []string
@@ -110,7 +111,9 @@ func (p *Parameters) UnmarshalJSON(data []byte) error {
 				ParameterValue string `json:"ParameterValue"`
 			}
 
-			if err := json.Unmarshal(data, &cfparams); err != nil {
+			d := json.NewDecoder(bytes.NewReader(data))
+			d.DisallowUnknownFields()
+			if err := d.Decode(&cfparams); err != nil {
 				return err
 			}
 
