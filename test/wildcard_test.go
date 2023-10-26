@@ -7,8 +7,8 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/terraform"
+	"github.com/aquasecurity/trivy-iac/pkg/rules"
 	"github.com/aquasecurity/trivy-iac/test/testutil"
-	"github.com/aquasecurity/trivy-policies/pkg/rules"
 )
 
 func Test_WildcardMatchingOnRequiredLabels(t *testing.T) {
@@ -68,7 +68,7 @@ func Test_WildcardMatchingOnRequiredLabels(t *testing.T) {
 					},
 				},
 			}
-			reg := rules.Register(rule, nil)
+			reg := rules.Register(rule)
 			defer rules.Deregister(reg)
 
 			results := scanHCL(t, test.input)

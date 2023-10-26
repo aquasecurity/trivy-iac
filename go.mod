@@ -7,8 +7,8 @@ require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/alecthomas/chroma v0.10.0 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aquasecurity/defsec v0.93.2-0.20231010220704-82e20e4c9d72
-	github.com/aquasecurity/trivy-policies v0.2.1-0.20231017063459-bd8eb4f035d0
+	github.com/aquasecurity/defsec v0.93.2-0.20231020041402-7ccc46780c09
+	github.com/aquasecurity/trivy-policies v0.3.1-0.20231021040354-0572a07131c2
 	github.com/aws/aws-sdk-go v1.44.245 // indirect
 	github.com/aws/smithy-go v1.14.2
 	github.com/bmatcuk/doublestar/v4 v4.6.0
@@ -25,7 +25,7 @@ require (
 	github.com/open-policy-agent/opa v0.57.0
 	github.com/owenrumney/squealer v1.2.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/spf13/cobra v1.7.0 // indirect
+	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
 	github.com/zclconf/go-cty v1.13.0
 	github.com/zclconf/go-cty-yaml v1.0.3
@@ -37,7 +37,7 @@ require (
 	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2
 )
 
-require github.com/mitchellh/mapstructure v1.5.0 // indirect
+require github.com/mitchellh/mapstructure v1.5.0
 
 require (
 	cloud.google.com/go v0.110.4 // indirect

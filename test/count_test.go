@@ -7,8 +7,8 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/terraform"
+	"github.com/aquasecurity/trivy-iac/pkg/rules"
 	"github.com/aquasecurity/trivy-iac/test/testutil"
-	"github.com/aquasecurity/trivy-policies/pkg/rules"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -171,7 +171,7 @@ variable "things" {
 					},
 				},
 			}
-			reg := rules.Register(r1, nil)
+			reg := rules.Register(r1)
 			defer rules.Deregister(reg)
 			results := scanHCL(t, test.source)
 			var include string
