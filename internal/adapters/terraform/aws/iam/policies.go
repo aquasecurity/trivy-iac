@@ -57,7 +57,7 @@ func adaptPolicies(modules terraform.Modules) (policies []iam.Policy) {
 	return
 }
 
-// applyForDependentResource returns the id of the parent block, the result of
+// applyForDependentResource returns the result of
 // applying the function to the dependent block from the parent block and true
 // if the parent block was found.
 //
@@ -72,43 +72,34 @@ func adaptPolicies(modules terraform.Modules) (policies []iam.Policy) {
 //	}
 func applyForDependentResource[T any](
 	modules terraform.Modules,
-	refBlockIDs []string,
+	refBlockID string,
 	refAttrName string,
 	dependentResourceType string,
 	dependentAttrName string,
 	fn func(resource *terraform.Block) T,
-) (string, T, bool) {
+) (T, bool) {
 	for _, resource := range modules.GetResourcesByType(dependentResourceType) {
 		relatedAttr := resource.GetAttribute(dependentAttrName)
 		if relatedAttr.IsNil() {
 			continue
 		}
 
-		var parent *terraform.Block
-
-		if relatedAttr.IsString() {
-			for _, refBlockId := range refBlockIDs {
-				refBlock, err := modules.GetBlockById(refBlockId)
-				if err != nil {
-					continue
-				}
-				refAttr := refBlock.GetAttribute(refAttrName).AsStringValueOrDefault("", refBlock).Value()
-				if relatedAttr.Equals(refBlock.ID()) || relatedAttr.Equals(refAttr) {
-					parent = refBlock
-				}
-			}
-		} else {
-			if refBlock, err := modules.GetReferencedBlock(relatedAttr, resource); err == nil {
-				parent = refBlock
-			}
+		refBlock, err := modules.GetBlockById(refBlockID)
+		if err != nil {
+			continue
 		}
 
-		if parent != nil && sameProvider(parent, resource) {
-			return parent.ID(), fn(resource), true
+		if sameProvider(refBlock, resource) && isDependentBlock(refBlock, refAttrName, relatedAttr) {
+			return fn(resource), true
 		}
 	}
 	var res T
-	return "", res, false
+	return res, false
+}
+
+func isDependentBlock(refBlock *terraform.Block, refAttrName string, relatedAttr *terraform.Attribute) bool {
+	refAttr := refBlock.GetAttribute(refAttrName).AsStringValueOrDefault("", refBlock).Value()
+	return relatedAttr.Equals(refBlock.ID()) || relatedAttr.Equals(refAttr) || relatedAttr.ReferencesBlock(refBlock)
 }
 
 func findPolicy(modules terraform.Modules) func(resource *terraform.Block) *iam.Policy {
