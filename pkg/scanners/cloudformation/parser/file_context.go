@@ -51,3 +51,11 @@ func (t *FileContext) Metadata() defsecTypes.Metadata {
 
 	return defsecTypes.NewMetadata(rng, NewCFReference("Template", rng).String())
 }
+
+func (t *FileContext) OverrideParameters(params map[string]any) {
+	for key := range t.Parameters {
+		if val, ok := params[key]; ok {
+			t.Parameters[key].UpdateDefault(val)
+		}
+	}
+}

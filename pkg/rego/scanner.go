@@ -12,13 +12,13 @@ import (
 	"github.com/aquasecurity/defsec/pkg/debug"
 	"github.com/aquasecurity/defsec/pkg/framework"
 	"github.com/aquasecurity/defsec/pkg/scan"
-	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/types"
-	trivyRego "github.com/aquasecurity/trivy-policies/pkg/rego"
-	"github.com/aquasecurity/trivy-policies/pkg/rego/schemas"
+	"github.com/aquasecurity/trivy-iac/pkg/rego/schemas"
 	"github.com/open-policy-agent/opa/ast"
 	"github.com/open-policy-agent/opa/rego"
 	"github.com/open-policy-agent/opa/storage"
+
+	"github.com/aquasecurity/defsec/pkg/scanners/options"
 )
 
 var _ options.ConfigurableScanner = (*Scanner)(nil)
@@ -34,7 +34,7 @@ type Scanner struct {
 	debug          debug.Logger
 	traceWriter    io.Writer
 	tracePerResult bool
-	retriever      *trivyRego.MetadataRetriever
+	retriever      *MetadataRetriever
 	policyFS       fs.FS
 	dataFS         fs.FS
 	frameworks     []framework.Framework
@@ -156,10 +156,6 @@ func NewScanner(source types.Source, options ...options.ScannerOption) *Scanner 
 
 func (s *Scanner) SetParentDebugLogger(l debug.Logger) {
 	s.debug = l.Extend("rego")
-}
-
-func getModuleNamespace(module *ast.Module) string {
-	return strings.TrimPrefix(module.Package.Path.String(), "data.")
 }
 
 func (s *Scanner) runQuery(ctx context.Context, query string, input interface{}, disableTracing bool) (rego.ResultSet, []string, error) {
@@ -288,7 +284,7 @@ func isPolicyWithSubtype(sourceType types.Source) bool {
 	return false
 }
 
-func checkSubtype(ii map[string]interface{}, provider string, subTypes []trivyRego.SubType) bool {
+func checkSubtype(ii map[string]interface{}, provider string, subTypes []SubType) bool {
 	if len(subTypes) == 0 {
 		return true
 	}
@@ -313,7 +309,7 @@ func checkSubtype(ii map[string]interface{}, provider string, subTypes []trivyRe
 	return false
 }
 
-func isPolicyApplicable(staticMetadata *trivyRego.StaticMetadata, inputs ...Input) bool {
+func isPolicyApplicable(staticMetadata *StaticMetadata, inputs ...Input) bool {
 	for _, input := range inputs {
 		if ii, ok := input.Contents.(map[string]interface{}); ok {
 			for provider := range ii {

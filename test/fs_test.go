@@ -14,6 +14,8 @@ import (
 func Test_OS_FS(t *testing.T) {
 	s := terraform.New(
 		options.ScannerWithDebug(os.Stderr),
+		options.ScannerWithEmbeddedPolicies(true),
+		options.ScannerWithEmbeddedLibraries(true),
 	)
 	results, err := s.ScanFS(context.TODO(), os.DirFS("tf"), "fail")
 	require.NoError(t, err)

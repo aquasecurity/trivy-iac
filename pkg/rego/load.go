@@ -7,8 +7,6 @@ import (
 	"io/fs"
 	"strings"
 
-	"github.com/aquasecurity/trivy-policies/pkg/rego"
-	"github.com/aquasecurity/trivy-policies/pkg/rego/embed"
 	"github.com/open-policy-agent/opa/ast"
 	"github.com/open-policy-agent/opa/bundle"
 )
@@ -42,7 +40,7 @@ func (s *Scanner) loadPoliciesFromReaders(readers []io.Reader) (map[string]*ast.
 
 func (s *Scanner) loadEmbedded(enableEmbeddedLibraries, enableEmbeddedPolicies bool) error {
 	if enableEmbeddedLibraries {
-		loadedLibs, errLoad := embed.LoadEmbeddedLibraries()
+		loadedLibs, errLoad := LoadEmbeddedLibraries()
 		if errLoad != nil {
 			return fmt.Errorf("failed to load embedded rego libraries: %w", errLoad)
 		}
@@ -53,7 +51,7 @@ func (s *Scanner) loadEmbedded(enableEmbeddedLibraries, enableEmbeddedPolicies b
 	}
 
 	if enableEmbeddedPolicies {
-		loaded, err := embed.LoadEmbeddedPolicies()
+		loaded, err := LoadEmbeddedPolicies()
 		if err != nil {
 			return fmt.Errorf("failed to load embedded rego policies: %w", err)
 		}
@@ -83,7 +81,7 @@ func (s *Scanner) LoadPolicies(enableEmbeddedLibraries, enableEmbeddedPolicies b
 
 	var err error
 	if len(paths) > 0 {
-		loaded, err := embed.LoadPoliciesFromDirs(srcFS, paths...)
+		loaded, err := LoadPoliciesFromDirs(srcFS, paths...)
 		if err != nil {
 			return fmt.Errorf("failed to load rego policies from %s: %w", paths, err)
 		}
@@ -144,7 +142,7 @@ func (s *Scanner) prunePoliciesWithError(compiler *ast.Compiler) error {
 
 func (s *Scanner) compilePolicies(srcFS fs.FS, paths []string) error {
 
-	schemaSet, custom, err := rego.BuildSchemaSetFromPolicies(s.policies, paths, srcFS)
+	schemaSet, custom, err := BuildSchemaSetFromPolicies(s.policies, paths, srcFS)
 	if err != nil {
 		return err
 	}
@@ -164,7 +162,7 @@ func (s *Scanner) compilePolicies(srcFS fs.FS, paths []string) error {
 		}
 		return s.compilePolicies(srcFS, paths)
 	}
-	retriever := rego.NewMetadataRetriever(compiler)
+	retriever := NewMetadataRetriever(compiler)
 
 	if err := s.filterModules(retriever); err != nil {
 		return err
@@ -186,7 +184,7 @@ func (s *Scanner) compilePolicies(srcFS fs.FS, paths []string) error {
 	return nil
 }
 
-func (s *Scanner) filterModules(retriever *rego.MetadataRetriever) error {
+func (s *Scanner) filterModules(retriever *MetadataRetriever) error {
 
 	filtered := make(map[string]*ast.Module)
 	for name, module := range s.policies {

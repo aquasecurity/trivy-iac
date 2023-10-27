@@ -12,10 +12,10 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/terraform"
+	"github.com/aquasecurity/trivy-iac/pkg/rules"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/executor"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
 	"github.com/aquasecurity/trivy-iac/test/testutil"
-	"github.com/aquasecurity/trivy-policies/pkg/rules"
 	"github.com/aquasecurity/trivy-policies/rules/cloud/policies/aws/iam"
 	"github.com/stretchr/testify/require"
 )
@@ -45,7 +45,7 @@ var badRule = scan.Rule{
 
 // IMPORTANT: if this test is failing, you probably need to set the version of go-cty in go.mod to the same version that hcl uses.
 func Test_GoCtyCompatibilityIssue(t *testing.T) {
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -102,7 +102,7 @@ resource "problem" "uhoh" {
 
 func Test_ProblemInModuleInSiblingDir(t *testing.T) {
 
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -130,7 +130,7 @@ resource "problem" "uhoh" {
 
 func Test_ProblemInModuleIgnored(t *testing.T) {
 
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -159,7 +159,7 @@ resource "problem" "uhoh" {
 
 func Test_ProblemInModuleInSubdirectory(t *testing.T) {
 
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -186,7 +186,7 @@ resource "problem" "uhoh" {
 
 func Test_ProblemInModuleInParentDir(t *testing.T) {
 
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -213,7 +213,7 @@ resource "problem" "uhoh" {
 
 func Test_ProblemInModuleReuse(t *testing.T) {
 
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -249,7 +249,7 @@ resource "problem" "uhoh" {
 
 func Test_ProblemInNestedModule(t *testing.T) {
 
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -287,7 +287,7 @@ resource "problem" "uhoh" {
 
 func Test_ProblemInReusedNestedModule(t *testing.T) {
 
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -341,7 +341,7 @@ resource "problem" "uhoh" {
 
 func Test_ProblemInInitialisedModule(t *testing.T) {
 
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -390,7 +390,7 @@ resource "problem" "uhoh" {
 
 func Test_ProblemInReusedInitialisedModule(t *testing.T) {
 
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -428,7 +428,7 @@ resource "problem" "uhoh" {
 }
 
 func Test_ProblemInDuplicateModuleNameAndPath(t *testing.T) {
-	registered := rules.Register(badRule, nil)
+	registered := rules.Register(badRule)
 	defer rules.Deregister(registered)
 
 	fs := testutil.CreateFS(t, map[string]string{
@@ -519,7 +519,7 @@ resource "bad" "thing" {
 			},
 		},
 	}
-	reg := rules.Register(r1, nil)
+	reg := rules.Register(r1)
 	defer rules.Deregister(reg)
 
 	p := parser.New(fs, "", parser.OptionStopOnHCLError(true))
@@ -568,7 +568,7 @@ resource "bad" "thing" {
 			},
 		},
 	}
-	reg := rules.Register(r1, nil)
+	reg := rules.Register(r1)
 	defer rules.Deregister(reg)
 
 	p := parser.New(fs, "", parser.OptionStopOnHCLError(true))
@@ -626,6 +626,6 @@ data "aws_iam_policy_document" "policy" {
 	modules, _, err := p.EvaluateAll(context.TODO())
 	require.NoError(t, err)
 	results, _, _ := executor.New().Execute(modules)
-	testutil.AssertRuleNotFound(t, iam.CheckEnforceGroupMFA.GetRule().LongID(), results, "")
+	testutil.AssertRuleNotFound(t, iam.CheckEnforceGroupMFA.LongID(), results, "")
 
 }

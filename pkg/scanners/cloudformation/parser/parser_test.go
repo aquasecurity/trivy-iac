@@ -4,10 +4,13 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/aquasecurity/trivy-iac/test/testutil"
 )
 
 func parseFile(t *testing.T, source string, name string) (FileContexts, error) {
@@ -226,4 +229,146 @@ Resources:
 	refProp := res.GetProperty("LogGroupName")
 	assert.False(t, refProp.IsNil())
 	assert.Equal(t, "/aws/lambda/${ServiceName}", refProp.AsString())
+}
+
+func TestParse_WithParameters(t *testing.T) {
+
+	fs := testutil.CreateFS(t, map[string]string{
+		"main.yaml": `AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  KmsMasterKeyId:
+    Type: String
+Resources:
+  TestQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: test-queue
+      KmsMasterKeyId: !Ref KmsMasterKeyId
+      `,
+	})
+
+	params := map[string]any{
+		"KmsMasterKeyId": "some_id",
+	}
+	p := New(WithParameters(params))
+
+	files, err := p.ParseFS(context.TODO(), fs, ".")
+	require.NoError(t, err)
+	require.Len(t, files, 1)
+
+	file := files[0]
+	res := file.GetResourceByLogicalID("TestQueue")
+	assert.NotNil(t, res)
+
+	kmsProp := res.GetProperty("KmsMasterKeyId")
+	assert.False(t, kmsProp.IsNil())
+	assert.Equal(t, "some_id", kmsProp.AsString())
+}
+
+func TestParse_WithParameterFiles(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"main.yaml": `AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  KmsMasterKeyId:
+    Type: String
+Resources:
+  TestQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: test-queue
+      KmsMasterKeyId: !Ref KmsMasterKeyId
+`,
+		"params.json": `[
+   {
+        "ParameterKey": "KmsMasterKeyId",
+        "ParameterValue": "some_id"
+    }
+]
+      `,
+	})
+
+	p := New(WithParameterFiles("params.json"))
+
+	files, err := p.ParseFS(context.TODO(), fs, ".")
+	require.NoError(t, err)
+	require.Len(t, files, 1)
+
+	file := files[0]
+	res := file.GetResourceByLogicalID("TestQueue")
+	assert.NotNil(t, res)
+
+	kmsProp := res.GetProperty("KmsMasterKeyId")
+	assert.False(t, kmsProp.IsNil())
+	assert.Equal(t, "some_id", kmsProp.AsString())
+}
+
+func TestParse_WithConfigFS(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"queue.yaml": `AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  KmsMasterKeyId:
+    Type: String
+Resources:
+  TestQueue:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: testqueue
+      KmsMasterKeyId: !Ref KmsMasterKeyId
+`,
+		"bucket.yaml": `AWSTemplateFormatVersion: '2010-09-09'
+Description: Bucket
+Parameters:
+  BucketName:
+    Type: String
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+`,
+	})
+
+	configFS := testutil.CreateFS(t, map[string]string{
+		"/workdir/parameters/queue.json": `[
+      {
+           "ParameterKey": "KmsMasterKeyId",
+           "ParameterValue": "some_id"
+       }
+   ]
+         `,
+		"/workdir/parameters/s3.json": `[
+      {
+           "ParameterKey": "BucketName",
+           "ParameterValue": "testbucket"
+       }
+   ]`,
+	})
+
+	p := New(
+		WithParameterFiles("/workdir/parameters/queue.json", "/workdir/parameters/s3.json"),
+		WithConfigsFS(configFS),
+	)
+
+	files, err := p.ParseFS(context.TODO(), fs, ".")
+	require.NoError(t, err)
+	require.Len(t, files, 2)
+
+	for _, file := range files {
+		if strings.Contains(file.filepath, "queue") {
+			res := file.GetResourceByLogicalID("TestQueue")
+			assert.NotNil(t, res)
+
+			kmsProp := res.GetProperty("KmsMasterKeyId")
+			assert.False(t, kmsProp.IsNil())
+			assert.Equal(t, "some_id", kmsProp.AsString())
+		} else if strings.Contains(file.filepath, "s3") {
+			res := file.GetResourceByLogicalID("S3Bucket")
+			assert.NotNil(t, res)
+
+			bucketNameProp := res.GetProperty("BucketName")
+			assert.False(t, bucketNameProp.IsNil())
+			assert.Equal(t, "testbucket", bucketNameProp.AsString())
+		}
+	}
+
 }
