@@ -596,7 +596,7 @@ module "something" {
 `,
 		"modules/a/main.tf": `
 variable "group" {
-    type = "string"
+    type = string
 }
 
 resource aws_iam_group_policy mfa {
