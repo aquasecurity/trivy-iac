@@ -1,29 +1,11 @@
 package iam
 
 import (
-	"strings"
-
 	"github.com/aquasecurity/defsec/pkg/providers/aws/iam"
 	"github.com/aquasecurity/defsec/pkg/terraform"
 	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
 	"github.com/liamg/iamgo"
 )
-
-func sameProvider(b1, b2 *terraform.Block) bool {
-
-	if b1.HasChild("provider") != b2.HasChild("provider") {
-		return false
-	}
-
-	var provider1, provider2 string
-	if providerAttr := b1.GetAttribute("provider"); providerAttr.IsString() {
-		provider1 = providerAttr.Value().AsString()
-	}
-	if providerAttr := b2.GetAttribute("provider"); providerAttr.IsString() {
-		provider2 = providerAttr.Value().AsString()
-	}
-	return strings.EqualFold(provider1, provider2)
-}
 
 func parsePolicy(policyBlock *terraform.Block, modules terraform.Modules) (iam.Policy, error) {
 	policy := iam.Policy{
@@ -89,7 +71,7 @@ func applyForDependentResource[T any](
 			continue
 		}
 
-		if sameProvider(refBlock, resource) && isDependentBlock(refBlock, refAttrName, relatedAttr) {
+		if isDependentBlock(refBlock, refAttrName, relatedAttr) {
 			return fn(resource), true
 		}
 	}
