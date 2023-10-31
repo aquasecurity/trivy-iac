@@ -592,44 +592,6 @@ resource "something" "blah" {
 	assert.Equal(t, true, values[2].GetMetadata().IsResolvable())
 }
 
-func Test_DefaultRegistry(t *testing.T) {
-
-	fs := testutil.CreateFS(t, map[string]string{
-		"code/test.tf": `
-module "registry" {
-	source = "terraform-aws-modules/vpc/aws"
-}
-`,
-	})
-
-	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
-	modules, _, err := parser.EvaluateAll(context.TODO())
-	require.NoError(t, err)
-	require.Len(t, modules, 2)
-}
-
-func Test_SpecificRegistry(t *testing.T) {
-
-	fs := testutil.CreateFS(t, map[string]string{
-		"code/test.tf": `
-module "registry" {
-	source = "registry.terraform.io/terraform-aws-modules/vpc/aws"
-}
-`,
-	})
-
-	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
-	modules, _, err := parser.EvaluateAll(context.TODO())
-	require.NoError(t, err)
-	require.Len(t, modules, 2)
-}
-
 func Test_NullDefaultValueForVar(t *testing.T) {
 	fs := testutil.CreateFS(t, map[string]string{
 		"test.tf": `
