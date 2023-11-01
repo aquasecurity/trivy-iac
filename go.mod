@@ -7,7 +7,7 @@ require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/alecthomas/chroma v0.10.0 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aquasecurity/defsec v0.93.2-0.20231020041402-7ccc46780c09
+	github.com/aquasecurity/defsec v0.93.2-0.20231024055158-015ab97ce898
 	github.com/aquasecurity/trivy-policies v0.3.1-0.20231021040354-0572a07131c2
 	github.com/aws/aws-sdk-go v1.44.245 // indirect
 	github.com/aws/smithy-go v1.14.2
@@ -38,6 +38,8 @@ require (
 )
 
 require github.com/mitchellh/mapstructure v1.5.0
+
+require golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
 
 require (
 	cloud.google.com/go v0.110.4 // indirect
