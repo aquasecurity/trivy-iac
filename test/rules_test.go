@@ -1,9 +1,14 @@
 package test
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/framework"
+	"github.com/stretchr/testify/require"
 
 	"github.com/aquasecurity/trivy-iac/pkg/rules"
 )
@@ -24,19 +29,19 @@ func TestAVDIDs(t *testing.T) {
 	}
 }
 
-// func TestRulesAgainstExampleCode(t *testing.T) {
-// 	for _, rule := range rules.GetRegistered(framework.ALL) {
-// 		testName := fmt.Sprintf("%s/%s", rule.GetRule().AVDID, rule.LongID())
-// 		t.Run(testName, func(t *testing.T) {
-// 			rule := rule
-// 			t.Parallel()
+func TestRulesAgainstExampleCode(t *testing.T) {
+	for _, rule := range rules.GetRegistered(framework.ALL) {
+		testName := fmt.Sprintf("%s/%s", rule.GetRule().AVDID, rule.LongID())
+		t.Run(testName, func(t *testing.T) {
+			rule := rule
+			t.Parallel()
 
-// 			t.Run("avd docs", func(t *testing.T) {
-// 				provider := strings.ToLower(rule.GetRule().Provider.ConstName())
-// 				service := strings.ToLower(strings.ReplaceAll(rule.GetRule().Service, "-", ""))
-// 				_, err := os.Stat(filepath.Join("..", "avd_docs", provider, service, rule.GetRule().AVDID, "docs.md"))
-// 				require.NoError(t, err)
-// 			})
-// 		})
-// 	}
-// }
+			t.Run("avd docs", func(t *testing.T) {
+				provider := strings.ToLower(rule.GetRule().Provider.ConstName())
+				service := strings.ToLower(strings.ReplaceAll(rule.GetRule().Service, "-", ""))
+				_, err := os.Stat(filepath.Join("..", "avd_docs", provider, service, rule.GetRule().AVDID, "docs.md"))
+				require.NoError(t, err)
+			})
+		})
+	}
+}
