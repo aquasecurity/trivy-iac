@@ -153,10 +153,6 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 						},
 						LoggingService:    defsecTypes.String("logging.googleapis.com/kubernetes", defsecTypes.NewTestMetadata()),
 						MonitoringService: defsecTypes.String("monitoring.googleapis.com/kubernetes", defsecTypes.NewTestMetadata()),
-						PodSecurityPolicy: gke.PodSecurityPolicy{
-							Metadata: defsecTypes.NewTestMetadata(),
-							Enabled:  defsecTypes.Bool(true, defsecTypes.NewTestMetadata()),
-						},
 						MasterAuth: gke.MasterAuth{
 							Metadata: defsecTypes.NewTestMetadata(),
 							ClientCertificate: gke.ClientCertificate{
@@ -227,10 +223,6 @@ resource "google_container_cluster" "example" {
 						},
 						LoggingService:    defsecTypes.String("logging.googleapis.com/kubernetes", defsecTypes.NewTestMetadata()),
 						MonitoringService: defsecTypes.String("monitoring.googleapis.com/kubernetes", defsecTypes.NewTestMetadata()),
-						PodSecurityPolicy: gke.PodSecurityPolicy{
-							Metadata: defsecTypes.NewTestMetadata(),
-							Enabled:  defsecTypes.Bool(false, defsecTypes.NewTestMetadata()),
-						},
 						MasterAuth: gke.MasterAuth{
 							Metadata: defsecTypes.NewTestMetadata(),
 							ClientCertificate: gke.ClientCertificate{
@@ -341,12 +333,6 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 
 	assert.Equal(t, 50, cluster.NodeConfig.EnableLegacyEndpoints.GetMetadata().Range().GetStartLine())
 	assert.Equal(t, 52, cluster.NodeConfig.EnableLegacyEndpoints.GetMetadata().Range().GetEndLine())
-
-	assert.Equal(t, 9, cluster.PodSecurityPolicy.Metadata.Range().GetStartLine())
-	assert.Equal(t, 11, cluster.PodSecurityPolicy.Metadata.Range().GetEndLine())
-
-	assert.Equal(t, 10, cluster.PodSecurityPolicy.Enabled.GetMetadata().Range().GetStartLine())
-	assert.Equal(t, 10, cluster.PodSecurityPolicy.Enabled.GetMetadata().Range().GetEndLine())
 
 	assert.Equal(t, 13, cluster.EnableLegacyABAC.GetMetadata().Range().GetStartLine())
 	assert.Equal(t, 13, cluster.EnableLegacyABAC.GetMetadata().Range().GetEndLine())
