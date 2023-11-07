@@ -1,32 +1,11 @@
 package iam
 
 import (
-	"strings"
-
-	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-
-	"github.com/liamg/iamgo"
-
-	"github.com/aquasecurity/defsec/pkg/terraform"
-
 	"github.com/aquasecurity/defsec/pkg/providers/aws/iam"
+	"github.com/aquasecurity/defsec/pkg/terraform"
+	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
+	"github.com/liamg/iamgo"
 )
-
-func sameProvider(b1, b2 *terraform.Block) bool {
-
-	if b1.HasChild("provider") != b2.HasChild("provider") {
-		return false
-	}
-
-	var provider1, provider2 string
-	if providerAttr := b1.GetAttribute("provider"); providerAttr.IsString() {
-		provider1 = providerAttr.Value().AsString()
-	}
-	if providerAttr := b2.GetAttribute("provider"); providerAttr.IsString() {
-		provider2 = providerAttr.Value().AsString()
-	}
-	return strings.EqualFold(provider1, provider2)
-}
 
 func parsePolicy(policyBlock *terraform.Block, modules terraform.Modules) (iam.Policy, error) {
 	policy := iam.Policy{
@@ -51,23 +30,80 @@ func parsePolicy(policyBlock *terraform.Block, modules terraform.Modules) (iam.P
 
 func adaptPolicies(modules terraform.Modules) (policies []iam.Policy) {
 	for _, policyBlock := range modules.GetResourcesByType("aws_iam_policy") {
-		policy := iam.Policy{
-			Metadata: policyBlock.GetMetadata(),
-			Name:     policyBlock.GetAttribute("name").AsStringValueOrDefault("", policyBlock),
-			Document: iam.Document{
-				Metadata: defsecTypes.NewUnmanagedMetadata(),
-				Parsed:   iamgo.Document{},
-				IsOffset: false,
-				HasRefs:  false,
-			},
-			Builtin: defsecTypes.Bool(false, policyBlock.GetMetadata()),
-		}
-		doc, err := ParsePolicyFromAttr(policyBlock.GetAttribute("policy"), policyBlock, modules)
+		policy, err := parsePolicy(policyBlock, modules)
 		if err != nil {
 			continue
 		}
-		policy.Document = *doc
 		policies = append(policies, policy)
 	}
 	return
+}
+
+// applyForDependentResource returns the result of
+// applying the function to the dependent block from the parent block and true
+// if the parent block was found.
+//
+//	resource "aws_s3_bucket" "this" {
+//	  bucket = ...
+//	  ...
+//	}
+//
+//	resource "aws_s3_bucket_logging" "this" {
+//	  bucket = aws_s3_bucket.this.id
+//	  ...
+//	}
+func applyForDependentResource[T any](
+	modules terraform.Modules,
+	refBlockID string,
+	refAttrName string,
+	dependentResourceType string,
+	dependentAttrName string,
+	fn func(resource *terraform.Block) T,
+) (T, bool) {
+	for _, resource := range modules.GetResourcesByType(dependentResourceType) {
+		relatedAttr := resource.GetAttribute(dependentAttrName)
+		if relatedAttr.IsNil() {
+			continue
+		}
+
+		refBlock, err := modules.GetBlockById(refBlockID)
+		if err != nil {
+			continue
+		}
+
+		if isDependentBlock(refBlock, refAttrName, relatedAttr) {
+			return fn(resource), true
+		}
+	}
+	var res T
+	return res, false
+}
+
+func isDependentBlock(refBlock *terraform.Block, refAttrName string, relatedAttr *terraform.Attribute) bool {
+	refAttr := refBlock.GetAttribute(refAttrName).AsStringValueOrDefault("", refBlock).Value()
+	return relatedAttr.Equals(refBlock.ID()) || relatedAttr.Equals(refAttr) || relatedAttr.ReferencesBlock(refBlock)
+}
+
+func findPolicy(modules terraform.Modules) func(resource *terraform.Block) *iam.Policy {
+	return func(resource *terraform.Block) *iam.Policy {
+		policy, err := parsePolicy(resource, modules)
+		if err != nil {
+			return nil
+		}
+		return &policy
+	}
+}
+
+func findAttachmentPolicy(modules terraform.Modules) func(resource *terraform.Block) *iam.Policy {
+	return func(resource *terraform.Block) *iam.Policy {
+		policyAttr := resource.GetAttribute("policy_arn")
+		if policyAttr.IsNil() {
+			return nil
+		}
+		policyBlock, err := modules.GetReferencedBlock(policyAttr, resource)
+		if err != nil {
+			return nil
+		}
+		return findPolicy(modules)(policyBlock)
+	}
 }

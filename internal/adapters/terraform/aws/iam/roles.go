@@ -3,119 +3,36 @@ package iam
 import (
 	"github.com/aquasecurity/defsec/pkg/providers/aws/iam"
 	"github.com/aquasecurity/defsec/pkg/terraform"
-	defsecTypes "github.com/aquasecurity/defsec/pkg/types"
-	"github.com/liamg/iamgo"
 )
 
 func adaptRoles(modules terraform.Modules) []iam.Role {
-
-	roleMap, policyMap := mapRoles(modules)
-
-	for _, policyBlock := range modules.GetResourcesByType("aws_iam_role_policy") {
-		if _, ok := policyMap[policyBlock.ID()]; ok {
-			continue
-		}
-		roleAttr := policyBlock.GetAttribute("role")
-		if roleAttr.IsNil() {
-			continue
-		}
-		roleBlock, err := modules.GetReferencedBlock(roleAttr, policyBlock)
-		if err != nil {
-			continue
-		}
-		policy, err := parsePolicy(policyBlock, modules)
-		if err != nil {
-			continue
-		}
-		role, ok := roleMap[roleBlock.ID()]
-		if !ok {
-			role = iam.Role{
-				Metadata: roleBlock.GetMetadata(),
-				Name:     roleBlock.GetAttribute("name").AsStringValueOrDefault("", roleBlock),
-				Policies: nil,
-			}
-		}
-		role.Policies = append(role.Policies, policy)
-		roleMap[roleBlock.ID()] = role
-	}
-
-	var output []iam.Role
-	for _, role := range roleMap {
-		output = append(output, role)
-	}
-	return output
-}
-
-func mapRoles(modules terraform.Modules) (map[string]iam.Role, map[string]struct{}) {
-	policyMap := make(map[string]struct{})
-	roleMap := make(map[string]iam.Role)
+	var roles []iam.Role
 	for _, roleBlock := range modules.GetResourcesByType("aws_iam_role") {
 		role := iam.Role{
 			Metadata: roleBlock.GetMetadata(),
 			Name:     roleBlock.GetAttribute("name").AsStringValueOrDefault("", roleBlock),
-			Policies: nil,
 		}
+
 		if inlineBlock := roleBlock.GetBlock("inline_policy"); inlineBlock.IsNotNil() {
-			policy := iam.Policy{
-				Metadata: inlineBlock.GetMetadata(),
-				Name:     inlineBlock.GetAttribute("name").AsStringValueOrDefault("", inlineBlock),
-				Document: iam.Document{
-					Metadata: defsecTypes.NewUnmanagedMetadata(),
-					Parsed:   iamgo.Document{},
-					IsOffset: false,
-					HasRefs:  false,
-				},
-				Builtin: defsecTypes.Bool(false, inlineBlock.GetMetadata()),
-			}
-			doc, err := ParsePolicyFromAttr(inlineBlock.GetAttribute("policy"), inlineBlock, modules)
-			if err != nil {
-				continue
-			}
-			policy.Document = *doc
-			role.Policies = append(role.Policies, policy)
-		}
-
-		for _, block := range modules.GetResourcesByType("aws_iam_role_policy") {
-			if !sameProvider(roleBlock, block) {
-				continue
-			}
-			if roleAttr := block.GetAttribute("role"); roleAttr.IsString() {
-				if roleAttr.Equals(role.Name.Value()) {
-					policy, err := parsePolicy(block, modules)
-					if err != nil {
-						continue
-					}
-					role.Policies = append(role.Policies, policy)
-					policyMap[block.ID()] = struct{}{}
-				}
+			if policy, err := parsePolicy(inlineBlock, modules); err == nil {
+				role.Policies = append(role.Policies, policy)
 			}
 		}
 
-		for _, block := range modules.GetResourcesByType("aws_iam_role_policy_attachment") {
-			if !sameProvider(roleBlock, block) {
-				continue
-			}
-			if roleAttr := block.GetAttribute("role"); roleAttr.IsString() {
-				if roleAttr.Equals(role.Name.Value()) {
-					policyAttr := block.GetAttribute("policy_arn")
-
-					policyBlock, err := modules.GetReferencedBlock(policyAttr, block)
-					if err != nil {
-						continue
-					}
-					policy, err := parsePolicy(policyBlock, modules)
-					if err != nil {
-						continue
-					}
-					role.Policies = append(role.Policies, policy)
-					policyMap[block.ID()] = struct{}{}
-				}
-			}
+		if policy, ok := applyForDependentResource(
+			modules, roleBlock.ID(), "name", "aws_iam_role_policy", "role", findPolicy(modules),
+		); ok && policy != nil {
+			role.Policies = append(role.Policies, *policy)
 		}
 
-		roleMap[roleBlock.ID()] = role
+		if policy, ok := applyForDependentResource(
+			modules, roleBlock.ID(), "name", "aws_iam_role_policy_attachment", "role", findAttachmentPolicy(modules),
+		); ok && policy != nil {
+			role.Policies = append(role.Policies, *policy)
+		}
+
+		roles = append(roles, role)
 	}
 
-	return roleMap, policyMap
-
+	return roles
 }
