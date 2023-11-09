@@ -65,7 +65,7 @@ func (p *Parser) addTarToFS(path string) (fs.FS, error) {
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if err := tarFS.MkdirAll(entryPath, os.FileMode(header.Mode)); err != nil && err != fs.ErrExist {
+			if err := tarFS.MkdirAll(entryPath, os.FileMode(header.Mode)); err != nil && !errors.Is(err, fs.ErrExist) {
 				return nil, err
 			}
 		case tar.TypeReg:
@@ -73,19 +73,14 @@ func (p *Parser) addTarToFS(path string) (fs.FS, error) {
 			p.debug.Log("Unpacking tar entry %s", writePath)
 
 			_ = tarFS.MkdirAll(filepath.Dir(writePath), fs.ModePerm)
-			var writer bytes.Buffer
 
-			for {
-				if _, err := io.CopyN(&writer, tr, 1024); err != nil {
-					if errors.Is(err, io.EOF) {
-						break
-					}
-					return nil, fmt.Errorf("failed to copy: %w", err)
-				}
+			buf, err := copyChunked(tr, 1024)
+			if err != nil {
+				return nil, err
 			}
 
 			p.debug.Log("writing file contents to %s", writePath)
-			if err := tarFS.WriteFile(writePath, writer.Bytes(), fs.ModePerm); err != nil {
+			if err := tarFS.WriteFile(writePath, buf.Bytes(), fs.ModePerm); err != nil {
 				return nil, fmt.Errorf("write file error: %w", err)
 			}
 		default:
@@ -98,4 +93,18 @@ func (p *Parser) addTarToFS(path string) (fs.FS, error) {
 	}
 
 	return tarFS, nil
+}
+
+func copyChunked(src io.Reader, chunkSize int64) (*bytes.Buffer, error) {
+	buf := new(bytes.Buffer)
+	for {
+		if _, err := io.CopyN(buf, src, chunkSize); err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return nil, fmt.Errorf("failed to copy: %w", err)
+		}
+	}
+
+	return buf, nil
 }
