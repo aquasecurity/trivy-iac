@@ -2,6 +2,7 @@ package test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/providers"
@@ -16,6 +17,7 @@ var exampleRule = scan.Rule{
 	Provider:  providers.AWSProvider,
 	Service:   "service",
 	ShortCode: "abc123",
+	AVDID:     "AWS-ABC-123",
 	Aliases:   []string{"aws-other-abc123"},
 	Severity:  severity.High,
 	CustomChecks: scan.CustomChecks{
@@ -490,4 +492,38 @@ func Test_TrivyIgnoreInline(t *testing.T) {
 	}
 	  `, exampleRule.LongID()))
 	assert.Len(t, results.GetFailed(), 0)
+}
+
+func Test_IgnoreInlineByAVDID(t *testing.T) {
+	testCases := []struct {
+		input string
+	}{
+		{
+			input: `
+	resource "bad" "sample" {
+		  secure = false # tfsec:ignore:%s
+	}
+	  `,
+		},
+		{
+			input: `
+	resource "bad" "sample" {
+		  secure = false # trivy:ignore:%s
+	}
+	  `,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		for _, id := range []string{exampleRule.AVDID, strings.ToLower(exampleRule.AVDID), exampleRule.ShortCode, exampleRule.LongID()} {
+			id := id
+			t.Run("", func(t *testing.T) {
+				reg := rules.Register(exampleRule)
+				defer rules.Deregister(reg)
+				results := scanHCL(t, fmt.Sprintf(tc.input, id))
+				assert.Len(t, results.GetFailed(), 0)
+			})
+		}
+	}
 }
