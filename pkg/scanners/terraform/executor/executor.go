@@ -3,6 +3,7 @@ package executor
 import (
 	"runtime"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/aquasecurity/defsec/pkg/debug"
@@ -130,6 +131,7 @@ func (e *Executor) Execute(modules terraform.Modules) (scan.Results, Metrics, er
 			allIDs := []string{
 				result.Rule().LongID(),
 				result.Rule().AVDID,
+				strings.ToLower(result.Rule().AVDID),
 				result.Rule().ShortCode,
 			}
 			allIDs = append(allIDs, result.Rule().Aliases...)
