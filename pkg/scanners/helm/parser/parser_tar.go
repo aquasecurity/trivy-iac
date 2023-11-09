@@ -15,31 +15,31 @@ import (
 	"github.com/liamg/memoryfs"
 )
 
+var errSkipFS = errors.New("skip parse FS")
+
 func (p *Parser) addTarToFS(path string) (fs.FS, error) {
-
-	var tr *tar.Reader
-	var err error
-
 	tarFS := memoryfs.CloneFS(p.workingFS)
-	if err != nil {
-		return nil, err
-	}
 
 	file, err := tarFS.Open(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open tar: %w", err)
 	}
-	defer func() { _ = file.Close() }()
+	defer file.Close()
+
+	var tr *tar.Reader
+
 	if detection.IsZip(path) {
 		zipped, err := gzip.NewReader(file)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create gzip reader: %w", err)
 		}
-		defer func() { _ = zipped.Close() }()
+		defer zipped.Close()
 		tr = tar.NewReader(zipped)
 	} else {
 		tr = tar.NewReader(file)
 	}
+
+	checkExistedChart := true
 
 	for {
 		header, err := tr.Next()
@@ -47,7 +47,17 @@ func (p *Parser) addTarToFS(path string) (fs.FS, error) {
 			if errors.Is(err, io.EOF) {
 				break
 			}
-			return nil, err
+			return nil, fmt.Errorf("failed to get next entry: %w", err)
+		}
+
+		if checkExistedChart {
+			// Do not add archive files to FS if the chart already exists
+			// This can happen when the source chart is located next to an archived chart (with the `helm package` command)
+			// The first level folder in the archive is equal to the Chart name
+			if _, err := tarFS.Stat(filepath.Dir(path) + "/" + filepath.Dir(header.Name)); err == nil {
+				return nil, errSkipFS
+			}
+			checkExistedChart = false
 		}
 
 		// get the individual path and extract to the current directory
@@ -55,42 +65,36 @@ func (p *Parser) addTarToFS(path string) (fs.FS, error) {
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if err := tarFS.MkdirAll(entryPath, os.FileMode(header.Mode)); err != nil {
+			if err := tarFS.MkdirAll(entryPath, os.FileMode(header.Mode)); err != nil && err != fs.ErrExist {
 				return nil, err
 			}
 		case tar.TypeReg:
-			writePath := fmt.Sprintf("%s/%s", filepath.Dir(path), entryPath)
+			writePath := filepath.Dir(path) + "/" + entryPath
 			p.debug.Log("Unpacking tar entry %s", writePath)
-			_ = tarFS.MkdirAll(filepath.Dir(writePath), fs.ModePerm)
-			content := []byte{}
-			writer := bytes.NewBuffer(content)
 
-			if err != nil {
-				return nil, err
-			}
+			_ = tarFS.MkdirAll(filepath.Dir(writePath), fs.ModePerm)
+			var writer bytes.Buffer
+
 			for {
-				_, err := io.CopyN(writer, tr, 1024)
-				if err != nil {
+				if _, err := io.CopyN(&writer, tr, 1024); err != nil {
 					if errors.Is(err, io.EOF) {
 						break
 					}
-					return nil, err
+					return nil, fmt.Errorf("failed to copy: %w", err)
 				}
 			}
 
 			p.debug.Log("writing file contents to %s", writePath)
 			if err := tarFS.WriteFile(writePath, writer.Bytes(), fs.ModePerm); err != nil {
-				return nil, err
+				return nil, fmt.Errorf("write file error: %w", err)
 			}
-
 		default:
-			return nil, fmt.Errorf("could not untar the section")
+			return nil, fmt.Errorf("header type %q is not supported", header.Typeflag)
 		}
 	}
 
-	// remove the tarball from the fs
 	if err := tarFS.Remove(path); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to remove tar from FS: %w", err)
 	}
 
 	return tarFS, nil

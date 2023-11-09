@@ -3,6 +3,7 @@ package parser
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -121,8 +122,11 @@ func (p *Parser) ParseFS(ctx context.Context, target fs.FS, path string) error {
 
 		if detection.IsArchive(path) {
 			tarFS, err := p.addTarToFS(path)
-			if err != nil {
-				return err
+			if errors.Is(err, errSkipFS) {
+				// an unpacked Chart already exists
+				return nil
+			} else if err != nil {
+				return fmt.Errorf("failed to add tar %q to FS: %w", path, err)
 			}
 
 			targetPath := filepath.Dir(path)
@@ -131,14 +135,14 @@ func (p *Parser) ParseFS(ctx context.Context, target fs.FS, path string) error {
 			}
 
 			if err := p.ParseFS(ctx, tarFS, targetPath); err != nil {
-				return err
+				return fmt.Errorf("parse tar FS error: %w", err)
 			}
 			return nil
+		} else {
+			return p.addPaths(path)
 		}
-
-		return p.addPaths(path)
 	}); err != nil {
-		return err
+		return fmt.Errorf("walk dir error: %w", err)
 	}
 
 	return nil
