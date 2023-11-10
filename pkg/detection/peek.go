@@ -45,16 +45,9 @@ func IsHelmChartArchive(path string, file io.Reader) bool {
 }
 
 func IsArchive(path string) bool {
-	if strings.HasSuffix(path, ".tar") || IsZip(path) {
-		return true
-	}
-	return false
+	return strings.HasSuffix(path, ".tar") || IsZip(path)
 }
 
 func IsZip(path string) bool {
-	if strings.HasSuffix(path, ".tgz") ||
-		strings.HasSuffix(path, ".tar.gz") {
-		return true
-	}
-	return false
+	return strings.HasSuffix(path, ".tgz") || strings.HasSuffix(path, ".tar.gz")
 }
