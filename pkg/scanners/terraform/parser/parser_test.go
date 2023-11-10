@@ -850,3 +850,42 @@ policy_rules = {
 	assert.Equal(t, "host() != 'google.com'", block.GetAttribute("session_matcher").AsStringValueOrDefault("", block).Value())
 	assert.Equal(t, 1001, block.GetAttribute("priority").AsIntValueOrDefault(0, block).Value())
 }
+
+func Test_ForEachRefersToMapThatContainsSameStringValues(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"main.tf": `locals {
+  buckets = {
+    bucket1 = "test1"
+    bucket2 = "test1"
+  }
+}
+
+resource "aws_s3_bucket" "this" {
+  for_each = local.buckets
+  bucket = each.key
+}
+`,
+	})
+
+	parser := New(fs, "", OptionStopOnHCLError(true))
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
+	modules, _, err := parser.EvaluateAll(context.TODO())
+	assert.NoError(t, err)
+	assert.Len(t, modules, 1)
+
+	bucketBlocks := modules.GetResourcesByType("aws_s3_bucket")
+	assert.Len(t, bucketBlocks, 2)
+
+	var labels []string
+
+	for _, b := range bucketBlocks {
+		labels = append(labels, b.Label())
+	}
+
+	expectedLabels := []string{
+		`aws_s3_bucket.this["bucket1"]`,
+		`aws_s3_bucket.this["bucket2"]`,
+	}
+	assert.Equal(t, expectedLabels, labels)
+}

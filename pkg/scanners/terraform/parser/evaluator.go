@@ -240,15 +240,7 @@ func (e *evaluator) expandBlockForEaches(blocks terraform.Blocks) terraform.Bloc
 		if !forEachAttr.Value().IsNull() && forEachAttr.Value().IsKnown() && forEachAttr.IsIterable() {
 			var clones []cty.Value
 			_ = forEachAttr.Each(func(key cty.Value, val cty.Value) {
-
-				index := key
-
-				switch val.Type() {
-				case cty.String, cty.Number:
-					index = val
-				}
-
-				clone := block.Clone(index)
+				clone := block.Clone(key)
 
 				ctx := clone.Context()
 
