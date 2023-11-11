@@ -16,6 +16,7 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
 	"github.com/zclconf/go-cty/cty/gocty"
+	"golang.org/x/exp/slices"
 )
 
 const (
@@ -279,11 +280,15 @@ func (e *evaluator) expandBlockForEaches(blocks terraform.Blocks) terraform.Bloc
 	return forEachFiltered
 }
 
+func isBlockSupportsCountMetaArgument(block *terraform.Block) bool {
+	return slices.Contains([]string{"module", "resource", "data"}, block.Type())
+}
+
 func (e *evaluator) expandBlockCounts(blocks terraform.Blocks) terraform.Blocks {
 	var countFiltered terraform.Blocks
 	for _, block := range blocks {
 		countAttr := block.GetAttribute("count")
-		if countAttr.IsNil() || block.IsCountExpanded() || (block.Type() != "resource" && block.Type() != "module") {
+		if countAttr.IsNil() || block.IsCountExpanded() || !isBlockSupportsCountMetaArgument(block) {
 			countFiltered = append(countFiltered, block)
 			continue
 		}
