@@ -68,6 +68,58 @@ func Test_adaptPolicies(t *testing.T) {
 			},
 		},
 		{
+			name: "aws_iam_policy_document with count Meta-Argument",
+			terraform: `locals {
+  sqs = [
+    "arn:aws:sqs:::*"
+  ]
+}
+
+data "aws_iam_policy_document" "this" {
+  count = length(local.sqs)
+  statement {
+    sid = "test-${count.index}"
+    actions = [
+      "sqs:CancelMessageMoveTask"
+    ]
+    resources = [
+      "${local.sqs[count.index]}"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "this" {
+  count  = length(local.sqs)
+  name   = "test-${count.index}"
+  policy = data.aws_iam_policy_document.this[count.index].json
+}
+`,
+			expected: []iam.Policy{
+				{
+					Metadata: defsecTypes.NewTestMetadata(),
+					Name:     defsecTypes.String("test-0", defsecTypes.NewTestMetadata()),
+					Builtin:  defsecTypes.Bool(false, defsecTypes.NewTestMetadata()),
+					Document: iam.Document{
+						Metadata: defsecTypes.NewTestMetadata(),
+						IsOffset: true,
+						HasRefs:  false,
+						Parsed: func() iamgo.Document {
+							builder := iamgo.NewPolicyBuilder()
+
+							sb := iamgo.NewStatementBuilder()
+							sb.WithEffect(iamgo.EffectAllow)
+							sb.WithSid("test-0")
+							sb.WithActions([]string{"sqs:CancelMessageMoveTask"})
+							sb.WithResources([]string{"arn:aws:sqs:::*"})
+
+							builder.WithStatement(sb.Build())
+							return builder.Build()
+						}(),
+					},
+				},
+			},
+		},
+		{
 			name: "aws_iam_policy_document with for_each meta-argument",
 			terraform: `locals {
   sqs = {
