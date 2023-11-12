@@ -890,6 +890,39 @@ resource "aws_s3_bucket" "this" {
 	assert.Equal(t, expectedLabels, labels)
 }
 
+func TestDataSourceWithCountMetaArgument(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"main.tf": `
+data "http" "example" {
+  count = 2
+}
+`,
+	})
+
+	parser := New(fs, "", OptionStopOnHCLError(true))
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
+	modules, _, err := parser.EvaluateAll(context.TODO())
+	assert.NoError(t, err)
+	assert.Len(t, modules, 1)
+
+	rootModule := modules[0]
+
+	httpDataSources := rootModule.GetDatasByType("http")
+	assert.Len(t, httpDataSources, 2)
+
+	var labels []string
+	for _, b := range httpDataSources {
+		labels = append(labels, b.Label())
+	}
+
+	expectedLabels := []string{
+		`http.example[0]`,
+		`http.example[1]`,
+	}
+	assert.Equal(t, expectedLabels, labels)
+}
+
 func TestForEach(t *testing.T) {
 
 	tests := []struct {
