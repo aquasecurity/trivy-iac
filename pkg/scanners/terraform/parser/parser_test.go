@@ -889,3 +889,125 @@ resource "aws_s3_bucket" "this" {
 	}
 	assert.Equal(t, expectedLabels, labels)
 }
+
+func TestForEach(t *testing.T) {
+
+	tests := []struct {
+		name          string
+		source        string
+		expectedCount int
+	}{
+		{
+			name: "arg is list of strings",
+			source: `locals {
+  buckets = ["bucket1", "bucket2"]
+}
+
+resource "aws_s3_bucket" "this" {
+  for_each = local.buckets
+  bucket = each.key
+}`,
+			expectedCount: 0,
+		},
+		{
+			name: "arg is empty set",
+			source: `locals {
+  buckets = toset([])
+}
+
+resource "aws_s3_bucket" "this" {
+  for_each = loca.buckets
+  bucket = each.key
+}`,
+			expectedCount: 0,
+		},
+		{
+			name: "arg is set of strings",
+			source: `locals {
+  buckets = ["bucket1", "bucket2"]
+}
+
+resource "aws_s3_bucket" "this" {
+  for_each = toset(local.buckets)
+  bucket = each.key
+}`,
+			expectedCount: 2,
+		},
+		{
+			name: "arg is map",
+			source: `locals {
+  buckets = {
+    1 = {}
+    2 = {}
+  }
+}
+
+resource "aws_s3_bucket" "this" {
+  for_each = local.buckets
+  bucket = each.key
+}`,
+			expectedCount: 2,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			fs := testutil.CreateFS(t, map[string]string{
+				"main.tf": tt.source,
+			})
+			parser := New(fs, "", OptionStopOnHCLError(true))
+			require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
+			modules, _, err := parser.EvaluateAll(context.TODO())
+			assert.NoError(t, err)
+			assert.Len(t, modules, 1)
+
+			bucketBlocks := modules.GetResourcesByType("aws_s3_bucket")
+			assert.Len(t, bucketBlocks, tt.expectedCount)
+		})
+	}
+}
+
+func TestForEachRefToResource(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"main.tf": `
+	locals {
+  vpcs = {
+    "test1" = {
+      cidr_block = "192.168.0.0/28"
+    }
+    "test2" = {
+      cidr_block = "192.168.1.0/28"
+    }
+  }
+}
+
+resource "aws_vpc" "example" {
+  for_each = local.vpcs
+  cidr_block = each.value.cidr_block
+}
+
+resource "aws_internet_gateway" "example" {
+  for_each = aws_vpc.example
+  vpc_id = each.key
+}
+`,
+	})
+	parser := New(fs, "", OptionStopOnHCLError(true))
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
+	modules, _, err := parser.EvaluateAll(context.TODO())
+	assert.NoError(t, err)
+	assert.Len(t, modules, 1)
+
+	blocks := modules.GetResourcesByType("aws_internet_gateway")
+	assert.Len(t, blocks, 2)
+
+	var vpcIds []string
+	for _, b := range blocks {
+		vpcIds = append(vpcIds, b.GetAttribute("vpc_id").Value().AsString())
+	}
+
+	expectedVpcIds := []string{"test1", "test2"}
+	assert.Equal(t, expectedVpcIds, vpcIds)
+}

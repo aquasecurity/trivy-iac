@@ -537,7 +537,7 @@ func Test_Dynamic_Variables_FalsePositive(t *testing.T) {
 resource "something" "else" {
 	x = 1
 	dynamic "blah" {
-		for_each = [true]
+		for_each = toset(["true"])
 
 		content {
 			ok = each.value
