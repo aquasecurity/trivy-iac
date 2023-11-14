@@ -5055,6 +5055,10 @@
         "name": {
           "type": "object",
           "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.StringValue"
+        },
+        "purpose": {
+          "type": "object",
+          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.StringValue"
         }
       }
     },
@@ -5177,10 +5181,6 @@
             "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.providers.google.gke.NodePool"
           }
         },
-        "podsecuritypolicy": {
-          "type": "object",
-          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.providers.google.gke.PodSecurityPolicy"
-        },
         "privatecluster": {
           "type": "object",
           "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.providers.google.gke.PrivateCluster"
@@ -5302,15 +5302,6 @@
         "nodeconfig": {
           "type": "object",
           "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.providers.google.gke.NodeConfig"
-        }
-      }
-    },
-    "github.com.aquasecurity.defsec.pkg.providers.google.gke.PodSecurityPolicy": {
-      "type": "object",
-      "properties": {
-        "enabled": {
-          "type": "object",
-          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.BoolValue"
         }
       }
     },
