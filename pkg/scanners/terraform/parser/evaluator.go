@@ -8,6 +8,8 @@ import (
 	"reflect"
 	"time"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/aquasecurity/defsec/pkg/debug"
 	"github.com/aquasecurity/defsec/pkg/terraform"
 	tfcontext "github.com/aquasecurity/defsec/pkg/terraform/context"
@@ -16,7 +18,6 @@ import (
 	"github.com/hashicorp/hcl/v2/ext/typeexpr"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
-	"golang.org/x/exp/slices"
 )
 
 const (
@@ -263,6 +264,10 @@ func validateForEachArg(arg cty.Value) error {
 	return nil
 }
 
+func isBlockSupportsForEachMetaArgument(block *terraform.Block) bool {
+	return slices.Contains([]string{"module", "resource", "data", "dynamic"}, block.Type())
+}
+
 func (e *evaluator) expandBlockForEaches(blocks terraform.Blocks) terraform.Blocks {
 	var forEachFiltered terraform.Blocks
 
@@ -270,7 +275,7 @@ func (e *evaluator) expandBlockForEaches(blocks terraform.Blocks) terraform.Bloc
 
 		forEachAttr := block.GetAttribute("for_each")
 
-		if forEachAttr.IsNil() || block.IsCountExpanded() || (block.Type() != "resource" && block.Type() != "module" && block.Type() != "dynamic") {
+		if forEachAttr.IsNil() || block.IsCountExpanded() || !isBlockSupportsForEachMetaArgument(block) {
 			forEachFiltered = append(forEachFiltered, block)
 			continue
 		}

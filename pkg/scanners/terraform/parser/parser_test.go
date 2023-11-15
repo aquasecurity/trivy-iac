@@ -68,13 +68,10 @@ check "cats_mittens_is_special" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "."); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
+
 	blocks := modules[0].GetBlocks()
 
 	// variable
@@ -172,13 +169,11 @@ output "mod_result" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true), options.ParserWithDebug(os.Stderr))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "code"))
+
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
+
 	require.Len(t, modules, 2)
 	rootModule := modules[0]
 	childModule := modules[1]
@@ -236,13 +231,9 @@ output "mod_result" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "code"))
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 	require.Len(t, modules, 2)
 	rootModule := modules[0]
 	childModule := modules[1]
@@ -285,13 +276,9 @@ resource "something" "blah" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "code"))
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 	require.Len(t, modules, 1)
 	rootModule := modules[0]
 
@@ -316,13 +303,9 @@ resource "something" "blah" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "code"))
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 	require.Len(t, modules, 1)
 	rootModule := modules[0]
 
@@ -363,13 +346,9 @@ resource "something" "blah" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "code"))
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 	require.Len(t, modules, 1)
 	rootModule := modules[0]
 
@@ -415,13 +394,9 @@ resource "something" "blah" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "code"))
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 	require.Len(t, modules, 1)
 	rootModule := modules[0]
 
@@ -460,13 +435,9 @@ resource "something" "blah" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "code"))
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 	require.Len(t, modules, 1)
 	rootModule := modules[0]
 
@@ -512,13 +483,9 @@ resource "something" "blah" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "code"))
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.NoError(t, err)
 	require.Len(t, modules, 1)
 	rootModule := modules[0]
 
@@ -560,13 +527,10 @@ resource "something" "blah" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "code"))
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
+
 	require.Len(t, modules, 1)
 	rootModule := modules[0]
 
@@ -607,9 +571,7 @@ resource "aws_s3_bucket" "default" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "."); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
 	modules, _, err := parser.EvaluateAll(context.TODO())
 	require.NoError(t, err)
 	require.Len(t, modules, 1)
@@ -669,9 +631,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this2" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "."); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
 	modules, _, err := parser.EvaluateAll(context.TODO())
 	assert.NoError(t, err)
 	assert.Len(t, modules, 1)
@@ -706,9 +666,7 @@ resource "aws_s3_bucket" "main" {
 		OptionWithTFVarsPaths("main.tfvars"),
 	)
 
-	if err := parser.ParseFS(context.TODO(), "."); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
 	modules, _, err := parser.EvaluateAll(context.TODO())
 	assert.NoError(t, err)
 	assert.Len(t, modules, 1)
@@ -740,9 +698,8 @@ resource "aws_s3_bucket" "this" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "."); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
 	modules, _, err := parser.EvaluateAll(context.TODO())
 	assert.NoError(t, err)
 	assert.Len(t, modules, 1)
@@ -775,9 +732,8 @@ resource "aws_s3_bucket" "this" {
 	})
 
 	parser := New(fs, "", OptionStopOnHCLError(true))
-	if err := parser.ParseFS(context.TODO(), "."); err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
 	modules, _, err := parser.EvaluateAll(context.TODO())
 	assert.NoError(t, err)
 	assert.Len(t, modules, 1)
@@ -829,11 +785,9 @@ policy_rules = {
 `,
 	})
 
-	parser := New(fs, "", OptionStopOnHCLError(true))
-	parser.SetTFVarsPaths("main.tfvars")
-	if err := parser.ParseFS(context.TODO(), "."); err != nil {
-		t.Fatal(err)
-	}
+	parser := New(fs, "", OptionStopOnHCLError(true), OptionWithTFVarsPaths("main.tfvars"))
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
 	modules, _, err := parser.EvaluateAll(context.TODO())
 	assert.NoError(t, err)
 	assert.Len(t, modules, 1)
@@ -921,6 +875,32 @@ data "http" "example" {
 		`http.example[1]`,
 	}
 	assert.Equal(t, expectedLabels, labels)
+}
+
+func TestDataSourceWithForEachMetaArgument(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"main.tf": `
+locals {
+	ports = ["80", "8080"]
+}
+data "http" "example" {
+  for_each = toset(local.ports)
+  url = "localhost:${each.key}"
+}
+`,
+	})
+
+	parser := New(fs, "", OptionStopOnHCLError(true))
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
+	modules, _, err := parser.EvaluateAll(context.TODO())
+	assert.NoError(t, err)
+	assert.Len(t, modules, 1)
+
+	rootModule := modules[0]
+
+	httpDataSources := rootModule.GetDatasByType("http")
+	assert.Len(t, httpDataSources, 2)
 }
 
 func TestForEach(t *testing.T) {
