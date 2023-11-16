@@ -3,6 +3,7 @@ package parser
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io/fs"
 	"reflect"
 	"time"
@@ -17,7 +18,6 @@ import (
 	"github.com/hashicorp/hcl/v2/ext/typeexpr"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/convert"
-	"github.com/zclconf/go-cty/cty/gocty"
 )
 
 const (
@@ -228,6 +228,42 @@ func (e *evaluator) expandDynamicBlock(b *terraform.Block) {
 	}
 }
 
+func validateForEachArg(arg cty.Value) error {
+	if arg.IsNull() {
+		return errors.New("arg is null")
+	}
+
+	ty := arg.Type()
+
+	if !arg.IsKnown() || ty.Equals(cty.DynamicPseudoType) || arg.LengthInt() == 0 {
+		return nil
+	}
+
+	if !(ty.IsSetType() || ty.IsObjectType() || ty.IsMapType()) {
+		return fmt.Errorf("%s type is not supported: arg is not set or map", ty.FriendlyName())
+	}
+
+	if ty.IsSetType() {
+		if !ty.ElementType().Equals(cty.String) {
+			return errors.New("arg is not set of strings")
+		}
+
+		it := arg.ElementIterator()
+		for it.Next() {
+			key, _ := it.Element()
+			if key.IsNull() {
+				return errors.New("arg is set of strings, but contains null")
+			}
+
+			if !key.IsKnown() {
+				return errors.New("arg is set of strings, but contains unknown value")
+			}
+		}
+	}
+
+	return nil
+}
+
 func isBlockSupportsForEachMetaArgument(block *terraform.Block) bool {
 	return slices.Contains([]string{"module", "resource", "data", "dynamic"}, block.Type())
 }
@@ -243,43 +279,50 @@ func (e *evaluator) expandBlockForEaches(blocks terraform.Blocks) terraform.Bloc
 			forEachFiltered = append(forEachFiltered, block)
 			continue
 		}
-		if !forEachAttr.Value().IsNull() && forEachAttr.Value().IsKnown() && forEachAttr.IsIterable() {
-			var clones []cty.Value
-			_ = forEachAttr.Each(func(key cty.Value, val cty.Value) {
 
-				index := key
+		forEachVal := forEachAttr.Value()
 
-				switch val.Type() {
-				case cty.String, cty.Number:
-					index = val
-				}
-
-				clone := block.Clone(index)
-
-				ctx := clone.Context()
-
-				e.copyVariables(block, clone)
-
-				ctx.SetByDot(key, "each.key")
-				ctx.SetByDot(val, "each.value")
-
-				ctx.Set(key, block.TypeLabel(), "key")
-				ctx.Set(val, block.TypeLabel(), "value")
-
-				forEachFiltered = append(forEachFiltered, clone)
-
-				clones = append(clones, clone.Values())
-				metadata := clone.GetMetadata()
-				e.ctx.SetByDot(clone.Values(), metadata.Reference())
-			})
-			metadata := block.GetMetadata()
-			if len(clones) == 0 {
-				e.ctx.SetByDot(cty.EmptyTupleVal, metadata.Reference())
-			} else {
-				e.ctx.SetByDot(cty.TupleVal(clones), metadata.Reference())
-			}
-			e.debug.Log("Expanded block '%s' into %d clones via 'for_each' attribute.", block.LocalName(), len(clones))
+		if err := validateForEachArg(forEachVal); err != nil {
+			e.debug.Log(`"for_each" argument is invalid: %s`, err.Error())
+			continue
 		}
+
+		clones := make(map[string]cty.Value)
+		_ = forEachAttr.Each(func(key cty.Value, val cty.Value) {
+
+			if !key.Type().Equals(cty.String) {
+				e.debug.Log(
+					`Invalid "for-each" argument: map key (or set value) is not a string, but %s`,
+					key.Type().FriendlyName(),
+				)
+				return
+			}
+
+			clone := block.Clone(key)
+
+			ctx := clone.Context()
+
+			e.copyVariables(block, clone)
+
+			ctx.SetByDot(key, "each.key")
+			ctx.SetByDot(val, "each.value")
+
+			ctx.Set(key, block.TypeLabel(), "key")
+			ctx.Set(val, block.TypeLabel(), "value")
+
+			forEachFiltered = append(forEachFiltered, clone)
+
+			clones[key.AsString()] = clone.Values()
+			metadata := clone.GetMetadata()
+			e.ctx.SetByDot(clone.Values(), metadata.Reference())
+		})
+		metadata := block.GetMetadata()
+		if len(clones) == 0 {
+			e.ctx.SetByDot(cty.EmptyTupleVal, metadata.Reference())
+		} else {
+			e.ctx.SetByDot(cty.MapVal(clones), metadata.Reference())
+		}
+		e.debug.Log("Expanded block '%s' into %d clones via 'for_each' attribute.", block.LocalName(), len(clones))
 	}
 
 	return forEachFiltered
@@ -298,19 +341,15 @@ func (e *evaluator) expandBlockCounts(blocks terraform.Blocks) terraform.Blocks 
 			continue
 		}
 		count := 1
-		if !countAttr.Value().IsNull() && countAttr.Value().IsKnown() {
-			if countAttr.Value().Type() == cty.Number {
-				f, _ := countAttr.Value().AsBigFloat().Float64()
-				count = int(f)
-			}
+		countAttrVal := countAttr.Value()
+		if !countAttrVal.IsNull() && countAttrVal.IsKnown() && countAttrVal.Type() == cty.Number {
+			count = int(countAttr.AsNumber())
 		}
 
 		var clones []cty.Value
 		for i := 0; i < count; i++ {
-			c, _ := gocty.ToCtyValue(i, cty.Number)
-			clone := block.Clone(c)
+			clone := block.Clone(cty.NumberIntVal(int64(i)))
 			clones = append(clones, clone.Values())
-			block.TypeLabel()
 			countFiltered = append(countFiltered, clone)
 			metadata := clone.GetMetadata()
 			e.ctx.SetByDot(clone.Values(), metadata.Reference())
