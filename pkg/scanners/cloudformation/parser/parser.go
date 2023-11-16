@@ -202,18 +202,18 @@ func (p *Parser) parseParams() error {
 
 	params := make(Parameters)
 
-	var errs []error
+	var errs []string
 
 	for _, path := range p.parameterFiles {
 		if parameters, err := p.parseParametersFile(path); err != nil {
-			errs = append(errs, err)
+			errs = append(errs, err.Error())
 		} else {
 			params.Merge(parameters)
 		}
 	}
 
 	if len(errs) != 0 {
-		return errors.Join(errs...)
+		return errors.New(strings.Join(errs, "\n"))
 	}
 
 	params.Merge(p.parameters)
