@@ -54,6 +54,7 @@ deny[res] {
 		options.ScannerWithEmbeddedLibraries(false),
 		options.ScannerWithRegoOnly(true),
 		ScannerWithAllDirectories(true),
+		ScannerWithSkipCachedModules(true),
 	)
 
 	results, err := scanner.ScanFS(context.TODO(), fs, ".")
@@ -117,6 +118,7 @@ deny[res] {
 		options.ScannerWithEmbeddedLibraries(false),
 		options.ScannerWithRegoOnly(true),
 		ScannerWithAllDirectories(true),
+		ScannerWithSkipCachedModules(true),
 	)
 
 	results, err := scanner.ScanFS(context.TODO(), fs, ".")

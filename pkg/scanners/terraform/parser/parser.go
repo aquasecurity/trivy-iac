@@ -43,25 +43,26 @@ var _ ConfigurableTerraformParser = (*Parser)(nil)
 
 // Parser is a tool for parsing terraform templates at a given file system location
 type Parser struct {
-	projectRoot    string
-	moduleName     string
-	modulePath     string
-	moduleSource   string
-	moduleFS       fs.FS
-	moduleBlock    *terraform.Block
-	files          []sourceFile
-	tfvarsPaths    []string
-	stopOnHCLError bool
-	workspaceName  string
-	underlying     *hclparse.Parser
-	children       []*Parser
-	metrics        Metrics
-	options        []options.ParserOption
-	debug          debug.Logger
-	allowDownloads bool
-	fsMap          map[string]fs.FS
-	skipRequired   bool
-	configsFS      fs.FS
+	projectRoot       string
+	moduleName        string
+	modulePath        string
+	moduleSource      string
+	moduleFS          fs.FS
+	moduleBlock       *terraform.Block
+	files             []sourceFile
+	tfvarsPaths       []string
+	stopOnHCLError    bool
+	workspaceName     string
+	underlying        *hclparse.Parser
+	children          []*Parser
+	metrics           Metrics
+	options           []options.ParserOption
+	debug             debug.Logger
+	allowDownloads    bool
+	skipCachedModules bool
+	fsMap             map[string]fs.FS
+	skipRequired      bool
+	configsFS         fs.FS
 }
 
 func (p *Parser) SetDebugWriter(writer io.Writer) {
@@ -82,6 +83,10 @@ func (p *Parser) SetWorkspaceName(s string) {
 
 func (p *Parser) SetAllowDownloads(b bool) {
 	p.allowDownloads = b
+}
+
+func (p *Parser) SetSkipCachedModules(b bool) {
+	p.skipCachedModules = b
 }
 
 func (p *Parser) SetSkipRequiredCheck(b bool) {
@@ -303,6 +308,7 @@ func (p *Parser) EvaluateAll(ctx context.Context) (terraform.Modules, cty.Value,
 		ignores,
 		p.debug.Extend("evaluator"),
 		p.allowDownloads,
+		p.skipCachedModules,
 	)
 	modules, fsMap, parseDuration := evaluator.EvaluateAll(ctx)
 	p.metrics.Counts.Modules = len(modules)

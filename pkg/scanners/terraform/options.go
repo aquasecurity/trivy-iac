@@ -194,6 +194,14 @@ func ScannerWithDownloadsAllowed(allowed bool) options.ScannerOption {
 	}
 }
 
+func ScannerWithSkipCachedModules(b bool) options.ScannerOption {
+	return func(s options.ConfigurableScanner) {
+		if tf, ok := s.(ConfigurableTerraformScanner); ok {
+			tf.AddParserOptions(parser.OptionWithDownloads(b))
+		}
+	}
+}
+
 func ScannerWithConfigsFileSystem(fsys fs.FS) options.ScannerOption {
 	return func(s options.ConfigurableScanner) {
 		if tf, ok := s.(ConfigurableTerraformScanner); ok {
