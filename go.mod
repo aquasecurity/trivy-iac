@@ -19,7 +19,7 @@ require (
 	github.com/liamg/memoryfs v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/moby/buildkit v0.11.6
+	github.com/moby/buildkit v0.12.3
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/open-policy-agent/opa v0.57.0
 	github.com/spf13/cobra v1.7.0
@@ -67,7 +67,7 @@ require (
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/containerd/containerd v1.7.7 // indirect
 	github.com/containerd/log v0.1.0 // indirect
-	github.com/containerd/typeurl v1.0.2 // indirect
+	github.com/containerd/typeurl/v2 v2.1.1 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
@@ -123,7 +123,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/klauspost/compress v1.16.0 // indirect
+	github.com/klauspost/compress v1.16.3 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
