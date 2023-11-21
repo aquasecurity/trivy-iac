@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/Masterminds/semver v1.5.0
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aquasecurity/defsec v0.93.2-0.20231117234854-a13ada52a90f
+	github.com/aquasecurity/defsec v0.93.2-0.20231115015625-adcb9e5799e5
 	github.com/aquasecurity/trivy-policies v0.6.1-0.20231117215321-f2affd629c34
 	github.com/aws/smithy-go v1.14.2
 	github.com/bmatcuk/doublestar/v4 v4.6.0
