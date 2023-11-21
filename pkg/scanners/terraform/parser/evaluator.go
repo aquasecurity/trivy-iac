@@ -25,18 +25,19 @@ const (
 )
 
 type evaluator struct {
-	filesystem      fs.FS
-	ctx             *tfcontext.Context
-	blocks          terraform.Blocks
-	inputVars       map[string]cty.Value
-	moduleMetadata  *modulesMetadata
-	projectRootPath string // root of the current scan
-	modulePath      string
-	moduleName      string
-	ignores         terraform.Ignores
-	parentParser    *Parser
-	debug           debug.Logger
-	allowDownloads  bool
+	filesystem        fs.FS
+	ctx               *tfcontext.Context
+	blocks            terraform.Blocks
+	inputVars         map[string]cty.Value
+	moduleMetadata    *modulesMetadata
+	projectRootPath   string // root of the current scan
+	modulePath        string
+	moduleName        string
+	ignores           terraform.Ignores
+	parentParser      *Parser
+	debug             debug.Logger
+	allowDownloads    bool
+	skipCachedModules bool
 }
 
 func newEvaluator(
@@ -53,6 +54,7 @@ func newEvaluator(
 	ignores []terraform.Ignore,
 	logger debug.Logger,
 	allowDownloads bool,
+	skipCachedModules bool,
 ) *evaluator {
 
 	// create a context to store variables and make functions available
