@@ -16,96 +16,49 @@ func adaptManagedZones(modules terraform.Modules) []dns.ManagedZone {
 	var managedZones []dns.ManagedZone
 	for _, module := range modules {
 		for _, resource := range module.GetResourcesByType("google_dns_managed_zone") {
-			managedZone := adaptManagedZone(resource)
-			for _, data := range module.GetDatasByType("google_dns_keys") {
-				managedZone.DNSSec.DefaultKeySpecs = adaptKeySpecs(data)
-			}
-			managedZones = append(managedZones, managedZone)
+			managedZones = append(managedZones, adaptManagedZone(resource))
 		}
 	}
 	return managedZones
 }
 
 func adaptManagedZone(resource *terraform.Block) dns.ManagedZone {
-
 	zone := dns.ManagedZone{
 		Metadata:   resource.GetMetadata(),
-		Visibility: defsecTypes.StringDefault("public", resource.GetMetadata()),
-		DNSSec: dns.DNSSec{
-			Metadata: resource.GetMetadata(),
-			Enabled:  defsecTypes.BoolDefault(false, resource.GetMetadata()),
-			DefaultKeySpecs: dns.KeySpecs{
-				Metadata: resource.GetMetadata(),
-				KeySigningKey: dns.Key{
-					Metadata:  resource.GetMetadata(),
-					Algorithm: defsecTypes.StringDefault("", resource.GetMetadata()),
-				},
-				ZoneSigningKey: dns.Key{
-					Metadata:  resource.GetMetadata(),
-					Algorithm: defsecTypes.StringDefault("", resource.GetMetadata()),
-				},
-			},
-		},
-	}
-
-	if resource.HasChild("visibility") {
-		zone.Visibility = resource.GetAttribute("visibility").AsStringValueOrDefault("public", resource)
-	}
-
-	if resource.HasChild("dnssec_config") {
-		DNSSecBlock := resource.GetBlock("dnssec_config")
-		zone.DNSSec.Metadata = DNSSecBlock.GetMetadata()
-
-		stateAttr := DNSSecBlock.GetAttribute("state")
-		if stateAttr.Equals("on") {
-			zone.DNSSec.Enabled = defsecTypes.Bool(true, stateAttr.GetMetadata())
-		} else if stateAttr.Equals("off") || stateAttr.Equals("transfer") {
-			zone.DNSSec.Enabled = defsecTypes.Bool(false, stateAttr.GetMetadata())
-		}
-
-		if DNSSecBlock.HasChild("default_key_specs") {
-			DefaultKeySpecsBlock := DNSSecBlock.GetBlock("default_key_specs")
-			zone.DNSSec.DefaultKeySpecs.Metadata = DefaultKeySpecsBlock.GetMetadata()
-
-			algorithmAttr := DefaultKeySpecsBlock.GetAttribute("algorithm")
-			algorithmVal := algorithmAttr.AsStringValueOrDefault("", DefaultKeySpecsBlock)
-
-			keyTypeAttr := DefaultKeySpecsBlock.GetAttribute("key_type")
-			if keyTypeAttr.Equals("keySigning") {
-				zone.DNSSec.DefaultKeySpecs.KeySigningKey.Algorithm = algorithmVal
-				zone.DNSSec.DefaultKeySpecs.KeySigningKey.Metadata = keyTypeAttr.GetMetadata()
-			} else if keyTypeAttr.Equals("zoneSigning") {
-				zone.DNSSec.DefaultKeySpecs.ZoneSigningKey.Algorithm = algorithmVal
-				zone.DNSSec.DefaultKeySpecs.ZoneSigningKey.Metadata = keyTypeAttr.GetMetadata()
-			}
-		}
+		Visibility: resource.GetAttribute("visibility").AsStringValueOrDefault("public", resource),
+		DNSSec:     adaptDNSSec(resource),
 	}
 	return zone
 }
 
-func adaptKeySpecs(resource *terraform.Block) dns.KeySpecs {
-	keySpecs := dns.KeySpecs{
-		Metadata: resource.GetMetadata(),
-		KeySigningKey: dns.Key{
-			Metadata:  resource.GetMetadata(),
-			Algorithm: defsecTypes.String("", resource.GetMetadata()),
-		},
-		ZoneSigningKey: dns.Key{
-			Metadata:  resource.GetMetadata(),
-			Algorithm: defsecTypes.String("", resource.GetMetadata()),
-		},
-	}
-	KeySigningKeysBlock := resource.GetBlock("key_signing_keys")
-	if KeySigningKeysBlock.IsNotNil() {
-		algorithmAttr := KeySigningKeysBlock.GetAttribute("algorithm")
-		keySpecs.KeySigningKey.Algorithm = algorithmAttr.AsStringValueOrDefault("", KeySigningKeysBlock)
+func adaptDNSSec(b *terraform.Block) dns.DNSSec {
+	DNSSecBlock := b.GetBlock("dnssec_config")
+	if DNSSecBlock.IsNil() {
+		return dns.DNSSec{
+			Metadata: b.GetMetadata(),
+			Enabled:  defsecTypes.BoolDefault(false, b.GetMetadata()),
+		}
 	}
 
-	ZoneSigningKeysBlock := resource.GetBlock("zone_signing_keys")
-	if ZoneSigningKeysBlock.IsNotNil() {
-		algorithmAttr := ZoneSigningKeysBlock.GetAttribute("algorithm")
-		keySpecs.ZoneSigningKey.Algorithm = algorithmAttr.AsStringValueOrDefault("", ZoneSigningKeysBlock)
+	stateAttr := DNSSecBlock.GetAttribute("state")
+
+	DNSSec := dns.DNSSec{
+		Metadata:        DNSSecBlock.GetMetadata(),
+		Enabled:         defsecTypes.Bool(stateAttr.Equals("on"), stateAttr.GetMetadata()),
+		DefaultKeySpecs: adaptKeySpecs(DNSSecBlock),
 	}
 
+	return DNSSec
+}
+
+func adaptKeySpecs(b *terraform.Block) []dns.KeySpecs {
+	var keySpecs []dns.KeySpecs
+	for _, keySpecsBlock := range b.GetBlocks("default_key_specs") {
+		keySpecs = append(keySpecs, dns.KeySpecs{
+			Metadata:  keySpecsBlock.GetMetadata(),
+			Algorithm: keySpecsBlock.GetAttribute("algorithm").AsStringValueOrDefault("", keySpecsBlock),
+			KeyType:   keySpecsBlock.GetAttribute("key_type").AsStringValueOrDefault("", keySpecsBlock),
+		})
+	}
 	return keySpecs
 }
