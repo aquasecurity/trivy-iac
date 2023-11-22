@@ -67,9 +67,12 @@ func adaptDistribution(resource *terraform.Block) cloudfront.Distribution {
 	}
 
 	if viewerCertBlock := resource.GetBlock("viewer_certificate"); viewerCertBlock.IsNotNil() {
-		distribution.ViewerCertificate.Metadata = viewerCertBlock.GetMetadata()
-		minProtocolAttr := viewerCertBlock.GetAttribute("minimum_protocol_version")
-		distribution.ViewerCertificate.MinimumProtocolVersion = minProtocolAttr.AsStringValueOrDefault("TLSv1", viewerCertBlock)
+		distribution.ViewerCertificate = cloudfront.ViewerCertificate{
+			Metadata:                     viewerCertBlock.GetMetadata(),
+			MinimumProtocolVersion:       viewerCertBlock.GetAttribute("minimum_protocol_version").AsStringValueOrDefault("TLSv1", viewerCertBlock),
+			SSLSupportMethod:             viewerCertBlock.GetAttribute("ssl_support_method").AsStringValueOrDefault("", viewerCertBlock),
+			CloudfrontDefaultCertificate: viewerCertBlock.GetAttribute("cloudfront_default_certificate").AsBoolValueOrDefault(false, viewerCertBlock),
+		}
 	}
 
 	return distribution

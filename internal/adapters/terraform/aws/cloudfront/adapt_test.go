@@ -41,6 +41,7 @@ func Test_adaptDistribution(t *testing.T) {
 				viewer_certificate {
 					cloudfront_default_certificate = true
 					minimum_protocol_version = "TLSv1.2_2021"
+					ssl_support_method = "sni-only"
 				}
 			}
 `,
@@ -62,8 +63,10 @@ func Test_adaptDistribution(t *testing.T) {
 					},
 				},
 				ViewerCertificate: cloudfront.ViewerCertificate{
-					Metadata:               defsecTypes.NewTestMetadata(),
-					MinimumProtocolVersion: defsecTypes.String("TLSv1.2_2021", defsecTypes.NewTestMetadata()),
+					Metadata:                     defsecTypes.NewTestMetadata(),
+					MinimumProtocolVersion:       defsecTypes.String("TLSv1.2_2021", defsecTypes.NewTestMetadata()),
+					CloudfrontDefaultCertificate: defsecTypes.Bool(true, defsecTypes.NewTestMetadata()),
+					SSLSupportMethod:             defsecTypes.String("sni-only", defsecTypes.NewTestMetadata()),
 				},
 			},
 		},
@@ -117,7 +120,7 @@ func TestLines(t *testing.T) {
 
 		ordered_cache_behavior {
 			viewer_protocol_policy = "redirect-to-https"
-		  }
+		}
 
 		viewer_certificate {
 			cloudfront_default_certificate = true

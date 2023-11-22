@@ -75,6 +75,7 @@ func Test_adaptNetworks(t *testing.T) {
 							Metadata:       defsecTypes.NewTestMetadata(),
 							Name:           defsecTypes.String("test-subnetwork", defsecTypes.NewTestMetadata()),
 							EnableFlowLogs: defsecTypes.Bool(true, defsecTypes.NewTestMetadata()),
+							Purpose:        defsecTypes.StringDefault("PRIVATE_RFC_1918", defsecTypes.NewTestMetadata()),
 						},
 					},
 				},
@@ -84,7 +85,8 @@ func Test_adaptNetworks(t *testing.T) {
 			name: "defaults",
 			terraform: `
 			resource "google_compute_subnetwork" "example" {
-				network       = google_compute_network.example.id
+				network = google_compute_network.example.id
+				purpose = "REGIONAL_MANAGED_PROXY"
 			  }
 
 			  resource "google_compute_network" "example" {
@@ -106,6 +108,7 @@ func Test_adaptNetworks(t *testing.T) {
 							Metadata:       defsecTypes.NewTestMetadata(),
 							Name:           defsecTypes.String("", defsecTypes.NewTestMetadata()),
 							EnableFlowLogs: defsecTypes.Bool(false, defsecTypes.NewTestMetadata()),
+							Purpose:        defsecTypes.String("REGIONAL_MANAGED_PROXY", defsecTypes.NewTestMetadata()),
 						},
 					},
 				},
