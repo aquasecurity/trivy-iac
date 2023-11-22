@@ -6,8 +6,8 @@ require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/Masterminds/semver v1.5.0
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aquasecurity/defsec v0.93.2-0.20231115015625-adcb9e5799e5
-	github.com/aquasecurity/trivy-policies v0.6.1-0.20231117215321-f2affd629c34
+	github.com/aquasecurity/defsec v0.93.2-0.20231117234854-a13ada52a90f
+	github.com/aquasecurity/trivy-policies v0.6.1-0.20231120231532-f6f2330bf842
 	github.com/aws/smithy-go v1.14.2
 	github.com/bmatcuk/doublestar/v4 v4.6.0
 	github.com/google/uuid v1.3.1
@@ -219,7 +219,3 @@ require (
 )
 
 replace oras.land/oras-go => oras.land/oras-go v1.2.4-0.20230801060855-932dd06d38af
-
-replace github.com/aquasecurity/defsec => github.com/nikpivkin/defsec v0.0.0-20231115093829-0276fe3a16b9
-
-replace github.com/aquasecurity/trivy-policies => github.com/nikpivkin/trivy-policies v0.0.0-20231115094623-198034063217

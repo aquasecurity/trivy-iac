@@ -318,7 +318,7 @@ resource "something" "blah" {
 
 	assert.Equal(t, true, attr.IsResolvable())
 
-	values := attr.AsStringValueSliceOrEmpty(block)
+	values := attr.AsStringValueSliceOrEmpty()
 	require.Len(t, values, 3)
 
 	assert.Equal(t, "first", values[0].Value())
@@ -361,7 +361,7 @@ resource "something" "blah" {
 
 	assert.Equal(t, true, attr.IsResolvable())
 
-	values := attr.AsStringValueSliceOrEmpty(block)
+	values := attr.AsStringValueSliceOrEmpty()
 	require.Len(t, values, 3)
 
 	assert.Equal(t, "first", values[0].Value())
@@ -409,7 +409,7 @@ resource "something" "blah" {
 
 	assert.Equal(t, true, attr.IsResolvable())
 
-	values := attr.AsStringValueSliceOrEmpty(block)
+	values := attr.AsStringValueSliceOrEmpty()
 	require.Len(t, values, 2)
 
 	assert.Equal(t, "1", values[0].Value())
@@ -450,7 +450,7 @@ resource "something" "blah" {
 
 	assert.Equal(t, true, attr.IsResolvable())
 
-	values := attr.AsStringValueSliceOrEmpty(block)
+	values := attr.AsStringValueSliceOrEmpty()
 	require.Len(t, values, 3)
 
 	assert.Equal(t, "a", values[0].Value())
@@ -498,7 +498,7 @@ resource "something" "blah" {
 
 	assert.Equal(t, true, attr.IsResolvable())
 
-	values := attr.AsStringValueSliceOrEmpty(block)
+	values := attr.AsStringValueSliceOrEmpty()
 	require.Len(t, values, 3)
 
 	assert.Equal(t, "a", values[0].Value())
@@ -543,7 +543,7 @@ resource "something" "blah" {
 
 	assert.Equal(t, true, attr.IsResolvable())
 
-	values := attr.AsStringValueSliceOrEmpty(block)
+	values := attr.AsStringValueSliceOrEmpty()
 	require.Len(t, values, 3)
 
 	assert.Equal(t, "a", values[0].Value())
