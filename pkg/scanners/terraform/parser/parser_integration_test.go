@@ -20,7 +20,7 @@ module "registry" {
 `,
 	})
 
-	parser := New(fs, "", OptionStopOnHCLError(true))
+	parser := New(fs, "", OptionStopOnHCLError(true), OptionWithSkipCachedModules(true))
 	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
 		t.Fatal(err)
 	}
@@ -41,7 +41,7 @@ module "registry" {
 `,
 	})
 
-	parser := New(fs, "", OptionStopOnHCLError(true))
+	parser := New(fs, "", OptionStopOnHCLError(true), OptionWithSkipCachedModules(true))
 	if err := parser.ParseFS(context.TODO(), "code"); err != nil {
 		t.Fatal(err)
 	}

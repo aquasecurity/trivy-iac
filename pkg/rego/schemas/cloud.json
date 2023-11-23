@@ -826,7 +826,15 @@
     "github.com.aquasecurity.defsec.pkg.providers.aws.cloudfront.ViewerCertificate": {
       "type": "object",
       "properties": {
+        "cloudfrontdefaultcertificate": {
+          "type": "object",
+          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.BoolValue"
+        },
         "minimumprotocolversion": {
+          "type": "object",
+          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.StringValue"
+        },
+        "sslsupportmethod": {
           "type": "object",
           "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.StringValue"
         }
@@ -5318,6 +5326,10 @@
         "name": {
           "type": "object",
           "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.StringValue"
+        },
+        "purpose": {
+          "type": "object",
+          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.StringValue"
         }
       }
     },
@@ -5337,8 +5349,11 @@
       "type": "object",
       "properties": {
         "defaultkeyspecs": {
-          "type": "object",
-          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.providers.google.dns.KeySpecs"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.providers.google.dns.KeySpecs"
+          }
         },
         "enabled": {
           "type": "object",
@@ -5346,25 +5361,16 @@
         }
       }
     },
-    "github.com.aquasecurity.defsec.pkg.providers.google.dns.Key": {
+    "github.com.aquasecurity.defsec.pkg.providers.google.dns.KeySpecs": {
       "type": "object",
       "properties": {
         "algorithm": {
           "type": "object",
           "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.StringValue"
-        }
-      }
-    },
-    "github.com.aquasecurity.defsec.pkg.providers.google.dns.KeySpecs": {
-      "type": "object",
-      "properties": {
-        "keysigningkey": {
-          "type": "object",
-          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.providers.google.dns.Key"
         },
-        "zonesigningkey": {
+        "keytype": {
           "type": "object",
-          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.providers.google.dns.Key"
+          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.StringValue"
         }
       }
     },

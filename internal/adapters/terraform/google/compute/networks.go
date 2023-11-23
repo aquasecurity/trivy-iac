@@ -10,6 +10,10 @@ import (
 	"github.com/aquasecurity/defsec/pkg/terraform"
 )
 
+const (
+	defaultSubnetPurpose = "PRIVATE_RFC_1918"
+)
+
 func adaptNetworks(modules terraform.Modules) (networks []compute.Network) {
 
 	networkMap := make(map[string]compute.Network)
@@ -28,12 +32,13 @@ func adaptNetworks(modules terraform.Modules) (networks []compute.Network) {
 		subnetwork := compute.SubNetwork{
 			Metadata:       subnetworkBlock.GetMetadata(),
 			Name:           subnetworkBlock.GetAttribute("name").AsStringValueOrDefault("", subnetworkBlock),
+			Purpose:        subnetworkBlock.GetAttribute("purpose").AsStringValueOrDefault(defaultSubnetPurpose, subnetworkBlock),
 			EnableFlowLogs: defsecTypes.BoolDefault(false, subnetworkBlock.GetMetadata()),
 		}
 
 		// logging
 		if logConfigBlock := subnetworkBlock.GetBlock("log_config"); logConfigBlock.IsNotNil() {
-			subnetwork.EnableFlowLogs = defsecTypes.BoolExplicit(true, subnetworkBlock.GetBlock("log_config").GetMetadata())
+			subnetwork.EnableFlowLogs = defsecTypes.BoolExplicit(true, logConfigBlock.GetMetadata())
 		}
 
 		nwAttr := subnetworkBlock.GetAttribute("network")

@@ -10,7 +10,7 @@ type Options struct {
 	Source, OriginalSource, Version, OriginalVersion, WorkingDir, Name, ModulePath string
 	DebugLogger                                                                    debug.Logger
 	AllowDownloads                                                                 bool
-	AllowCache                                                                     bool
+	SkipCache                                                                      bool
 	RelativePath                                                                   string
 }
 

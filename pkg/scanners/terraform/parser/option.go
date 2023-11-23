@@ -12,6 +12,7 @@ type ConfigurableTerraformParser interface {
 	SetStopOnHCLError(bool)
 	SetWorkspaceName(string)
 	SetAllowDownloads(bool)
+	SetSkipCachedModules(bool)
 	SetConfigsFS(fsys fs.FS)
 }
 
@@ -45,6 +46,14 @@ func OptionWithDownloads(allowed bool) options.ParserOption {
 	return func(p options.ConfigurableParser) {
 		if tf, ok := p.(ConfigurableTerraformParser); ok {
 			tf.SetAllowDownloads(allowed)
+		}
+	}
+}
+
+func OptionWithSkipCachedModules(b bool) options.ParserOption {
+	return func(p options.ConfigurableParser) {
+		if tf, ok := p.(ConfigurableTerraformParser); ok {
+			tf.SetSkipCachedModules(b)
 		}
 	}
 }
