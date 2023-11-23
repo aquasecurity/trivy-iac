@@ -40,7 +40,9 @@ import (
 
 func Adapt(modules terraform.Modules) aws.AWS {
 	return aws.AWS{
-		Providers:     provider.Adapt(modules),
+		Meta: aws.Meta{
+			TFProviders: provider.Adapt(modules),
+		},
 		APIGateway:    apigateway.Adapt(modules),
 		Athena:        athena.Adapt(modules),
 		Cloudfront:    cloudfront.Adapt(modules),

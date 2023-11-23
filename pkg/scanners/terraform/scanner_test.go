@@ -1302,11 +1302,11 @@ provider "aws" {
 #     selector:
 #     - type: cloud
 #       subtypes:
-#         - service: providers
+#         - service: meta
 #           provider: aws
 package defsec.test.aws1
 deny[res] {
-  region := input.aws.providers[_].region
+  region := input.aws.meta.tfproviders[_].region
   region.value != "us-east-1"
   res := result.new("Only the 'us-east-1' region is allowed!", region)
 }
@@ -1321,11 +1321,11 @@ deny[res] {
 #     selector:
 #     - type: cloud
 #       subtypes:
-#         - service: providers
+#         - service: meta
 #           provider: aws
 package defsec.test.aws2
 deny[res] {
-  provider := input.aws.providers[_]
+  provider := input.aws.meta.tfproviders[_]
   tags = provider.defaulttags.tags.value
   not tags.Environment
   res := result.new("provider should have the following default tags: 'Environment'", tags)
