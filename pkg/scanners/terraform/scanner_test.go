@@ -1258,7 +1258,7 @@ deny[res] {
   policy.name.value == "bad-policy"
   res := result.new("Deny!", policy)
 }
-		`,
+`,
 	})
 
 	debugLog := bytes.NewBuffer([]byte{})
@@ -1277,4 +1277,84 @@ deny[res] {
 
 	assert.Len(t, results, 1)
 	assert.Len(t, results.GetFailed(), 1)
+}
+
+func Test_RegoRefToAwsProviderAttributes(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"code/providers.tf": `
+provider "aws" {
+  region  = "us-east-2"
+  default_tags {
+    tags = {
+      Environment = "Local"
+      Name        = "LocalStack"
+    }
+  }
+}
+`,
+		"rules/region.rego": `
+# METADATA
+# schemas:
+# - input: schema.input
+# custom:
+#   avd_id: AVD-AWS-0001
+#   input:
+#     selector:
+#     - type: cloud
+#       subtypes:
+#         - service: meta
+#           provider: aws
+package defsec.test.aws1
+deny[res] {
+  region := input.aws.meta.tfproviders[_].region
+  region.value != "us-east-1"
+  res := result.new("Only the 'us-east-1' region is allowed!", region)
+}
+`,
+		"rules/tags.rego": `
+# METADATA
+# schemas:
+# - input: schema.input
+# custom:
+#   avd_id: AVD-AWS-0002
+#   input:
+#     selector:
+#     - type: cloud
+#       subtypes:
+#         - service: meta
+#           provider: aws
+package defsec.test.aws2
+deny[res] {
+  provider := input.aws.meta.tfproviders[_]
+  tags = provider.defaulttags.tags.value
+  not tags.Environment
+  res := result.new("provider should have the following default tags: 'Environment'", tags)
+}`,
+	})
+
+	debugLog := bytes.NewBuffer([]byte{})
+	scanner := New(
+		options.ScannerWithDebug(debugLog),
+		options.ScannerWithPolicyDirs("rules"),
+		options.ScannerWithPolicyFilesystem(fs),
+		options.ScannerWithRegoOnly(true),
+		options.ScannerWithEmbeddedLibraries(false),
+		options.ScannerWithEmbeddedPolicies(false),
+		ScannerWithAllDirectories(true),
+	)
+
+	results, err := scanner.ScanFS(context.TODO(), fs, "code")
+	require.NoError(t, err)
+
+	require.Len(t, results, 2)
+
+	require.Len(t, results.GetFailed(), 1)
+	assert.Equal(t, "AVD-AWS-0001", results.GetFailed()[0].Rule().AVDID)
+
+	require.Len(t, results.GetPassed(), 1)
+	assert.Equal(t, "AVD-AWS-0002", results.GetPassed()[0].Rule().AVDID)
+
+	if t.Failed() {
+		fmt.Printf("Debug logs:\n%s\n", debugLog.String())
+	}
 }

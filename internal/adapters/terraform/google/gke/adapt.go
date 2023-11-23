@@ -141,13 +141,7 @@ func (a *adapter) adaptCluster(resource *terraform.Block, module *terraform.Modu
 
 	resourceLabelsAttr := resource.GetAttribute("resource_labels")
 	if resourceLabelsAttr.IsNotNil() {
-		resourceLabels := make(map[string]string)
-		_ = resourceLabelsAttr.Each(func(key, val cty.Value) {
-			if key.Type() == cty.String && val.Type() == cty.String {
-				resourceLabels[key.AsString()] = val.AsString()
-			}
-		})
-		cluster.ResourceLabels = defsecTypes.Map(resourceLabels, resourceLabelsAttr.GetMetadata())
+		cluster.ResourceLabels = resourceLabelsAttr.AsMapValue()
 	}
 
 	cluster.RemoveDefaultNodePool = resource.GetAttribute("remove_default_node_pool").AsBoolValueOrDefault(false, resource)

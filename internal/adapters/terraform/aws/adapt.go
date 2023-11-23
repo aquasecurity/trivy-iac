@@ -28,6 +28,7 @@ import (
 	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/aws/mq"
 	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/aws/msk"
 	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/aws/neptune"
+	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/aws/provider"
 	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/aws/rds"
 	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/aws/redshift"
 	"github.com/aquasecurity/trivy-iac/internal/adapters/terraform/aws/s3"
@@ -39,6 +40,9 @@ import (
 
 func Adapt(modules terraform.Modules) aws.AWS {
 	return aws.AWS{
+		Meta: aws.Meta{
+			TFProviders: provider.Adapt(modules),
+		},
 		APIGateway:    apigateway.Adapt(modules),
 		Athena:        athena.Adapt(modules),
 		Cloudfront:    cloudfront.Adapt(modules),
