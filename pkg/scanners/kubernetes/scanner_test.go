@@ -717,7 +717,7 @@ spec:
 	})
 
 	scanner := NewScanner(
-		//options.ScannerWithEmbeddedPolicies(true), options.ScannerWithEmbeddedLibraries(true),
+		// options.ScannerWithEmbeddedPolicies(true), options.ScannerWithEmbeddedLibraries(true),
 		options.ScannerWithEmbeddedLibraries(true),
 		options.ScannerWithPolicyDirs("policies/"),
 		options.ScannerWithPolicyFilesystem(srcFS),
