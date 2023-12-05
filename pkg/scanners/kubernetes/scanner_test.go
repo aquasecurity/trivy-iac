@@ -613,8 +613,6 @@ spec:
 	assert.Equal(t, "k8s.yaml", firstResult.Metadata().Range().GetFilename())
 }
 
-/*
-// TODO(simar): Uncomment once all k8s policies have subtype selector added
 func Test_checkPolicyIsApplicable(t *testing.T) {
 	srcFS := testutil.CreateFS(t, map[string]string{
 		"policies/pod_policy.rego": `# METADATA
@@ -719,7 +717,7 @@ spec:
 	})
 
 	scanner := NewScanner(
-		//options.ScannerWithEmbeddedPolicies(true), options.ScannerWithEmbeddedLibraries(true),
+		// options.ScannerWithEmbeddedPolicies(true), options.ScannerWithEmbeddedLibraries(true),
 		options.ScannerWithEmbeddedLibraries(true),
 		options.ScannerWithPolicyDirs("policies/"),
 		options.ScannerWithPolicyFilesystem(srcFS),
@@ -733,4 +731,3 @@ spec:
 	failure := results.GetFailed()[0].Rule()
 	assert.Equal(t, "Process can elevate its own privileges", failure.Summary)
 }
-*/
