@@ -20,6 +20,7 @@ type StaticMetadata struct {
 	AVDID              string
 	Title              string
 	ShortCode          string
+	Aliases            []string
 	Description        string
 	Severity           string
 	RecommendedActions string
@@ -55,10 +56,20 @@ func (sm *StaticMetadata) Update(meta map[string]any) error {
 		}
 	}
 
+	updSlice := func(field *[]string, key string) {
+		if raw, ok := meta[key]; ok {
+			if _, ok := raw.([]string); ok {
+				*field = make([]string, 0)
+				*field = append(*field, raw.([]string)...)
+			}
+		}
+	}
+
 	upd(&sm.ID, "id")
 	upd(&sm.AVDID, "avd_id")
 	upd(&sm.Title, "title")
 	upd(&sm.ShortCode, "short_code")
+	updSlice(&sm.Aliases, "aliases")
 	upd(&sm.Description, "description")
 	upd(&sm.Service, "service")
 	upd(&sm.Provider, "provider")
