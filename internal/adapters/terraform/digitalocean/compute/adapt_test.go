@@ -173,11 +173,14 @@ func Test_adaptLoadBalancers(t *testing.T) {
 				  target_port     = 443
 				  target_protocol = "https"
 				}
+
+				redirect_http_to_https = true
 			  }
 `,
 			expected: []compute.LoadBalancer{
 				{
-					Metadata: defsecTypes.NewTestMetadata(),
+					Metadata:            defsecTypes.NewTestMetadata(),
+					RedirectHttpToHttps: defsecTypes.Bool(true, defsecTypes.NewTestMetadata()),
 					ForwardingRules: []compute.ForwardingRule{
 						{
 							Metadata:      defsecTypes.NewTestMetadata(),
