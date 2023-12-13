@@ -1,9 +1,14 @@
 package kubernetes
 
 import (
+	"regexp"
+	"strings"
+
 	"github.com/aquasecurity/defsec/pkg/providers/kubernetes"
 	"github.com/aquasecurity/defsec/pkg/terraform"
 )
+
+var versionRegex = regexp.MustCompile(`^v\d+(beta\d+)?$`)
 
 func Adapt(modules terraform.Modules) kubernetes.Kubernetes {
 	return kubernetes.Kubernetes{
@@ -14,7 +19,7 @@ func Adapt(modules terraform.Modules) kubernetes.Kubernetes {
 func adaptNetworkPolicies(modules terraform.Modules) []kubernetes.NetworkPolicy {
 	var networkPolicies []kubernetes.NetworkPolicy
 	for _, module := range modules {
-		for _, resource := range module.GetResourcesByType("kubernetes_network_policy") {
+		for _, resource := range getBlocksIgnoreVersion(module, "resource", "kubernetes_network_policy") {
 			networkPolicies = append(networkPolicies, adaptNetworkPolicy(resource))
 		}
 	}
@@ -91,4 +96,28 @@ func adaptNetworkPolicy(resourceBlock *terraform.Block) kubernetes.NetworkPolicy
 	}
 
 	return policy
+}
+
+// https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/guides/versioned-resources
+func getBlocksIgnoreVersion(module *terraform.Module, blockType string, resourceType string) terraform.Blocks {
+	var res terraform.Blocks
+	for _, block := range module.GetBlocks().OfType(blockType) {
+		if isMatchingTypeLabel(block.TypeLabel(), resourceType) {
+			res = append(res, block)
+		}
+	}
+	return res
+}
+
+func isMatchingTypeLabel(typeLabel string, resourceType string) bool {
+	if typeLabel == resourceType {
+		return true
+	}
+
+	versionPart, found := strings.CutPrefix(typeLabel, resourceType+"_")
+	if !found {
+		return false
+	}
+
+	return versionRegex.MatchString(versionPart)
 }
