@@ -314,15 +314,18 @@ func (e *evaluator) expandBlockForEaches(blocks terraform.Blocks) terraform.Bloc
 
 			forEachFiltered = append(forEachFiltered, clone)
 
-			clones[key.AsString()] = clone.Values()
-			metadata := clone.GetMetadata()
-			e.ctx.SetByDot(clone.Values(), metadata.Reference())
+			values := clone.Values()
+			clones[key.AsString()] = values
+			e.ctx.SetByDot(values, clone.GetMetadata().Reference())
 		})
+
 		metadata := block.GetMetadata()
 		if len(clones) == 0 {
 			e.ctx.SetByDot(cty.EmptyTupleVal, metadata.Reference())
 		} else {
-			e.ctx.SetByDot(cty.MapVal(clones), metadata.Reference())
+			// The for-each meta-argument creates multiple instances of the resource that are stored in the map.
+			// So we must replace the old resource with a map with the attributes of the resource.
+			e.ctx.Replace(cty.ObjectVal(clones), metadata.Reference())
 		}
 		e.debug.Log("Expanded block '%s' into %d clones via 'for_each' attribute.", block.LocalName(), len(clones))
 	}

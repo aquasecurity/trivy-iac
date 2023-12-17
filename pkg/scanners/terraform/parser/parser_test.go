@@ -1010,11 +1010,11 @@ resource "aws_internet_gateway" "example" {
 	require.NoError(t, parser.ParseFS(context.TODO(), "."))
 
 	modules, _, err := parser.EvaluateAll(context.TODO())
-	assert.NoError(t, err)
-	assert.Len(t, modules, 1)
+	require.NoError(t, err)
+	require.Len(t, modules, 1)
 
 	blocks := modules.GetResourcesByType("aws_internet_gateway")
-	assert.Len(t, blocks, 2)
+	require.Len(t, blocks, 2)
 
 	var vpcIds []string
 	for _, b := range blocks {
@@ -1023,4 +1023,32 @@ resource "aws_internet_gateway" "example" {
 
 	expectedVpcIds := []string{"test1", "test2"}
 	assert.Equal(t, expectedVpcIds, vpcIds)
+}
+
+func TestForEachWithObjectsOfDifferentTypes(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"main.tf": `module "backups" {
+  bucket_name  = each.key
+  client       = each.value.client
+  path_writers = each.value.path_writers
+
+  for_each = {
+    "bucket1" = {
+      client       = "client1"
+      path_writers = ["writer1"] // tuple with string
+    },
+    "bucket2" = {
+      client       = "client2"
+      path_writers = [] // empty tuple
+    }
+  }
+}
+`,
+	})
+	parser := New(fs, "", OptionStopOnHCLError(true))
+	require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
+	modules, _, err := parser.EvaluateAll(context.TODO())
+	assert.NoError(t, err)
+	assert.Len(t, modules, 1)
 }
