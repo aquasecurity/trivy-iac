@@ -7,7 +7,6 @@ import (
 )
 
 func getInstances(ctx parser.FileContext) (instances []ec2.Instance) {
-
 	instanceResources := ctx.GetResourcesByType("AWS::EC2::Instance")
 
 	for _, r := range instanceResources {
@@ -20,11 +19,20 @@ func getInstances(ctx parser.FileContext) (instances []ec2.Instance) {
 				HttpTokens:   defsecTypes.StringDefault("optional", r.Metadata()),
 				HttpEndpoint: defsecTypes.StringDefault("enabled", r.Metadata()),
 			},
-			UserData:        r.GetStringProperty("UserData"),
-			SecurityGroups:  nil,
-			RootBlockDevice: nil,
-			EBSBlockDevices: nil,
+			UserData: r.GetStringProperty("UserData"),
 		}
+
+		if launchTemplate := findRelatedLaunchTemplate(ctx, r); launchTemplate != nil {
+			instance = launchTemplate.Instance
+		}
+
+		if instance.RootBlockDevice == nil {
+			instance.RootBlockDevice = &ec2.BlockDevice{
+				Metadata:  r.Metadata(),
+				Encrypted: defsecTypes.BoolDefault(false, r.Metadata()),
+			}
+		}
+
 		blockDevices := getBlockDevices(r)
 		for i, device := range blockDevices {
 			copyDevice := device
@@ -38,6 +46,28 @@ func getInstances(ctx parser.FileContext) (instances []ec2.Instance) {
 	}
 
 	return instances
+}
+
+func findRelatedLaunchTemplate(fctx parser.FileContext, r *parser.Resource) *ec2.LaunchTemplate {
+	launchTemplateRef := r.GetProperty("LaunchTemplate.LaunchTemplateName")
+
+	if !launchTemplateRef.IsString() || launchTemplateRef.IsEmpty() {
+		return nil
+	}
+
+	for _, res := range fctx.GetResourcesByType("AWS::EC2::LaunchTemplate") {
+		templateName := res.GetProperty("LaunchTemplateName")
+		if templateName.IsNotString() {
+			continue
+		}
+
+		if launchTemplateRef.EqualTo(templateName.AsString()) {
+			launchTemplate := adaptLaunchTemplate(res)
+			return &launchTemplate
+		}
+	}
+
+	return nil
 }
 
 func getBlockDevices(r *parser.Resource) []*ec2.BlockDevice {
