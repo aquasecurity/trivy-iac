@@ -15,24 +15,21 @@ func adaptLaunchTemplates(modules terraform.Modules) (templates []ec2.LaunchTemp
 	blocks := modules.GetResourcesByType("aws_launch_template")
 
 	for _, b := range blocks {
-
-		metadataOptions := getMetadataOptions(b)
-		userData := b.GetAttribute("user_data").AsStringValueOrDefault("", b)
-
-		templates = append(templates, ec2.LaunchTemplate{
-			Metadata: b.GetMetadata(),
-			Instance: ec2.Instance{
-				Metadata:        b.GetMetadata(),
-				MetadataOptions: metadataOptions,
-				UserData:        userData,
-				SecurityGroups:  nil,
-				RootBlockDevice: nil,
-				EBSBlockDevices: nil,
-			},
-		})
+		templates = append(templates, adaptLaunchTemplate(b))
 	}
 
 	return templates
+}
+
+func adaptLaunchTemplate(b *terraform.Block) ec2.LaunchTemplate {
+	return ec2.LaunchTemplate{
+		Metadata: b.GetMetadata(),
+		Instance: ec2.Instance{
+			Metadata:        b.GetMetadata(),
+			MetadataOptions: getMetadataOptions(b),
+			UserData:        b.GetAttribute("user_data").AsStringValueOrDefault("", b),
+		},
+	}
 }
 
 func adaptLaunchConfigurations(modules terraform.Modules) []ec2.LaunchConfiguration {

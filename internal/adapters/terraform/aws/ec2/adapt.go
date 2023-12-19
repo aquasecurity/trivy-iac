@@ -29,25 +29,28 @@ func getInstances(modules terraform.Modules) []ec2.Instance {
 	blocks := modules.GetResourcesByType("aws_instance")
 
 	for _, b := range blocks {
-
-		metadataOptions := getMetadataOptions(b)
-		userData := b.GetAttribute("user_data").AsStringValueOrDefault("", b)
-
 		instance := ec2.Instance{
 			Metadata:        b.GetMetadata(),
-			MetadataOptions: metadataOptions,
-			UserData:        userData,
-			SecurityGroups:  nil,
-			RootBlockDevice: &ec2.BlockDevice{
+			MetadataOptions: getMetadataOptions(b),
+			UserData:        b.GetAttribute("user_data").AsStringValueOrDefault("", b),
+		}
+
+		if launchTemplate := findRelatedLaunchTemplate(modules, b); launchTemplate != nil {
+			instance = launchTemplate.Instance
+		}
+
+		if instance.RootBlockDevice == nil {
+			instance.RootBlockDevice = &ec2.BlockDevice{
 				Metadata:  b.GetMetadata(),
 				Encrypted: types.BoolDefault(false, b.GetMetadata()),
-			},
-			EBSBlockDevices: nil,
+			}
 		}
 
 		if rootBlockDevice := b.GetBlock("root_block_device"); rootBlockDevice.IsNotNil() {
-			instance.RootBlockDevice.Metadata = rootBlockDevice.GetMetadata()
-			instance.RootBlockDevice.Encrypted = rootBlockDevice.GetAttribute("encrypted").AsBoolValueOrDefault(false, b)
+			instance.RootBlockDevice = &ec2.BlockDevice{
+				Metadata:  rootBlockDevice.GetMetadata(),
+				Encrypted: rootBlockDevice.GetAttribute("encrypted").AsBoolValueOrDefault(false, b),
+			}
 		}
 
 		for _, ebsBlock := range b.GetBlocks("ebs_block_device") {
@@ -71,4 +74,29 @@ func getInstances(modules terraform.Modules) []ec2.Instance {
 	}
 
 	return instances
+}
+
+func findRelatedLaunchTemplate(modules terraform.Modules, instanceBlock *terraform.Block) *ec2.LaunchTemplate {
+	launchTemplateBlock := instanceBlock.GetBlock("launch_template")
+	if launchTemplateBlock.IsNil() {
+		return nil
+	}
+
+	templateRef := launchTemplateBlock.GetAttribute("name")
+
+	if !templateRef.IsResolvable() {
+		templateRef = launchTemplateBlock.GetAttribute("id")
+	}
+
+	if templateRef.IsString() {
+		for _, r := range modules.GetResourcesByType("aws_launch_template") {
+			templateName := r.GetAttribute("name").AsStringValueOrDefault("", r).Value()
+			if templateRef.Equals(r.ID()) || templateRef.Equals(templateName) {
+				launchTemplate := adaptLaunchTemplate(r)
+				return &launchTemplate
+			}
+		}
+	}
+
+	return nil
 }

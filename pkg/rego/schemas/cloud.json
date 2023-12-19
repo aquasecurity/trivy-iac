@@ -1367,6 +1367,10 @@
         "instance": {
           "type": "object",
           "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.providers.aws.ec2.Instance"
+        },
+        "name": {
+          "type": "object",
+          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.StringValue"
         }
       }
     },
@@ -5408,6 +5412,10 @@
     "github.com.aquasecurity.defsec.pkg.providers.google.gke.Cluster": {
       "type": "object",
       "properties": {
+        "datapathprovider": {
+          "type": "object",
+          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.StringValue"
+        },
         "enableautpilot": {
           "type": "object",
           "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.BoolValue"
