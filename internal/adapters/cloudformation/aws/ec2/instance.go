@@ -22,7 +22,7 @@ func getInstances(ctx parser.FileContext) (instances []ec2.Instance) {
 			UserData: r.GetStringProperty("UserData"),
 		}
 
-		if launchTemplate := findRelatedLaunchTemplate(ctx, r); launchTemplate != nil {
+		if launchTemplate, ok := findRelatedLaunchTemplate(ctx, r); ok {
 			instance = launchTemplate.Instance
 		}
 
@@ -48,22 +48,36 @@ func getInstances(ctx parser.FileContext) (instances []ec2.Instance) {
 	return instances
 }
 
-func findRelatedLaunchTemplate(fctx parser.FileContext, r *parser.Resource) *ec2.LaunchTemplate {
+func findRelatedLaunchTemplate(fctx parser.FileContext, r *parser.Resource) (ec2.LaunchTemplate, bool) {
 	launchTemplateRef := r.GetProperty("LaunchTemplate.LaunchTemplateName")
-
-	if !launchTemplateRef.IsString() || launchTemplateRef.IsEmpty() {
-		return nil
+	if launchTemplateRef.IsString() {
+		res := findLaunchTemplateByName(fctx, launchTemplateRef)
+		if res != nil {
+			return adaptLaunchTemplate(res), true
+		}
 	}
 
+	launchTemplateRef = r.GetProperty("LaunchTemplate.LaunchTemplateId")
+	if !launchTemplateRef.IsString() {
+		return ec2.LaunchTemplate{}, false
+	}
+
+	resource := fctx.GetResourceByLogicalID(launchTemplateRef.AsString())
+	if resource == nil {
+		return ec2.LaunchTemplate{}, false
+	}
+	return adaptLaunchTemplate(resource), true
+}
+
+func findLaunchTemplateByName(fctx parser.FileContext, prop *parser.Property) *parser.Resource {
 	for _, res := range fctx.GetResourcesByType("AWS::EC2::LaunchTemplate") {
 		templateName := res.GetProperty("LaunchTemplateName")
 		if templateName.IsNotString() {
 			continue
 		}
 
-		if launchTemplateRef.EqualTo(templateName.AsString()) {
-			launchTemplate := adaptLaunchTemplate(res)
-			return &launchTemplate
+		if prop.EqualTo(templateName.AsString()) {
+			return res
 		}
 	}
 

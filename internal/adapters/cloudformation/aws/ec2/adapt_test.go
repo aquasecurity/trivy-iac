@@ -109,6 +109,54 @@ Resources:
 				},
 			},
 		},
+		{
+			name: "ec2 instance with launch template, ref to id",
+			source: `AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+        LaunchTemplateName: MyTemplate
+        LaunchTemplateData:
+          MetadataOptions:
+            HttpEndpoint: enabled
+            HttpTokens: required
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "ami-79fd7eee"
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+`,
+			expected: ec2.EC2{
+				LaunchTemplates: []ec2.LaunchTemplate{
+					{
+						Metadata: types.NewTestMetadata(),
+						Name:     types.String("MyTemplate", types.NewTestMetadata()),
+						Instance: ec2.Instance{
+							Metadata: types.NewTestMetadata(),
+							MetadataOptions: ec2.MetadataOptions{
+								HttpEndpoint: types.String("enabled", types.NewTestMetadata()),
+								HttpTokens:   types.String("required", types.NewTestMetadata()),
+							},
+						},
+					},
+				},
+				Instances: []ec2.Instance{
+					{
+						Metadata: types.NewTestMetadata(),
+						MetadataOptions: ec2.MetadataOptions{
+							HttpEndpoint: types.String("enabled", types.NewTestMetadata()),
+							HttpTokens:   types.String("required", types.NewTestMetadata()),
+						},
+						RootBlockDevice: &ec2.BlockDevice{
+							Metadata:  types.NewTestMetadata(),
+							Encrypted: types.Bool(false, types.NewTestMetadata()),
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
