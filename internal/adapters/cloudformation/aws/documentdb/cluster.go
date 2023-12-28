@@ -16,7 +16,7 @@ func getClusters(ctx parser.FileContext) (clusters []documentdb.Cluster) {
 			Identifier:            r.GetStringProperty("DBClusterIdentifier"),
 			EnabledLogExports:     getLogExports(r),
 			Instances:             nil,
-			BackupRetentionPeriod: r.GetIntProperty("BackupRetentionPeriod"),
+			BackupRetentionPeriod: r.GetIntProperty("BackupRetentionPeriod", 1),
 			StorageEncrypted:      r.GetBoolProperty("StorageEncrypted"),
 			KMSKeyID:              r.GetStringProperty("KmsKeyId"),
 		}
