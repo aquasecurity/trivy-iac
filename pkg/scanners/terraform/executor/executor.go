@@ -1,7 +1,6 @@
 package executor
 
 import (
-	"fmt"
 	"runtime"
 	"sort"
 	"strings"
@@ -135,7 +134,6 @@ func (e *Executor) Execute(modules terraform.Modules) (scan.Results, Metrics, er
 				strings.ToLower(result.Rule().AVDID),
 				result.Rule().ShortCode,
 			}
-			fmt.Println(">>> aliases: ", result.Rule().Aliases)
 			allIDs = append(allIDs, result.Rule().Aliases...)
 
 			if e.alternativeIDProviderFunc != nil {
