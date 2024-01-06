@@ -14,9 +14,9 @@ import (
 	"github.com/aquasecurity/defsec/pkg/framework"
 	"github.com/aquasecurity/trivy-policies/rules"
 
-	_ "github.com/aquasecurity/trivy-iac/pkg/rego"
-	registered "github.com/aquasecurity/trivy-iac/pkg/rules"
-	"github.com/aquasecurity/trivy-iac/pkg/types"
+	_ "github.com/aquasecurity/defsec/pkg/rego"
+	registered "github.com/aquasecurity/defsec/pkg/rules"
+	"github.com/aquasecurity/defsec/pkg/types"
 )
 
 func main() {

@@ -14,9 +14,9 @@ import (
 	"github.com/aquasecurity/defsec/pkg/types"
 	"github.com/liamg/memoryfs"
 
+	"github.com/aquasecurity/defsec/pkg/rego"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/trivy-iac/pkg/detection"
-	"github.com/aquasecurity/trivy-iac/pkg/rego"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/helm/parser"
 	kparser "github.com/aquasecurity/trivy-iac/pkg/scanners/kubernetes/parser"
