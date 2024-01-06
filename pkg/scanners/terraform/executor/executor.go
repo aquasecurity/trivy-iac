@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"fmt"
 	"runtime"
 	"sort"
 	"strings"
@@ -13,9 +14,9 @@ import (
 	"github.com/aquasecurity/defsec/pkg/state"
 	"github.com/aquasecurity/defsec/pkg/terraform"
 
+	"github.com/aquasecurity/defsec/pkg/rego"
+	"github.com/aquasecurity/defsec/pkg/rules"
 	adapter "github.com/aquasecurity/trivy-iac/internal/adapters/terraform"
-	"github.com/aquasecurity/trivy-iac/pkg/rego"
-	"github.com/aquasecurity/trivy-iac/pkg/rules"
 )
 
 // Executor scans HCL blocks by running all registered rules against them
@@ -134,6 +135,7 @@ func (e *Executor) Execute(modules terraform.Modules) (scan.Results, Metrics, er
 				strings.ToLower(result.Rule().AVDID),
 				result.Rule().ShortCode,
 			}
+			fmt.Println(">>> aliases: ", result.Rule().Aliases)
 			allIDs = append(allIDs, result.Rule().Aliases...)
 
 			if e.alternativeIDProviderFunc != nil {
