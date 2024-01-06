@@ -16,7 +16,7 @@ import (
 
 	_ "github.com/aquasecurity/defsec/pkg/rego"
 	registered "github.com/aquasecurity/defsec/pkg/rules"
-	"github.com/aquasecurity/defsec/pkg/types"
+	types "github.com/aquasecurity/defsec/pkg/types/rules"
 )
 
 func main() {
