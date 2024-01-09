@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/Masterminds/semver v1.5.0
 	github.com/apparentlymart/go-cidr v1.1.0
-	github.com/aquasecurity/defsec v0.93.2-0.20231208181342-318642ac6f08
+	github.com/aquasecurity/defsec v0.93.2-0.20240104002958-968b8f115bc0
 	github.com/aquasecurity/trivy-policies v0.6.1-0.20231120231532-f6f2330bf842
 	github.com/aws/smithy-go v1.19.0
 	github.com/bmatcuk/doublestar/v4 v4.6.0
@@ -218,5 +218,3 @@ require (
 )
 
 replace oras.land/oras-go => oras.land/oras-go v1.2.4-0.20230801060855-932dd06d38af
-
-replace github.com/aquasecurity/defsec => /Users/simarpreetsingh/repos/defsec
