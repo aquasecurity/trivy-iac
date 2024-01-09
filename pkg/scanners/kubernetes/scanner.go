@@ -10,10 +10,10 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/debug"
 	"github.com/aquasecurity/defsec/pkg/framework"
+	"github.com/aquasecurity/defsec/pkg/rego"
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/types"
-	"github.com/aquasecurity/trivy-iac/pkg/rego"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/kubernetes/parser"
 	"github.com/liamg/memoryfs"

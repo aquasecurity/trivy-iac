@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/aquasecurity/defsec/pkg/rego"
+	"github.com/aquasecurity/defsec/pkg/rego/schemas"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
-	"github.com/aquasecurity/trivy-iac/pkg/rego"
-	"github.com/aquasecurity/trivy-iac/pkg/rego/schemas"
 	"github.com/aquasecurity/trivy-iac/test/testutil"
 )
 
