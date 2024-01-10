@@ -12,7 +12,7 @@ import (
 	"text/template"
 
 	"github.com/aquasecurity/defsec/pkg/framework"
-	"github.com/aquasecurity/trivy-policies/rules"
+	policies "github.com/aquasecurity/trivy-policies"
 
 	_ "github.com/aquasecurity/trivy-iac/pkg/rego"
 	registered "github.com/aquasecurity/trivy-iac/pkg/rules"
@@ -120,7 +120,7 @@ func fail(msg string, args ...interface{}) {
 
 func readFileFromPolicyFS(path string) (io.Reader, error) {
 	path = strings.TrimPrefix(path, "rules/")
-	return rules.EmbeddedPolicyFileSystem.Open(path)
+	return policies.EmbeddedPolicyFileSystem.Open(path)
 
 }
 
