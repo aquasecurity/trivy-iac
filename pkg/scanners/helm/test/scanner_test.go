@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
@@ -262,4 +263,44 @@ func Test_helm_chart_with_templated_name(t *testing.T) {
 	testFs := os.DirFS(filepath.Join("testdata", "templated-name"))
 	_, err := helmScanner.ScanFS(context.TODO(), testFs, ".")
 	require.NoError(t, err)
+}
+
+func TestCodeShouldNotBeMissing(t *testing.T) {
+	policy := `# METADATA
+# title: "Test rego"
+# description: "Test rego"
+# scope: package
+# schemas:
+# - input: schema["kubernetes"]
+# custom:
+#   id: ID001
+#   avd_id: AVD-USR-ID001
+#   severity: LOW
+#   input:
+#     selector:
+#     - type: kubernetes
+package user.kubernetes.ID001
+
+deny[res] {
+    input.spec.replicas == 3
+    res := result.new("Replicas are not allowed", input)
+}
+`
+	helmScanner := helm.New(
+		options.ScannerWithEmbeddedPolicies(false),
+		options.ScannerWithEmbeddedLibraries(false),
+		options.ScannerWithPolicyNamespaces("user"),
+		options.ScannerWithPolicyReader(strings.NewReader(policy)),
+	)
+
+	results, err := helmScanner.ScanFS(context.TODO(), os.DirFS("testdata/simmilar-templates"), ".")
+	require.NoError(t, err)
+
+	failedResults := results.GetFailed()
+	require.Len(t, failedResults, 1)
+
+	failed := failedResults[0]
+	code, err := failed.GetCode()
+	require.NoError(t, err)
+	assert.NotNil(t, code)
 }
