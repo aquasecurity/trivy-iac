@@ -22,7 +22,7 @@ require (
 	github.com/moby/buildkit v0.11.6
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/open-policy-agent/opa v0.58.0
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	github.com/zclconf/go-cty v1.13.0
 	github.com/zclconf/go-cty-yaml v1.0.3
