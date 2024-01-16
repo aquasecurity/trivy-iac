@@ -63,6 +63,8 @@ func (a *adapter) adaptCluster(resource *terraform.Block, module *terraform.Modu
 			Metadata: resource.GetMetadata(),
 			Enabled:  defsecTypes.BoolDefault(false, resource.GetMetadata()),
 		},
+		DatapathProvider: resource.GetAttribute("datapath_provider").
+			AsStringValueOrDefault("DATAPATH_PROVIDER_UNSPECIFIED", resource),
 		PrivateCluster: gke.PrivateCluster{
 			Metadata:           resource.GetMetadata(),
 			EnablePrivateNodes: defsecTypes.BoolDefault(false, resource.GetMetadata()),

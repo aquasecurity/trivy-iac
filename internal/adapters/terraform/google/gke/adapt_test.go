@@ -76,6 +76,8 @@ resource "google_container_cluster" "example" {
   ip_allocation_policy {}
 
   enable_autopilot = true
+
+  datapath_provider = "ADVANCED_DATAPATH"
 }
 
 resource "google_container_node_pool" "primary_preemptible_nodes" {
@@ -147,6 +149,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 							Metadata: defsecTypes.NewTestMetadata(),
 							Enabled:  defsecTypes.Bool(true, defsecTypes.NewTestMetadata()),
 						},
+						DatapathProvider: defsecTypes.String("ADVANCED_DATAPATH", defsecTypes.NewTestMetadata()),
 						PrivateCluster: gke.PrivateCluster{
 							Metadata:           defsecTypes.NewTestMetadata(),
 							EnablePrivateNodes: defsecTypes.Bool(true, defsecTypes.NewTestMetadata()),
@@ -217,6 +220,7 @@ resource "google_container_cluster" "example" {
 							Metadata: defsecTypes.NewTestMetadata(),
 							Enabled:  defsecTypes.Bool(false, defsecTypes.NewTestMetadata()),
 						},
+						DatapathProvider: defsecTypes.StringDefault("DATAPATH_PROVIDER_UNSPECIFIED", defsecTypes.NewTestMetadata()),
 						PrivateCluster: gke.PrivateCluster{
 							Metadata:           defsecTypes.NewTestMetadata(),
 							EnablePrivateNodes: defsecTypes.Bool(false, defsecTypes.NewTestMetadata()),
