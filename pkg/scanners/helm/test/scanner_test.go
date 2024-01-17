@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
@@ -45,7 +46,7 @@ func Test_helm_scanner_with_archive(t *testing.T) {
 		require.NotNil(t, results)
 
 		failed := results.GetFailed()
-		assert.Equal(t, 19, len(failed))
+		assert.Equal(t, 13, len(failed))
 
 		visited := make(map[string]bool)
 		var errorCodes []string
@@ -56,7 +57,7 @@ func Test_helm_scanner_with_archive(t *testing.T) {
 				errorCodes = append(errorCodes, id)
 			}
 		}
-		assert.Len(t, errorCodes, 14)
+		assert.Len(t, errorCodes, 13)
 
 		sort.Strings(errorCodes)
 
@@ -65,7 +66,7 @@ func Test_helm_scanner_with_archive(t *testing.T) {
 			"AVD-KSV-0011", "AVD-KSV-0012", "AVD-KSV-0014",
 			"AVD-KSV-0015", "AVD-KSV-0016", "AVD-KSV-0018",
 			"AVD-KSV-0020", "AVD-KSV-0021", "AVD-KSV-0030",
-			"AVD-KSV-0104", "AVD-KSV-0106", "AVD-KSV-0116",
+			"AVD-KSV-0104", "AVD-KSV-0106",
 		}, errorCodes)
 	}
 }
@@ -125,7 +126,7 @@ func Test_helm_scanner_with_dir(t *testing.T) {
 		require.NotNil(t, results)
 
 		failed := results.GetFailed()
-		assert.Equal(t, 17, len(failed))
+		assert.Equal(t, 14, len(failed))
 
 		visited := make(map[string]bool)
 		var errorCodes []string
@@ -144,7 +145,7 @@ func Test_helm_scanner_with_dir(t *testing.T) {
 			"AVD-KSV-0011", "AVD-KSV-0012", "AVD-KSV-0014",
 			"AVD-KSV-0015", "AVD-KSV-0016", "AVD-KSV-0018",
 			"AVD-KSV-0020", "AVD-KSV-0021", "AVD-KSV-0030",
-			"AVD-KSV-0104", "AVD-KSV-0106", "AVD-KSV-0116",
+			"AVD-KSV-0104", "AVD-KSV-0106",
 			"AVD-KSV-0117",
 		}, errorCodes)
 	}
@@ -212,7 +213,7 @@ deny[res] {
 			require.NotNil(t, results)
 
 			failed := results.GetFailed()
-			assert.Equal(t, 21, len(failed))
+			assert.Equal(t, 15, len(failed))
 
 			visited := make(map[string]bool)
 			var errorCodes []string
@@ -223,7 +224,7 @@ deny[res] {
 					errorCodes = append(errorCodes, id)
 				}
 			}
-			assert.Len(t, errorCodes, 15)
+			assert.Len(t, errorCodes, 14)
 
 			sort.Strings(errorCodes)
 
@@ -232,7 +233,7 @@ deny[res] {
 				"AVD-KSV-0011", "AVD-KSV-0012", "AVD-KSV-0014",
 				"AVD-KSV-0015", "AVD-KSV-0016", "AVD-KSV-0018",
 				"AVD-KSV-0020", "AVD-KSV-0021", "AVD-KSV-0030",
-				"AVD-KSV-0104", "AVD-KSV-0106", "AVD-KSV-0116", "AVD-USR-ID001",
+				"AVD-KSV-0104", "AVD-KSV-0106", "AVD-USR-ID001",
 			}, errorCodes)
 		})
 	}
@@ -262,4 +263,44 @@ func Test_helm_chart_with_templated_name(t *testing.T) {
 	testFs := os.DirFS(filepath.Join("testdata", "templated-name"))
 	_, err := helmScanner.ScanFS(context.TODO(), testFs, ".")
 	require.NoError(t, err)
+}
+
+func TestCodeShouldNotBeMissing(t *testing.T) {
+	policy := `# METADATA
+# title: "Test rego"
+# description: "Test rego"
+# scope: package
+# schemas:
+# - input: schema["kubernetes"]
+# custom:
+#   id: ID001
+#   avd_id: AVD-USR-ID001
+#   severity: LOW
+#   input:
+#     selector:
+#     - type: kubernetes
+package user.kubernetes.ID001
+
+deny[res] {
+    input.spec.replicas == 3
+    res := result.new("Replicas are not allowed", input)
+}
+`
+	helmScanner := helm.New(
+		options.ScannerWithEmbeddedPolicies(false),
+		options.ScannerWithEmbeddedLibraries(false),
+		options.ScannerWithPolicyNamespaces("user"),
+		options.ScannerWithPolicyReader(strings.NewReader(policy)),
+	)
+
+	results, err := helmScanner.ScanFS(context.TODO(), os.DirFS("testdata/simmilar-templates"), ".")
+	require.NoError(t, err)
+
+	failedResults := results.GetFailed()
+	require.Len(t, failedResults, 1)
+
+	failed := failedResults[0]
+	code, err := failed.GetCode()
+	require.NoError(t, err)
+	assert.NotNil(t, code)
 }
