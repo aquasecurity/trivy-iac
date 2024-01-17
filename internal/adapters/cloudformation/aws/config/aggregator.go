@@ -27,24 +27,15 @@ func getConfigurationAggregator(ctx parser.FileContext) config.ConfigurationAggr
 
 func isSourcingAllRegions(r *parser.Resource) defsecTypes.BoolValue {
 	accountProp := r.GetProperty("AccountAggregationSources")
-	orgProp := r.GetProperty("OrganizationAggregationSource")
 
 	if accountProp.IsNotNil() && accountProp.IsList() {
 		for _, a := range accountProp.AsList() {
 			regionsProp := a.GetProperty("AllAwsRegions")
-			if regionsProp.IsNil() || regionsProp.IsBool() {
-				return regionsProp.AsBoolValue()
+			if regionsProp.IsNotNil() {
+				return a.GetBoolProperty("AllAwsRegions")
 			}
 		}
 	}
 
-	if orgProp.IsNotNil() {
-		regionsProp := orgProp.GetProperty("AllAwsRegions")
-		if regionsProp.IsBool() {
-			return regionsProp.AsBoolValue()
-		}
-	}
-
-	// nothing is set or resolvable so its got to be false
-	return defsecTypes.BoolDefault(false, r.Metadata())
+	return r.GetBoolProperty("OrganizationAggregationSource.AllAwsRegions")
 }

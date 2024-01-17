@@ -50,17 +50,9 @@ func getBlockDevices(r *parser.Resource) []*ec2.BlockDevice {
 	}
 
 	for _, d := range devicesProp.AsList() {
-		encrypted := d.GetProperty("Ebs.Encrypted")
-		var result defsecTypes.BoolValue
-		if encrypted.IsNil() {
-			result = defsecTypes.BoolDefault(false, d.Metadata())
-		} else {
-			result = encrypted.AsBoolValue()
-		}
-
 		device := &ec2.BlockDevice{
 			Metadata:  d.Metadata(),
-			Encrypted: result,
+			Encrypted: d.GetBoolProperty("Ebs.Encrypted"),
 		}
 
 		blockDevices = append(blockDevices, device)
