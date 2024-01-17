@@ -16,10 +16,10 @@ import (
 
 	trivyRego "github.com/aquasecurity/trivy-iac/pkg/rego"
 	"github.com/aquasecurity/trivy-iac/pkg/rego/schemas"
-	"github.com/aquasecurity/trivy-policies/rules"
+	policies "github.com/aquasecurity/trivy-policies"
 )
 
-var embeddedFilesystems = []fs.FS{rules.EmbeddedLibraryFileSystem, rules.EmbeddedPolicyFileSystem}
+var embeddedFilesystems = []fs.FS{policies.EmbeddedLibraryFileSystem, policies.EmbeddedPolicyFileSystem}
 
 type walkDirFunc func(fs.FS) fs.WalkDirFunc
 
@@ -65,7 +65,7 @@ func Test_AllRegoCloudRulesMatchSchema(t *testing.T) {
 		}
 	}
 
-	require.NoError(t, walkOverFilesystems("cloud", walkDirFunc, rules.EmbeddedPolicyFileSystem))
+	require.NoError(t, walkOverFilesystems("checks/cloud", walkDirFunc, policies.EmbeddedPolicyFileSystem))
 
 	var schema interface{}
 	require.NoError(t, json.Unmarshal([]byte(schemas.Cloud), &schema))
