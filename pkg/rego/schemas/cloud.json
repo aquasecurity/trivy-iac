@@ -4783,6 +4783,10 @@
             "type": "object",
             "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.providers.digitalocean.compute.ForwardingRule"
           }
+        },
+        "redirecthttptohttps": {
+          "type": "object",
+          "$ref": "#/definitions/github.com.aquasecurity.defsec.pkg.types.BoolValue"
         }
       }
     },
