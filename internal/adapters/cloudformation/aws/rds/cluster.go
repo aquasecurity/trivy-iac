@@ -9,56 +9,24 @@ import (
 func getClusters(ctx parser.FileContext) (clusters map[string]rds.Cluster) {
 	clusters = make(map[string]rds.Cluster)
 	for _, clusterResource := range ctx.GetResourcesByType("AWS::RDS::DBCluster") {
-		cluster := rds.Cluster{
+		clusters[clusterResource.ID()] = rds.Cluster{
 			Metadata:                  clusterResource.Metadata(),
-			BackupRetentionPeriodDays: defsecTypes.IntDefault(1, clusterResource.Metadata()),
-			ReplicationSourceARN:      defsecTypes.StringDefault("", clusterResource.Metadata()),
+			BackupRetentionPeriodDays: clusterResource.GetIntProperty("BackupRetentionPeriod", 1),
 			PerformanceInsights: rds.PerformanceInsights{
 				Metadata: clusterResource.Metadata(),
-				Enabled:  defsecTypes.BoolDefault(false, clusterResource.Metadata()),
-				KMSKeyID: defsecTypes.StringDefault("", clusterResource.Metadata()),
+				Enabled:  clusterResource.GetBoolProperty("PerformanceInsightsEnabled"),
+				KMSKeyID: clusterResource.GetStringProperty("PerformanceInsightsKmsKeyId"),
 			},
-			Instances: nil,
 			Encryption: rds.Encryption{
 				Metadata:       clusterResource.Metadata(),
-				EncryptStorage: defsecTypes.BoolDefault(false, clusterResource.Metadata()),
-				KMSKeyID:       defsecTypes.StringDefault("", clusterResource.Metadata()),
+				EncryptStorage: clusterResource.GetBoolProperty("StorageEncrypted"),
+				KMSKeyID:       clusterResource.GetStringProperty("KmsKeyId"),
 			},
 			PublicAccess:         defsecTypes.BoolDefault(false, clusterResource.Metadata()),
-			Engine:               defsecTypes.StringDefault(rds.EngineAurora, clusterResource.Metadata()),
+			Engine:               clusterResource.GetStringProperty("Engine", rds.EngineAurora),
 			LatestRestorableTime: defsecTypes.TimeUnresolvable(clusterResource.Metadata()),
-			DeletionProtection:   defsecTypes.BoolDefault(false, clusterResource.Metadata()),
+			DeletionProtection:   clusterResource.GetBoolProperty("DeletionProtection"),
 		}
-
-		if engineProp := clusterResource.GetProperty("Engine"); engineProp.IsString() {
-			cluster.Engine = engineProp.AsStringValue()
-		}
-
-		if backupProp := clusterResource.GetProperty("BackupRetentionPeriod"); backupProp.IsInt() {
-			cluster.BackupRetentionPeriodDays = backupProp.AsIntValue()
-		}
-
-		if replicaProp := clusterResource.GetProperty("SourceDBInstanceIdentifier"); replicaProp.IsString() {
-			cluster.ReplicationSourceARN = replicaProp.AsStringValue()
-		}
-
-		if piProp := clusterResource.GetProperty("EnablePerformanceInsights"); piProp.IsBool() {
-			cluster.PerformanceInsights.Enabled = piProp.AsBoolValue()
-		}
-
-		if insightsKeyProp := clusterResource.GetProperty("PerformanceInsightsKMSKeyId"); insightsKeyProp.IsString() {
-			cluster.PerformanceInsights.KMSKeyID = insightsKeyProp.AsStringValue()
-		}
-
-		if encryptedProp := clusterResource.GetProperty("StorageEncrypted"); encryptedProp.IsBool() {
-			cluster.Encryption.EncryptStorage = encryptedProp.AsBoolValue()
-		}
-
-		if keyProp := clusterResource.GetProperty("KmsKeyId"); keyProp.IsString() {
-			cluster.Encryption.KMSKeyID = keyProp.AsStringValue()
-		}
-
-		clusters[clusterResource.ID()] = cluster
 	}
 	return clusters
 }
