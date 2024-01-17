@@ -12,11 +12,10 @@ import (
 	"text/template"
 
 	"github.com/aquasecurity/defsec/pkg/framework"
+	_ "github.com/aquasecurity/defsec/pkg/rego"
+	registered "github.com/aquasecurity/defsec/pkg/rules"
+	types "github.com/aquasecurity/defsec/pkg/types/rules"
 	policies "github.com/aquasecurity/trivy-policies"
-
-	_ "github.com/aquasecurity/trivy-iac/pkg/rego"
-	registered "github.com/aquasecurity/trivy-iac/pkg/rules"
-	"github.com/aquasecurity/trivy-iac/pkg/types"
 )
 
 func main() {
