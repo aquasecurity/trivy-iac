@@ -220,3 +220,5 @@ require (
 )
 
 replace oras.land/oras-go => oras.land/oras-go v1.2.4-0.20230801060855-932dd06d38af
+
+replace github.com/aquasecurity/defsec => github.com/nikpivkin/defsec v0.0.0-20240118164627-06ff1b174830

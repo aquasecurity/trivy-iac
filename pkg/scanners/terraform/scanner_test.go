@@ -539,7 +539,8 @@ func Test_OptionWithSkipDownloaded(t *testing.T) {
 module "s3-bucket" {
   source   = "terraform-aws-modules/s3-bucket/aws"
   version = "3.14.0"
-  bucket = mybucket
+  bucket = "mybucket"
+  create_bucket = true
 }
 `,
 		// creating our own rule for the reliability of the test
@@ -558,16 +559,88 @@ deny[cause] {
 }`,
 	})
 
-	scanner := New(options.ScannerWithEmbeddedPolicies(true), options.ScannerWithEmbeddedLibraries(true))
+	t.Run("without skip", func(t *testing.T) {
+		scanner := New(
+			options.ScannerWithPolicyDirs("rules"),
+			options.ScannerWithRegoOnly(true),
+			options.ScannerWithEmbeddedPolicies(false),
+			options.ScannerWithEmbeddedLibraries(true),
+		)
+		results, err := scanner.ScanFS(context.TODO(), fs, "test")
+		require.NoError(t, err)
+
+		assert.Len(t, results, 1)
+		assert.Len(t, results.GetFailed(), 1)
+	})
+
+	t.Run("with skip", func(t *testing.T) {
+		scanner := New(
+			ScannerWithSkipDownloaded(true),
+			options.ScannerWithPolicyDirs("rules"),
+			options.ScannerWithRegoOnly(true),
+			options.ScannerWithEmbeddedPolicies(false),
+			options.ScannerWithEmbeddedLibraries(true),
+		)
+		results, err := scanner.ScanFS(context.TODO(), fs, "test")
+		require.NoError(t, err)
+
+		assert.Len(t, results, 1)
+		assert.Len(t, results.GetIgnored(), 1)
+	})
+}
+
+func Test_OptionWithSkipDownloadedIAMDocument(t *testing.T) {
+	fs := testutil.CreateFS(t, map[string]string{
+		"test/main.tf": `
+module "karpenter" {
+  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  version = "19.21.0"
+
+  cluster_name           = "test"
+  irsa_oidc_provider_arn = "example"
+}
+`,
+		// creating our own rule for the reliability of the test
+		"/rules/test.rego": `
+package defsec.abcdefg
+
+__rego_input__ := {
+	"combine": false,
+	"selector": [{"type": "defsec", "subtypes": [{"service": "iam", "provider": "aws"}]}],
+}
+
+allows_permission(statements, permission, effect) {
+	statement := statements[_]
+	statement.Effect == effect
+	action = statement.Action[_]
+	action == permission
+}
+
+deny[res] {
+	policy := input.aws.iam.policies[_]
+	value = json.unmarshal(policy.document.value)
+	statements = value.Statement
+	not allows_permission(statements, "iam:PassRole", "Deny")
+	allows_permission(statements, "iam:PassRole", "Allow")
+	res = result.new("IAM policy allows 'iam:PassRole' action", policy.document)
+}
+`,
+	})
+
+	scanner := New(
+		ScannerWithSkipDownloaded(true),
+		options.ScannerWithPolicyDirs("rules"),
+		options.ScannerWithRegoOnly(true),
+		options.ScannerWithEmbeddedLibraries(true),
+		options.ScannerWithEmbeddedPolicies(false),
+	)
 	results, err := scanner.ScanFS(context.TODO(), fs, "test")
-	assert.NoError(t, err)
-	assert.Greater(t, len(results.GetFailed()), 0)
+	require.NoError(t, err)
+	assert.Len(t, results, 1)
 
-	scanner = New(ScannerWithSkipDownloaded(true))
-	results, err = scanner.ScanFS(context.TODO(), fs, "test")
-	assert.NoError(t, err)
-	assert.Len(t, results.GetFailed(), 0)
-
+	ignored := results.GetIgnored()
+	assert.Len(t, ignored, 1)
+	assert.NotNil(t, ignored[0].Metadata().Parent())
 }
 
 func Test_IAMPolicyRego(t *testing.T) {
