@@ -86,8 +86,9 @@ func adaptLoadBalancers(module terraform.Modules) (loadBalancers []compute.LoadB
 			fRules = append(fRules, rule)
 		}
 		loadBalancers = append(loadBalancers, compute.LoadBalancer{
-			Metadata:        block.GetMetadata(),
-			ForwardingRules: fRules,
+			Metadata:            block.GetMetadata(),
+			RedirectHttpToHttps: block.GetAttribute("redirect_http_to_https").AsBoolValueOrDefault(false, block),
+			ForwardingRules:     fRules,
 		})
 	}
 
