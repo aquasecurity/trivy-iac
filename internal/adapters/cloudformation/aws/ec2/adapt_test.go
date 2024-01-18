@@ -4,16 +4,15 @@ import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/aquasecurity/defsec/pkg/providers/aws/ec2"
 	"github.com/aquasecurity/defsec/pkg/types"
+	"github.com/stretchr/testify/require"
+
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 	"github.com/aquasecurity/trivy-iac/test/testutil"
 )
 
 func TestAdapt(t *testing.T) {
-
 	tests := []struct {
 		name     string
 		source   string

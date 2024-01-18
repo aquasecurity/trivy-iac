@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/trivy-iac/pkg/rules"
-	rules2 "github.com/aquasecurity/trivy-policies/rules"
+	policies "github.com/aquasecurity/trivy-policies"
 	"github.com/open-policy-agent/opa/ast"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -102,7 +102,7 @@ deny[res]{
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			policies, err := LoadPoliciesFromDirs(rules2.EmbeddedLibraryFileSystem, ".")
+			policies, err := LoadPoliciesFromDirs(policies.EmbeddedLibraryFileSystem, ".")
 			require.NoError(t, err)
 			newRule, err := ast.ParseModuleWithOpts("/rules/newrule.rego", tc.inputPolicy, ast.ParserOptions{
 				ProcessAnnotation: true,

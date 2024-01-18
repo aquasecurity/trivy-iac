@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/aquasecurity/trivy-iac/pkg/rules"
-	rules2 "github.com/aquasecurity/trivy-policies/rules"
+	policies "github.com/aquasecurity/trivy-policies"
 	"github.com/open-policy-agent/opa/ast"
 )
 
@@ -61,11 +61,11 @@ func RegisterRegoRules(modules map[string]*ast.Module) {
 }
 
 func LoadEmbeddedPolicies() (map[string]*ast.Module, error) {
-	return LoadPoliciesFromDirs(rules2.EmbeddedPolicyFileSystem, ".")
+	return LoadPoliciesFromDirs(policies.EmbeddedPolicyFileSystem, ".")
 }
 
 func LoadEmbeddedLibraries() (map[string]*ast.Module, error) {
-	return LoadPoliciesFromDirs(rules2.EmbeddedLibraryFileSystem, ".")
+	return LoadPoliciesFromDirs(policies.EmbeddedLibraryFileSystem, ".")
 }
 
 func LoadPoliciesFromDirs(target fs.FS, paths ...string) (map[string]*ast.Module, error) {
@@ -79,7 +79,7 @@ func LoadPoliciesFromDirs(target fs.FS, paths ...string) (map[string]*ast.Module
 				return nil
 			}
 
-			if strings.HasSuffix(filepath.Dir(filepath.ToSlash(path)), "policies/advanced/optional") {
+			if strings.HasSuffix(filepath.Dir(filepath.ToSlash(path)), "advanced/optional") {
 				return fs.SkipDir
 			}
 

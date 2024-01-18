@@ -1025,6 +1025,93 @@ resource "aws_internet_gateway" "example" {
 	assert.Equal(t, expectedVpcIds, vpcIds)
 }
 
+func TestArnAttributeOfBucketIsCorrect(t *testing.T) {
+
+	t.Run("the bucket doesn't have a name", func(t *testing.T) {
+		fs := testutil.CreateFS(t, map[string]string{
+			"main.tf": `resource "aws_s3_bucket" "this" {}`,
+		})
+		parser := New(fs, "", OptionStopOnHCLError(true))
+		require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
+		modules, _, err := parser.EvaluateAll(context.TODO())
+		require.NoError(t, err)
+		require.Len(t, modules, 1)
+
+		blocks := modules.GetResourcesByType("aws_s3_bucket")
+		assert.Len(t, blocks, 1)
+
+		bucket := blocks[0]
+
+		values := bucket.Values()
+		arnVal := values.GetAttr("arn")
+		assert.True(t, arnVal.Type().Equals(cty.String))
+
+		id := values.GetAttr("id").AsString()
+
+		arn := arnVal.AsString()
+		assert.Equal(t, "arn:aws:s3:::"+id, arn)
+	})
+
+	t.Run("the bucket has a name", func(t *testing.T) {
+		fs := testutil.CreateFS(t, map[string]string{
+			"main.tf": `resource "aws_s3_bucket" "this" {
+  bucket = "test"
+}
+
+resource "aws_iam_role" "this" {
+  name = "test_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "s3.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "this" {
+  name   = "test_policy"
+  role   = aws_iam_role.this.id
+  policy = data.aws_iam_policy_document.this.json
+}
+
+data "aws_iam_policy_document" "this" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject"
+    ]
+    resources = ["${aws_s3_bucket.this.arn}/*"]
+  }
+}`,
+		})
+		parser := New(fs, "", OptionStopOnHCLError(true))
+		require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
+		modules, _, err := parser.EvaluateAll(context.TODO())
+		require.NoError(t, err)
+		require.Len(t, modules, 1)
+
+		blocks := modules[0].GetDatasByType("aws_iam_policy_document")
+		assert.Len(t, blocks, 1)
+
+		policyDoc := blocks[0]
+
+		statement := policyDoc.GetBlock("statement")
+		resources := statement.GetAttribute("resources").AsStringValueSliceOrEmpty()
+
+		assert.Len(t, resources, 1)
+		assert.True(t, resources[0].EqualTo("arn:aws:s3:::test/*"))
+	})
+}
+
 func TestForEachWithObjectsOfDifferentTypes(t *testing.T) {
 	fs := testutil.CreateFS(t, map[string]string{
 		"main.tf": `module "backups" {

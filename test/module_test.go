@@ -16,7 +16,7 @@ import (
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/executor"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
 	"github.com/aquasecurity/trivy-iac/test/testutil"
-	"github.com/aquasecurity/trivy-policies/rules/cloud/policies/aws/iam"
+	"github.com/aquasecurity/trivy-policies/checks/cloud/aws/iam"
 	"github.com/stretchr/testify/require"
 )
 
