@@ -7,7 +7,6 @@ import (
 )
 
 func getInstances(ctx parser.FileContext) (instances []ec2.Instance) {
-
 	instanceResources := ctx.GetResourcesByType("AWS::EC2::Instance")
 
 	for _, r := range instanceResources {
@@ -20,11 +19,20 @@ func getInstances(ctx parser.FileContext) (instances []ec2.Instance) {
 				HttpTokens:   defsecTypes.StringDefault("optional", r.Metadata()),
 				HttpEndpoint: defsecTypes.StringDefault("enabled", r.Metadata()),
 			},
-			UserData:        r.GetStringProperty("UserData"),
-			SecurityGroups:  nil,
-			RootBlockDevice: nil,
-			EBSBlockDevices: nil,
+			UserData: r.GetStringProperty("UserData"),
 		}
+
+		if launchTemplate, ok := findRelatedLaunchTemplate(ctx, r); ok {
+			instance = launchTemplate.Instance
+		}
+
+		if instance.RootBlockDevice == nil {
+			instance.RootBlockDevice = &ec2.BlockDevice{
+				Metadata:  r.Metadata(),
+				Encrypted: defsecTypes.BoolDefault(false, r.Metadata()),
+			}
+		}
+
 		blockDevices := getBlockDevices(r)
 		for i, device := range blockDevices {
 			copyDevice := device
@@ -40,6 +48,42 @@ func getInstances(ctx parser.FileContext) (instances []ec2.Instance) {
 	return instances
 }
 
+func findRelatedLaunchTemplate(fctx parser.FileContext, r *parser.Resource) (ec2.LaunchTemplate, bool) {
+	launchTemplateRef := r.GetProperty("LaunchTemplate.LaunchTemplateName")
+	if launchTemplateRef.IsString() {
+		res := findLaunchTemplateByName(fctx, launchTemplateRef)
+		if res != nil {
+			return adaptLaunchTemplate(res), true
+		}
+	}
+
+	launchTemplateRef = r.GetProperty("LaunchTemplate.LaunchTemplateId")
+	if !launchTemplateRef.IsString() {
+		return ec2.LaunchTemplate{}, false
+	}
+
+	resource := fctx.GetResourceByLogicalID(launchTemplateRef.AsString())
+	if resource == nil {
+		return ec2.LaunchTemplate{}, false
+	}
+	return adaptLaunchTemplate(resource), true
+}
+
+func findLaunchTemplateByName(fctx parser.FileContext, prop *parser.Property) *parser.Resource {
+	for _, res := range fctx.GetResourcesByType("AWS::EC2::LaunchTemplate") {
+		templateName := res.GetProperty("LaunchTemplateName")
+		if templateName.IsNotString() {
+			continue
+		}
+
+		if prop.EqualTo(templateName.AsString()) {
+			return res
+		}
+	}
+
+	return nil
+}
+
 func getBlockDevices(r *parser.Resource) []*ec2.BlockDevice {
 	var blockDevices []*ec2.BlockDevice
 
@@ -50,17 +94,9 @@ func getBlockDevices(r *parser.Resource) []*ec2.BlockDevice {
 	}
 
 	for _, d := range devicesProp.AsList() {
-		encrypted := d.GetProperty("Ebs.Encrypted")
-		var result defsecTypes.BoolValue
-		if encrypted.IsNil() {
-			result = defsecTypes.BoolDefault(false, d.Metadata())
-		} else {
-			result = encrypted.AsBoolValue()
-		}
-
 		device := &ec2.BlockDevice{
 			Metadata:  d.Metadata(),
-			Encrypted: result,
+			Encrypted: d.GetBoolProperty("Ebs.Encrypted"),
 		}
 
 		blockDevices = append(blockDevices, device)

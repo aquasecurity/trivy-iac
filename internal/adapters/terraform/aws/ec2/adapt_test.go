@@ -96,6 +96,95 @@ export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
 				},
 			},
 		},
+		{
+			name: "ec2 instance with launch template, ref to id",
+			terraform: `
+resource "aws_launch_template" "this" {
+  metadata_options {
+    http_endpoint               = "disabled"
+    http_tokens                 = "required"
+  }
+}
+
+resource "aws_instance" "this" {
+  launch_template {
+    id = aws_launch_template.this.id
+  }
+}
+`,
+			expected: ec2.EC2{
+				LaunchTemplates: []ec2.LaunchTemplate{
+					{
+						Metadata: defsecTypes.NewTestMetadata(),
+						Instance: ec2.Instance{
+							Metadata: defsecTypes.NewTestMetadata(),
+							MetadataOptions: ec2.MetadataOptions{
+								HttpEndpoint: defsecTypes.String("disabled", defsecTypes.NewTestMetadata()),
+								HttpTokens:   defsecTypes.String("required", defsecTypes.NewTestMetadata()),
+							},
+						},
+					},
+				},
+				Instances: []ec2.Instance{
+					{
+						Metadata: defsecTypes.NewTestMetadata(),
+						MetadataOptions: ec2.MetadataOptions{
+							HttpEndpoint: defsecTypes.String("disabled", defsecTypes.NewTestMetadata()),
+							HttpTokens:   defsecTypes.String("required", defsecTypes.NewTestMetadata()),
+						},
+						RootBlockDevice: &ec2.BlockDevice{
+							Metadata:  defsecTypes.NewTestMetadata(),
+							Encrypted: defsecTypes.Bool(false, defsecTypes.NewTestMetadata()),
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "ec2 instance with launch template, ref to name",
+			terraform: `
+resource "aws_launch_template" "this" {
+  name = "testname"
+  metadata_options {
+    http_endpoint = "disabled"
+    http_tokens   = "required"
+  }
+}
+
+resource "aws_instance" "this" {
+  launch_template {
+    name = aws_launch_template.this.name
+  }
+}
+`,
+			expected: ec2.EC2{
+				LaunchTemplates: []ec2.LaunchTemplate{
+					{
+						Metadata: defsecTypes.NewTestMetadata(),
+						Instance: ec2.Instance{
+							Metadata: defsecTypes.NewTestMetadata(),
+							MetadataOptions: ec2.MetadataOptions{
+								HttpEndpoint: defsecTypes.String("disabled", defsecTypes.NewTestMetadata()),
+								HttpTokens:   defsecTypes.String("required", defsecTypes.NewTestMetadata()),
+							},
+						},
+					},
+				},
+				Instances: []ec2.Instance{
+					{
+						Metadata: defsecTypes.NewTestMetadata(),
+						MetadataOptions: ec2.MetadataOptions{
+							HttpEndpoint: defsecTypes.String("disabled", defsecTypes.NewTestMetadata()),
+							HttpTokens:   defsecTypes.String("required", defsecTypes.NewTestMetadata()),
+						},
+						RootBlockDevice: &ec2.BlockDevice{
+							Metadata:  defsecTypes.NewTestMetadata(),
+							Encrypted: defsecTypes.Bool(false, defsecTypes.NewTestMetadata()),
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {

@@ -6,9 +6,11 @@ import (
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/cloudformation/parser"
 )
 
-func getClustersAndInstances(ctx parser.FileContext) (clusters []rds.Cluster, orphans []rds.Instance) {
+func getClustersAndInstances(ctx parser.FileContext) ([]rds.Cluster, []rds.Instance) {
 
 	clusterMap := getClusters(ctx)
+
+	var orphans []rds.Instance
 
 	for _, r := range ctx.GetResourcesByType("AWS::RDS::DBInstance") {
 
@@ -45,25 +47,19 @@ func getClustersAndInstances(ctx parser.FileContext) (clusters []rds.Cluster, or
 		}
 
 		if clusterID := r.GetProperty("DBClusterIdentifier"); clusterID.IsString() {
-			var found bool
-			for key, cluster := range clusterMap {
-				if key == clusterID.AsString() {
-					cluster.Instances = append(cluster.Instances, rds.ClusterInstance{
-						Instance:          instance,
-						ClusterIdentifier: clusterID.AsStringValue(),
-					})
-					clusterMap[key] = cluster
-					found = true
-					break
-				}
+			if cluster, exist := clusterMap[clusterID.AsString()]; exist {
+				cluster.Instances = append(cluster.Instances, rds.ClusterInstance{
+					Instance:          instance,
+					ClusterIdentifier: clusterID.AsStringValue(),
+				})
+				clusterMap[clusterID.AsString()] = cluster
 			}
-			if found {
-				continue
-			}
+		} else {
+			orphans = append(orphans, instance)
 		}
-
-		orphans = append(orphans, instance)
 	}
+
+	clusters := make([]rds.Cluster, 0, len(clusterMap))
 
 	for _, cluster := range clusterMap {
 		clusters = append(clusters, cluster)
@@ -74,10 +70,16 @@ func getClustersAndInstances(ctx parser.FileContext) (clusters []rds.Cluster, or
 
 func getDBParameterGroups(ctx parser.FileContext, r *parser.Resource) (dbParameterGroup []rds.DBParameterGroupsList) {
 
-	for _, r := range ctx.GetResourcesByType("DBParameterGroups") {
+	dbParameterGroupName := r.GetStringProperty("DBParameterGroupName")
+
+	for _, r := range ctx.GetResourcesByType("AWS::RDS::DBParameterGroup") {
+		name := r.GetStringProperty("DBParameterGroupName")
+		if !dbParameterGroupName.EqualTo(name.Value()) {
+			continue
+		}
 		dbpmgl := rds.DBParameterGroupsList{
 			Metadata:             r.Metadata(),
-			DBParameterGroupName: r.GetStringProperty("DBParameterGroupName"),
+			DBParameterGroupName: name,
 			KMSKeyID:             types.StringUnresolvable(r.Metadata()),
 		}
 		dbParameterGroup = append(dbParameterGroup, dbpmgl)
@@ -100,7 +102,7 @@ func getEnabledCloudwatchLogsExports(r *parser.Resource) (enabledcloudwatchlogex
 }
 
 func getTagList(r *parser.Resource) (taglist []rds.TagList) {
-	tagLists := r.GetProperty("tags")
+	tagLists := r.GetProperty("Tags")
 
 	if tagLists.IsNil() || tagLists.IsNotList() {
 		return taglist
@@ -115,7 +117,7 @@ func getTagList(r *parser.Resource) (taglist []rds.TagList) {
 }
 
 func getReadReplicaDBInstanceIdentifiers(r *parser.Resource) (readreplicadbidentifier []types.StringValue) {
-	readReplicaDBIdentifier := r.GetProperty("EnableCloudwatchLogsExports")
+	readReplicaDBIdentifier := r.GetProperty("SourceDBInstanceIdentifier")
 
 	if readReplicaDBIdentifier.IsNil() || readReplicaDBIdentifier.IsNotList() {
 		return readreplicadbidentifier
