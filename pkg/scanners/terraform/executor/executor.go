@@ -8,14 +8,14 @@ import (
 
 	"github.com/aquasecurity/defsec/pkg/debug"
 	"github.com/aquasecurity/defsec/pkg/framework"
+	"github.com/aquasecurity/defsec/pkg/rules"
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/severity"
 	"github.com/aquasecurity/defsec/pkg/state"
 	"github.com/aquasecurity/defsec/pkg/terraform"
 
+	"github.com/aquasecurity/defsec/pkg/rego"
 	adapter "github.com/aquasecurity/trivy-iac/internal/adapters/terraform"
-	"github.com/aquasecurity/trivy-iac/pkg/rego"
-	"github.com/aquasecurity/trivy-iac/pkg/rules"
 )
 
 // Executor scans HCL blocks by running all registered rules against them

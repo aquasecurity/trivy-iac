@@ -7,10 +7,11 @@ import (
 	"github.com/aquasecurity/defsec/pkg/scan"
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
 	"github.com/aquasecurity/defsec/pkg/terraform"
+	"github.com/stretchr/testify/require"
+
 	tfScanner "github.com/aquasecurity/trivy-iac/pkg/scanners/terraform"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
 	"github.com/aquasecurity/trivy-iac/test/testutil"
-	"github.com/stretchr/testify/require"
 )
 
 func createModulesFromSource(t *testing.T, source string, ext string) terraform.Modules {
