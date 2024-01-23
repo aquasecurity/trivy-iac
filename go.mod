@@ -9,7 +9,7 @@ require (
 	github.com/aquasecurity/defsec v0.94.1
 	github.com/aquasecurity/trivy-policies v0.8.0
 	github.com/aws/smithy-go v1.19.0
-	github.com/bmatcuk/doublestar/v4 v4.6.0
+	github.com/bmatcuk/doublestar/v4 v4.6.1
 	github.com/google/uuid v1.5.0
 	github.com/hashicorp/go-getter v1.7.3
 	github.com/hashicorp/go-uuid v1.0.3
