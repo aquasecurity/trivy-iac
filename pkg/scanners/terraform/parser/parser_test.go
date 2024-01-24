@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/scanners/options"
+	"github.com/aquasecurity/defsec/pkg/terraform"
 	"github.com/aquasecurity/defsec/test/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -918,8 +919,22 @@ func TestForEach(t *testing.T) {
 
 resource "aws_s3_bucket" "this" {
   for_each = local.buckets
-  bucket = each.key
-}`,
+  bucket   = each.value
+}
+`,
+			expectedCount: 2,
+		},
+		{
+			name: "arg is empty list",
+			source: `locals {
+  buckets = []
+}
+
+resource "aws_s3_bucket" "this" {
+  for_each = loca.buckets
+  bucket   = each.value
+}
+`,
 			expectedCount: 0,
 		},
 		{
@@ -930,8 +945,9 @@ resource "aws_s3_bucket" "this" {
 
 resource "aws_s3_bucket" "this" {
   for_each = loca.buckets
-  bucket = each.key
-}`,
+  bucket   = each.value
+}
+`,
 			expectedCount: 0,
 		},
 		{
@@ -942,8 +958,9 @@ resource "aws_s3_bucket" "this" {
 
 resource "aws_s3_bucket" "this" {
   for_each = toset(local.buckets)
-  bucket = each.key
-}`,
+  bucket   = each.value
+}
+`,
 			expectedCount: 2,
 		},
 		{
@@ -957,9 +974,23 @@ resource "aws_s3_bucket" "this" {
 
 resource "aws_s3_bucket" "this" {
   for_each = local.buckets
-  bucket = each.key
-}`,
+  bucket   = each.value
+}
+`,
 			expectedCount: 2,
+		},
+		{
+			name: "arg is empty map",
+			source: `locals {
+  buckets = {}
+}
+
+resource "aws_s3_bucket" "this" {
+  for_each = local.buckets
+  bucket   = each.value
+}
+`,
+			expectedCount: 0,
 		},
 	}
 
@@ -1138,4 +1169,157 @@ func TestForEachWithObjectsOfDifferentTypes(t *testing.T) {
 	modules, _, err := parser.EvaluateAll(context.TODO())
 	assert.NoError(t, err)
 	assert.Len(t, modules, 1)
+}
+
+func TestDynamicBlocks(t *testing.T) {
+
+	tests := []struct {
+		name   string
+		source string
+		count  int
+	}{}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			fs := testutil.CreateFS(t, map[string]string{
+				"main.tf": tt.source,
+			})
+			parser := New(fs, "", OptionStopOnHCLError(true))
+			require.NoError(t, parser.ParseFS(context.TODO(), "."))
+		})
+	}
+
+	t.Run("arg is list of int", func(t *testing.T) {
+		fs := testutil.CreateFS(t, map[string]string{
+			"main.tf": `
+resource "aws_security_group" "sg-webserver" {
+  vpc_id = "1111"
+  dynamic "ingress" {
+    for_each = [80, 443]
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+}
+`,
+		})
+		parser := New(fs, "", OptionStopOnHCLError(true))
+		require.NoError(t, parser.ParseFS(context.TODO(), "."))
+
+		modules, _, err := parser.EvaluateAll(context.TODO())
+		require.NoError(t, err)
+		require.Len(t, modules, 1)
+
+		secGroups := modules.GetResourcesByType("aws_security_group")
+		assert.Len(t, secGroups, 1)
+		ingressBlocks := secGroups[0].GetBlocks("ingress")
+		assert.Len(t, ingressBlocks, 2)
+
+		var inboundPorts []int
+		for _, ingress := range ingressBlocks {
+			fromPort := ingress.GetAttribute("from_port").AsIntValueOrDefault(-1, ingress).Value()
+			inboundPorts = append(inboundPorts, fromPort)
+		}
+
+		assert.True(t, compareSets([]int{80, 443}, inboundPorts))
+	})
+
+	t.Run("empty for-each", func(t *testing.T) {
+		fs := testutil.CreateFS(t, map[string]string{
+			"main.tf": `
+resource "aws_lambda_function" "analyzer" {
+  dynamic "vpc_config" {
+    for_each = []
+    content {}
+  }
+}
+`,
+		})
+		parser := New(fs, "", OptionStopOnHCLError(true))
+		require.NoError(t, parser.ParseFS(context.TODO(), "."))
+		modules, _, err := parser.EvaluateAll(context.TODO())
+		require.NoError(t, err)
+		require.Len(t, modules, 1)
+
+		secGroups := modules.GetResourcesByType("aws_lambda_function")
+		assert.Len(t, secGroups, 1)
+		vpcConfigs := secGroups[0].GetBlocks("vpc_config")
+		assert.Empty(t, vpcConfigs)
+	})
+
+	t.Run("arg is list of bool", func(t *testing.T) {
+		fs := testutil.CreateFS(t, map[string]string{
+			"main.tf": `
+resource "aws_lambda_function" "analyzer" {
+  dynamic "vpc_config" {
+    for_each = [true]
+    content {}
+  }
+}
+`,
+		})
+		parser := New(fs, "", OptionStopOnHCLError(true))
+		require.NoError(t, parser.ParseFS(context.TODO(), "."))
+		modules, _, err := parser.EvaluateAll(context.TODO())
+		require.NoError(t, err)
+		require.Len(t, modules, 1)
+
+		secGroups := modules.GetResourcesByType("aws_lambda_function")
+		assert.Len(t, secGroups, 1)
+		vpcConfigs := secGroups[0].GetBlocks("vpc_config")
+		assert.Len(t, vpcConfigs, 1)
+	})
+
+	t.Run("nested dynamic", func(t *testing.T) {
+		fs := testutil.CreateFS(t, map[string]string{
+			"main.tf": `
+resource "test_block" "this" {
+  name     = "name"
+  location = "loc"
+  dynamic "env" {
+	for_each = ["1", "2"]
+	content {
+	  dynamic "value_source" {
+		for_each = [true, true]
+		content {}
+	  }
+	}
+  }
+}`,
+		})
+		parser := New(fs, "", OptionStopOnHCLError(true))
+		require.NoError(t, parser.ParseFS(context.TODO(), "."))
+		modules, _, err := parser.EvaluateAll(context.TODO())
+		require.NoError(t, err)
+		require.Len(t, modules, 1)
+
+		secGroups := modules.GetResourcesByType("test_block")
+		assert.Len(t, secGroups, 1)
+		envs := secGroups[0].GetBlocks("env")
+		assert.Len(t, envs, 2)
+
+		var sources []*terraform.Block
+		for _, env := range envs {
+			sources = append(sources, env.GetBlocks("value_source")...)
+		}
+		assert.Len(t, sources, 4)
+	})
+}
+
+func compareSets(a []int, b []int) bool {
+	m := make(map[int]bool)
+	for _, el := range a {
+		m[el] = true
+	}
+
+	for _, el := range b {
+		if !m[el] {
+			return false
+		}
+	}
+
+	return true
 }

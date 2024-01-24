@@ -3,7 +3,6 @@ package parser
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io/fs"
 	"reflect"
 	"time"
@@ -148,7 +147,8 @@ func (e *evaluator) EvaluateAll(ctx context.Context) (terraform.Modules, map[str
 		}
 	}
 
-	// expand out resources and modules via count (not a typo, we do this twice so every order is processed)
+	// expand out resources and modules via count, for-each and dynamic
+	// (not a typo, we do this twice so every order is processed)
 	e.blocks = e.expandBlocks(e.blocks)
 	e.blocks = e.expandBlocks(e.blocks)
 
@@ -219,6 +219,9 @@ func (e *evaluator) expandDynamicBlock(b *terraform.Block) {
 		e.expandDynamicBlock(sub)
 	}
 	for _, sub := range b.AllBlocks().OfType("dynamic") {
+		if sub.IsCountExpanded() {
+			continue
+		}
 		blockName := sub.TypeLabel()
 		expanded := e.expandBlockForEaches(terraform.Blocks{sub})
 		for _, ex := range expanded {
@@ -227,43 +230,8 @@ func (e *evaluator) expandDynamicBlock(b *terraform.Block) {
 				b.InjectBlock(content, blockName)
 			}
 		}
+		sub.MarkCountExpanded()
 	}
-}
-
-func validateForEachArg(arg cty.Value) error {
-	if arg.IsNull() {
-		return errors.New("arg is null")
-	}
-
-	ty := arg.Type()
-
-	if !arg.IsKnown() || ty.Equals(cty.DynamicPseudoType) || arg.LengthInt() == 0 {
-		return nil
-	}
-
-	if !(ty.IsSetType() || ty.IsObjectType() || ty.IsMapType()) {
-		return fmt.Errorf("%s type is not supported: arg is not set or map", ty.FriendlyName())
-	}
-
-	if ty.IsSetType() {
-		if !ty.ElementType().Equals(cty.String) {
-			return errors.New("arg is not set of strings")
-		}
-
-		it := arg.ElementIterator()
-		for it.Next() {
-			key, _ := it.Element()
-			if key.IsNull() {
-				return errors.New("arg is set of strings, but contains null")
-			}
-
-			if !key.IsKnown() {
-				return errors.New("arg is set of strings, but contains unknown value")
-			}
-		}
-	}
-
-	return nil
 }
 
 func isBlockSupportsForEachMetaArgument(block *terraform.Block) bool {
@@ -284,15 +252,15 @@ func (e *evaluator) expandBlockForEaches(blocks terraform.Blocks) terraform.Bloc
 
 		forEachVal := forEachAttr.Value()
 
-		if err := validateForEachArg(forEachVal); err != nil {
-			e.debug.Log(`"for_each" argument is invalid: %s`, err.Error())
+		if forEachVal.IsNull() || !forEachVal.IsKnown() || !forEachAttr.IsIterable() {
 			continue
 		}
 
 		clones := make(map[string]cty.Value)
 		_ = forEachAttr.Each(func(key cty.Value, val cty.Value) {
 
-			if !key.Type().Equals(cty.String) {
+			idx, err := convert.Convert(key, cty.String)
+			if err != nil {
 				e.debug.Log(
 					`Invalid "for-each" argument: map key (or set value) is not a string, but %s`,
 					key.Type().FriendlyName(),
@@ -315,7 +283,7 @@ func (e *evaluator) expandBlockForEaches(blocks terraform.Blocks) terraform.Bloc
 			forEachFiltered = append(forEachFiltered, clone)
 
 			values := clone.Values()
-			clones[key.AsString()] = values
+			clones[idx.AsString()] = values
 			e.ctx.SetByDot(values, clone.GetMetadata().Reference())
 		})
 
