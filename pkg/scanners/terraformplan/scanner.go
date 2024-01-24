@@ -141,8 +141,8 @@ func (s *Scanner) ScanFile(filepath string, fs fs.FS) (scan.Results, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 	return s.Scan(file)
-
 }
 
 func (s *Scanner) Scan(reader io.Reader) (scan.Results, error) {
