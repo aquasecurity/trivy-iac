@@ -8,9 +8,8 @@ import (
 	"testing"
 
 	"github.com/aquasecurity/defsec/pkg/framework"
+	"github.com/aquasecurity/defsec/pkg/rules"
 	"github.com/stretchr/testify/require"
-
-	"github.com/aquasecurity/trivy-iac/pkg/rules"
 )
 
 func TestAVDIDs(t *testing.T) {

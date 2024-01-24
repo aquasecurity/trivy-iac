@@ -18,8 +18,8 @@ import (
 	"github.com/aquasecurity/defsec/pkg/types"
 	"golang.org/x/exp/slices"
 
+	"github.com/aquasecurity/defsec/pkg/rego"
 	"github.com/aquasecurity/trivy-iac/pkg/extrafs"
-	"github.com/aquasecurity/trivy-iac/pkg/rego"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/executor"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/terraform/parser"
