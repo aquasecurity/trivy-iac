@@ -8,11 +8,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
-      with:
-        go-version-file: go.mod
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
 
-    - name: Run tests
-      run: make test
-      shell: bash
+      - name: go mod tidy
+        run: |
+          go mod tidy
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Run 'go mod tidy' and push it"
+            exit 1
+          fi
+
+      - name: Run tests
+        run: make test
+        shell: bash
