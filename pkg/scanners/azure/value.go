@@ -4,9 +4,10 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/aquasecurity/defsec/pkg/types"
 	"github.com/aquasecurity/trivy-iac/pkg/scanners/azure/arm/parser/armjson"
-	"k8s.io/utils/strings/slices"
 )
 
 type EvalContext struct{}
