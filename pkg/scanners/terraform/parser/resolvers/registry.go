@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/Masterminds/semver"
+	"golang.org/x/net/idna"
 )
 
 type registryResolver struct {
@@ -55,18 +56,24 @@ func (r *registryResolver) Resolve(ctx context.Context, target fs.FS, opt Option
 		hostname = parts[0]
 		parts = parts[1:]
 
-		envVar := fmt.Sprintf("TF_TOKEN_%s", strings.ReplaceAll(hostname, ".", "_"))
-		token = os.Getenv(envVar)
-
-		if token == "" {
-			envVar = strings.ReplaceAll(hostname, "-", "__")
-			token = os.Getenv(envVar)
-		}
-
-		if token != "" {
-			opt.Debug("Found a token for the registry at %s", hostname)
+		ascii_hostname, err := idna.ToASCII(hostname)
+		if err != nil {
+			opt.Debug("Could not convert hostname %s to a punycode encoded ASCII string so cannot find token for this registry", hostname)
 		} else {
-			opt.Debug("No token was found for the registry at %s", hostname)
+			envVar := fmt.Sprintf("TF_TOKEN_%s", strings.ReplaceAll(ascii_hostname, ".", "_"))
+			token = os.Getenv(envVar)
+
+			// Dashes in the hostname can optionally be converted to double underscores
+			if token == "" {
+				envVar = strings.ReplaceAll(envVar, "-", "__")
+				token = os.Getenv(envVar)
+			}
+
+			if token != "" {
+				opt.Debug("Found a token for the registry at %s", hostname)
+			} else {
+				opt.Debug("No token was found for the registry at %s", hostname)
+			}
 		}
 	}
 
