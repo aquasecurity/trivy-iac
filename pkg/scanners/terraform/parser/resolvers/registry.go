@@ -56,24 +56,11 @@ func (r *registryResolver) Resolve(ctx context.Context, target fs.FS, opt Option
 		hostname = parts[0]
 		parts = parts[1:]
 
-		ascii_hostname, err := idna.ToASCII(hostname)
-		if err != nil {
-			opt.Debug("Could not convert hostname %s to a punycode encoded ASCII string so cannot find token for this registry", hostname)
+		token, err = getPrivateRegistryTokenFromEnvVars(hostname)
+		if err == nil {
+			opt.Debug("Found a token for the registry at %s", hostname)
 		} else {
-			envVar := fmt.Sprintf("TF_TOKEN_%s", strings.ReplaceAll(ascii_hostname, ".", "_"))
-			token = os.Getenv(envVar)
-
-			// Dashes in the hostname can optionally be converted to double underscores
-			if token == "" {
-				envVar = strings.ReplaceAll(envVar, "-", "__")
-				token = os.Getenv(envVar)
-			}
-
-			if token != "" {
-				opt.Debug("Found a token for the registry at %s", hostname)
-			} else {
-				opt.Debug("No token was found for the registry at %s", hostname)
-			}
+			opt.Debug(err.Error())
 		}
 	}
 
@@ -147,6 +134,29 @@ func (r *registryResolver) Resolve(ctx context.Context, target fs.FS, opt Option
 	}
 
 	return filesystem, prefix, downloadPath, true, nil
+}
+
+func getPrivateRegistryTokenFromEnvVars(hostname string) (string, error) {
+	token := ""
+	asciiHostname, err := idna.ToASCII(hostname)
+	if err != nil {
+		return "", fmt.Errorf("Could not convert hostname %s to a punycode encoded ASCII string so cannot find token for this registry", hostname)
+	} else {
+		envVar := fmt.Sprintf("TF_TOKEN_%s", strings.ReplaceAll(asciiHostname, ".", "_"))
+		token = os.Getenv(envVar)
+
+		// Dashes in the hostname can optionally be converted to double underscores
+		if token == "" {
+			envVar = strings.ReplaceAll(envVar, "-", "__")
+			token = os.Getenv(envVar)
+		}
+
+		if token == "" {
+			return "", fmt.Errorf("No token was found for the registry at %s", hostname)
+		} else {
+			return token, nil
+		}
+	}
 }
 
 func resolveVersion(input string, versions moduleVersions) (string, error) {
