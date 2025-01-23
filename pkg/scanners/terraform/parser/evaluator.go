@@ -241,24 +241,24 @@ func validateForEachArg(arg cty.Value) error {
 		return nil
 	}
 
-	if !(ty.IsSetType() || ty.IsObjectType() || ty.IsMapType()) {
-		return fmt.Errorf("%s type is not supported: arg is not set or map", ty.FriendlyName())
+	if !(ty.IsListType() || ty.IsSetType() || ty.IsObjectType() || ty.IsMapType()) {
+		return fmt.Errorf("%s type is not supported: arg is not set, map, or list", ty.FriendlyName())
 	}
 
-	if ty.IsSetType() {
+	if ty.IsListType() || ty.IsSetType() {
 		if !ty.ElementType().Equals(cty.String) {
-			return errors.New("arg is not set of strings")
+			return errors.New("arg is not set or list of strings")
 		}
 
 		it := arg.ElementIterator()
 		for it.Next() {
 			key, _ := it.Element()
 			if key.IsNull() {
-				return errors.New("arg is set of strings, but contains null")
+				return errors.New("arg is set or list of strings, but contains null")
 			}
 
 			if !key.IsKnown() {
-				return errors.New("arg is set of strings, but contains unknown value")
+				return errors.New("arg is set or list of strings, but contains unknown value")
 			}
 		}
 	}
@@ -292,12 +292,20 @@ func (e *evaluator) expandBlockForEaches(blocks terraform.Blocks) terraform.Bloc
 		clones := make(map[string]cty.Value)
 		_ = forEachAttr.Each(func(key cty.Value, val cty.Value) {
 
-			if !key.Type().Equals(cty.String) {
+			if !(key.Type().Equals(cty.String) || key.Type().Equals(cty.Number)) {
 				e.debug.Log(
-					`Invalid "for-each" argument: map key (or set value) is not a string, but %s`,
+					`Invalid "for-each" argument: key is not a string or number, but %s`,
 					key.Type().FriendlyName(),
 				)
 				return
+			}
+
+			var keyString string
+
+			if key.Type().Equals(cty.String) {
+				keyString = key.AsString()
+			} else {
+				keyString = key.AsBigFloat().Text('f', -1)
 			}
 
 			clone := block.Clone(key)
@@ -315,7 +323,7 @@ func (e *evaluator) expandBlockForEaches(blocks terraform.Blocks) terraform.Bloc
 			forEachFiltered = append(forEachFiltered, clone)
 
 			values := clone.Values()
-			clones[key.AsString()] = values
+			clones[keyString] = values
 			e.ctx.SetByDot(values, clone.GetMetadata().Reference())
 		})
 

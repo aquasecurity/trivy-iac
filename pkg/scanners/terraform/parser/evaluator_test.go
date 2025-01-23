@@ -24,22 +24,22 @@ func TestValidateForEachArg(t *testing.T) {
 		{
 			name:          "set of non-strings",
 			arg:           cty.SetVal([]cty.Value{cty.NumberIntVal(1), cty.NumberIntVal(2)}),
-			expectedError: "is not set of strings",
+			expectedError: "is not set or list of strings",
 		},
 		{
 			name:          "set with null",
 			arg:           cty.SetVal([]cty.Value{cty.StringVal("val1"), cty.NullVal(cty.String)}),
-			expectedError: "arg is set of strings, but contains null",
+			expectedError: "arg is set or list of strings, but contains null",
 		},
 		{
 			name:          "set with unknown",
 			arg:           cty.SetVal([]cty.Value{cty.StringVal("val1"), cty.UnknownVal(cty.String)}),
-			expectedError: "arg is set of strings, but contains unknown",
+			expectedError: "arg is set or list of strings, but contains unknown",
 		},
 		{
 			name:          "set with unknown",
 			arg:           cty.SetVal([]cty.Value{cty.StringVal("val1"), cty.UnknownVal(cty.String)}),
-			expectedError: "arg is set of strings, but contains unknown",
+			expectedError: "arg is set or list of strings, but contains unknown",
 		},
 		{
 			name: "non empty map",
